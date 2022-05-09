@@ -1,0 +1,112 @@
+<!--
+ $HeadURL: $
+ $Id: $
+
+ Project       : Supervision and Automation - Dependency injection
+
+ Description   : The definition and implementation for dependency injection templates in SUP.
+
+ Authors       : Walter Van Herck (IO)
+
+ Copyright (c) : 2010-2022 ITER Organization,
+                 CS 90 046
+                 13067 St. Paul-lez-Durance Cedex
+                 France
+
+ This file is part of ITER CODAC software.
+ For the terms and conditions of redistribution or use of this software
+ refer to the file ITER-LICENSE.TXT located in the top level directory
+ of the distribution package.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.iter.codac.units</groupId>
+    <artifactId>sup-di</artifactId>
+    <packaging>codac</packaging>
+    <version>0.1.0</version>
+    <name>SUP dependency injection module</name>
+    <description>Library for dependency injection in SUP</description>
+    <url>http://www.iter.org/</url>
+
+    <!-- project properties -->
+    <properties>
+        <unit.type>module</unit.type>
+        <integrity.level>1</integrity.level>
+        <cppcheck.args>--enable=all --suppress=missingInclude --inline-suppr</cppcheck.args>
+        <sonar.exclusions>src/test/**</sonar.exclusions>
+    </properties>
+
+    <!-- parent pom.xml -->
+    <parent>
+        <groupId>org.iter.codac.units</groupId>
+        <artifactId>maven-iter-settings</artifactId>
+        <version>7.1.0</version>
+    </parent>
+
+    <!-- unit owner and developers -->
+    <developers>
+        <developer>
+            <id>vanherw</id>
+            <name>Walter Van Herck</name>
+            <organization>ITER Organisation</organization>
+            <email>walter.vanherck@iter.org</email>
+            <roles>
+                <role>unit owner</role>
+                <role>developer</role>
+            </roles>
+        </developer>
+    </developers>
+
+    <!-- configuration of how the project is built -->
+    <build>
+        <!-- default phase is compile -->
+        <defaultGoal>compile</defaultGoal>
+        <!-- this command is executed if you just write 'mvn' -->
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-iter-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <init>
+                        <expand source="-" file="main/VERSION">
+                            <![CDATA[${project.version}]]>
+                        </expand>
+                    </init>
+                    <packaging>
+                        <package>
+                            <!-- Libraries -->
+                            <include type="file" source="lib" target="lib">
+                                <include>*.so.*</include>
+                            </include>
+                            <!-- Package dependencies -->
+                            <requires version="current" buildOnly="true">cmake</requires>
+                        </package>
+                        <package name="devel">
+                            <!-- Libraries -->
+                            <include type="file" source="lib" target="lib">
+                                <include>*.a</include>
+                                <include>*.so</include>
+                            </include>
+                            <!-- Public API headers -->
+                            <include type="file" source="include" target="include/sup">
+                                <include>*.h</include>
+                            </include>
+                            <!-- Package dependencies -->
+                            <requires version="current">%{codac_rpm_prefix}-${project.artifactId}</requires>
+                        </package>
+                        <package name="tests">
+                            <!-- Unit Test -->
+                            <include type="file" source="bin/unit-tests" target="tests/${project.artifactId}/unit-tests"/>
+                            <!-- Package dependencies -->
+                            <requires version="current">%{codac_rpm_prefix}-${project.artifactId}-devel</requires>
+                            <requires version="current" buildOnly="true">gtest-devel</requires>
+                            <requires version="current" buildOnly="true">gmock-devel</requires>
+                        </package>
+                    </packaging>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

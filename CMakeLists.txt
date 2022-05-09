@@ -1,0 +1,21 @@
+cmake_minimum_required(VERSION 3.5)
+
+project(SUP-DI-MAIN VERSION 0.1.0)
+
+set(LIBVERSION ${CMAKE_PROJECT_VERSION})
+set(LIBSOVERSION ${CMAKE_PROJECT_VERSION_MAJOR})
+set(CMAKE_BUILD_TYPE "RelWithDebInfo")
+
+set(TARGET_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/target)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${TARGET_DIRECTORY}/lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${TARGET_DIRECTORY}/lib)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${TARGET_DIRECTORY}/bin)
+
+file(MAKE_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
+file(MAKE_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+
+option(COVERAGE "Generate unit test coverage information" FALSE)
+option(EXPLICIT_TEST_BUILD_DEPENDENCIES "Force building of main library before building tests" TRUE)
+
+# add_subdirectory(src/main/c++)
+add_subdirectory(src/test/c++)
