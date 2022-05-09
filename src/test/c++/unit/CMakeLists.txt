@@ -9,6 +9,7 @@ add_executable(unit-tests)
 target_sources(unit-tests
     PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/TypeMap-tests.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/TypeStringList-tests.cpp
 )
 
 target_include_directories(unit-tests
