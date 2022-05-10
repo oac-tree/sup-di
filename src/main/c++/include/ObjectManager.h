@@ -92,11 +92,11 @@ T* ObjectManager::GetInstance(const std::string& instance_name)
     throw std::runtime_error("ObjectManager::GetInstance: accessing unknow service type");
   }
   auto instance_it = service_map_it->second.find(instance_name);
-  if (instance_it == service_map_it.end())
+  if (instance_it == service_map_it->second.end())
   {
     throw std::runtime_error("ObjectManager::GetInstance: accessing unknow instance");
   }
-  return static_cast<T*>(instance_it->second->get());
+  return static_cast<T*>(instance_it->second->Get());
 }
 
 template <typename ServiceType, typename Deleter, typename... Deps>
