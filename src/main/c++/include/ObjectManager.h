@@ -148,7 +148,7 @@ template <std::size_t I, typename... Deps>
 auto ObjectManager::IndexedArgument(const internal::TypeStringList<Deps...>& type_string_list)
     -> typename internal::TypeStringList<Deps...>::IndexedType<I>*
 {
-  return GetInstance<internal::TypeStringList<Deps...>::IndexedType<I>>(
+  return GetInstance<typename internal::TypeStringList<Deps...>::IndexedType<I>>(
     type_string_list.IndexedString(I) );
 }
 

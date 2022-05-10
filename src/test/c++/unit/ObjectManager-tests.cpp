@@ -22,6 +22,7 @@
 #include <gtest/gtest.h>
 
 #include "ObjectManager.h"
+#include "TestServices.h"
 
 #include <memory>
 #include <string>
@@ -37,35 +38,8 @@ protected:
   ObjectManager object_manager;
 };
 
-class IPrinter
-{
-public:
-  virtual ~IPrinter() = default;
-
-  virtual std::string Print() = 0;
-};
-
-const std::string HelloWorld = "Hello, world!";
-
-class HelloPrinter : public IPrinter
-{
-public:
-  HelloPrinter() = default;
-  ~HelloPrinter() = default;
-
-  std::string Print() override
-  {
-    return HelloWorld;
-  }
-};
-
-const std::string HelloPrinterName = "HelloPrinter";
 const std::string HelloPrinterInstanceName = "HelloPrinterInstance";
-
-std::unique_ptr<IPrinter> HelloPrinterFactoryFunction()
-{
-  return std::unique_ptr<IPrinter>(new HelloPrinter());
-}
+const std::string PrinterDecoratorInstanceName = "PrinterDecoratorInstance";
 
 TEST_F(ObjectManagerTest, NoDependencies)
 {
@@ -77,6 +51,22 @@ TEST_F(ObjectManagerTest, NoDependencies)
   EXPECT_NO_THROW(print_service = object_manager.GetInstance<IPrinter>(HelloPrinterInstanceName));
   EXPECT_NE(print_service, nullptr);
   EXPECT_EQ(print_service->Print(), HelloWorld);
+}
+
+TEST_F(ObjectManagerTest, Decorator)
+{
+  EXPECT_NO_THROW(object_manager.RegisterFactoryFunction(
+    HelloPrinterName, HelloPrinterFactoryFunction));
+  EXPECT_NO_THROW(object_manager.RegisterFactoryFunction(
+    PrinterDecoratorName, PrinterDecoratorFactoryFunction));
+  EXPECT_NO_THROW(object_manager.CreateInstance(HelloPrinterName, HelloPrinterInstanceName, {}));
+  EXPECT_NO_THROW(object_manager.CreateInstance(PrinterDecoratorName, PrinterDecoratorInstanceName,
+                                                {HelloPrinterInstanceName}));
+  IPrinter* print_service = nullptr;
+  EXPECT_NO_THROW(print_service =
+    object_manager.GetInstance<IPrinter>(PrinterDecoratorInstanceName));
+  EXPECT_NE(print_service, nullptr);
+  EXPECT_EQ(print_service->Print(), DecoratedPrefix + HelloWorld);
 }
 
 ObjectManagerTest::ObjectManagerTest()
