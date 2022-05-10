@@ -19,12 +19,10 @@
  * of the distribution package.
  ******************************************************************************/
 
-#ifndef _SUP_TypeStringList_h_
-#define _SUP_TypeStringList_h_
+#ifndef _SUP_IndexSequence_h_
+#define _SUP_IndexSequence_h_
 
-#include <array>
-#include <string>
-#include <vector>
+#include <cstddef>
 
 namespace sup
 {
@@ -33,33 +31,20 @@ namespace di
 namespace internal
 {
 
-template <typename... Args>
-class TypeStringList
+template<std::size_t... >
+struct IndexSequence {};
+
+template<std::size_t N, std::size_t ...S>
+struct MakeIndexSequence
 {
-public:
-  TypeStringList(const std::vector<std::string>& string_list);
-  ~TypeStringList() = default;
-
-  template<std::size_t I> using IndexedType =
-    typename std::tuple_element<I, std::tuple<Args...>>::type;
-
-  std::string IndexedString(std::size_t i) const
-  {
-    return names[i];
-  }
-
-private:
-  std::array<std::string, sizeof...(Args)> names;
+  using type = typename MakeIndexSequence<N-1, N-1, S...>::type;
 };
 
-template <typename... Args>
-TypeStringList<Args...>::TypeStringList(const std::vector<std::string>& string_list)
+template<std::size_t ...S>
+struct MakeIndexSequence<0, S...>
 {
-  for(std::size_t i=0; i<sizeof...(Args); ++i)
-  {
-    names[i] = string_list[i];
-  }
-}
+  using type = IndexSequence<S...>;
+};
 
 }  // namespace internal
 
@@ -67,4 +52,4 @@ TypeStringList<Args...>::TypeStringList(const std::vector<std::string>& string_l
 
 }  // namespace sup
 
-#endif  // _SUP_TypeStringList_h_
+#endif  // _SUP_IndexSequence_h_

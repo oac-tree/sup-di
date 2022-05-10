@@ -38,8 +38,8 @@ protected:
 
 TEST_F(TypeStringListTest, MemberFunctions)
 {
-  EXPECT_EQ(type_string_list.IndexedString<0>(), "int");
-  EXPECT_EQ(type_string_list.IndexedString<1>(), "std::string");
+  EXPECT_EQ(type_string_list.IndexedString(0), "int");
+  EXPECT_EQ(type_string_list.IndexedString(1), "std::string");
   EXPECT_TRUE((std::is_same<int, decltype(type_string_list)::IndexedType<0>>::value));
   EXPECT_TRUE((std::is_same<std::string, decltype(type_string_list)::IndexedType<1>>::value));
 }

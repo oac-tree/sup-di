@@ -17,5 +17,5 @@ file(MAKE_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 option(COVERAGE "Generate unit test coverage information" FALSE)
 option(EXPLICIT_TEST_BUILD_DEPENDENCIES "Force building of main library before building tests" TRUE)
 
-# add_subdirectory(src/main/c++)
+add_subdirectory(src/main/c++)
 add_subdirectory(src/test/c++)

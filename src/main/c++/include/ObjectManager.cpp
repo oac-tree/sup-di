@@ -19,52 +19,28 @@
  * of the distribution package.
  ******************************************************************************/
 
-#ifndef _SUP_TypeStringList_h_
-#define _SUP_TypeStringList_h_
-
-#include <array>
-#include <string>
-#include <vector>
+#include "ObjectManager.h"
 
 namespace sup
 {
 namespace di
 {
-namespace internal
+ObjectManager::ObjectManager() = default;
+
+ObjectManager::~ObjectManager() = default;
+
+void ObjectManager::CreateInstance(
+  const std::string& registered_typename, const std::string& instance_name,
+  const std::vector<std::string>& dependency_names)
 {
-
-template <typename... Args>
-class TypeStringList
-{
-public:
-  TypeStringList(const std::vector<std::string>& string_list);
-  ~TypeStringList() = default;
-
-  template<std::size_t I> using IndexedType =
-    typename std::tuple_element<I, std::tuple<Args...>>::type;
-
-  std::string IndexedString(std::size_t i) const
+  auto it = factory_functions.find(registered_typename);
+  if (it == factory_functions.end())
   {
-    return names[i];
+    throw std::runtime_error("ObjectManager::CreateInstance: typename not registered");
   }
-
-private:
-  std::array<std::string, sizeof...(Args)> names;
-};
-
-template <typename... Args>
-TypeStringList<Args...>::TypeStringList(const std::vector<std::string>& string_list)
-{
-  for(std::size_t i=0; i<sizeof...(Args); ++i)
-  {
-    names[i] = string_list[i];
-  }
+  it->second(instance_name, dependency_names);
 }
-
-}  // namespace internal
 
 }  // namespace di
 
 }  // namespace sup
-
-#endif  // _SUP_TypeStringList_h_

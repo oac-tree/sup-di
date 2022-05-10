@@ -32,7 +32,8 @@ namespace internal
 {
 
 template <typename ValueType>
-class TypeMap {
+class TypeMap
+{
   using Container = std::map<int, ValueType>;
 public:
   using iterator = typename Container::iterator;

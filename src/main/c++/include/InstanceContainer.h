@@ -19,12 +19,10 @@
  * of the distribution package.
  ******************************************************************************/
 
-#ifndef _SUP_TypeStringList_h_
-#define _SUP_TypeStringList_h_
+#ifndef _SUP_InstanceContainer_h_
+#define _SUP_InstanceContainer_h_
 
-#include <array>
-#include <string>
-#include <vector>
+#include <memory>
 
 namespace sup
 {
@@ -33,32 +31,37 @@ namespace di
 namespace internal
 {
 
-template <typename... Args>
-class TypeStringList
+class AbstractInstanceContainer
 {
 public:
-  TypeStringList(const std::vector<std::string>& string_list);
-  ~TypeStringList() = default;
+  virtual ~AbstractInstanceContainer() = default;
 
-  template<std::size_t I> using IndexedType =
-    typename std::tuple_element<I, std::tuple<Args...>>::type;
+  virtual void* Get() = 0;
+};
 
-  std::string IndexedString(std::size_t i) const
+template <class T, class Deleter>
+class InstanceContainer : public AbstractInstanceContainer
+{
+public:
+  ~InstanceContainer() = default;
+
+  explicit InstanceContainer(std::unique_ptr<T, Deleter>&& p)
+    : pointer(std::move(p)) {}
+
+  void* Get() override
   {
-    return names[i];
+    return pointer.get();
   }
 
 private:
-  std::array<std::string, sizeof...(Args)> names;
+  std::unique_ptr<T, Deleter> pointer;
 };
 
-template <typename... Args>
-TypeStringList<Args...>::TypeStringList(const std::vector<std::string>& string_list)
+template <class T, class Deleter>
+std::unique_ptr<AbstractInstanceContainer> WrapIntoContainer(std::unique_ptr<T, Deleter>&& p)
 {
-  for(std::size_t i=0; i<sizeof...(Args); ++i)
-  {
-    names[i] = string_list[i];
-  }
+  return std::unique_ptr<AbstractInstanceContainer>(
+    new InstanceContainer<T, Deleter>(std::move(p)));
 }
 
 }  // namespace internal
@@ -67,4 +70,4 @@ TypeStringList<Args...>::TypeStringList(const std::vector<std::string>& string_l
 
 }  // namespace sup
 
-#endif  // _SUP_TypeStringList_h_
+#endif  // _SUP_InstanceContainer_h_
