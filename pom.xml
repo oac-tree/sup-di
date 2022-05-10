@@ -26,7 +26,7 @@
     <packaging>codac</packaging>
     <version>0.1.0</version>
     <name>SUP dependency injection module</name>
-    <description>Library for dependency injection in SUP</description>
+    <description>Library for configuration-based dependency injection in SUP</description>
     <url>http://www.iter.org/</url>
 
     <!-- project properties -->
