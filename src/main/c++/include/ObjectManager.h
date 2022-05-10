@@ -64,6 +64,9 @@ public:
                                internal::InstanceFactoryFunction<ServiceType, Deleter, Deps...>
                                  factory_function);
 
+  template <typename ServiceType>
+  void RegisterInstance(std::unique_ptr<ServiceType>&& instance, const std::string& instance_name);
+
 private:
   using ServiceMap = std::map<std::string, std::unique_ptr<internal::AbstractInstanceContainer>>;
   std::map<std::string, internal::RegisteredFactoryFunction> factory_functions;
@@ -115,14 +118,21 @@ void ObjectManager::RegisterFactoryFunction(
       typename internal::MakeIndexSequence<sizeof...(Deps)>::type index_sequence;
       auto p_instance = CreateFromTypeStringList(
         factory_function, type_string_list, index_sequence);
-      auto& service_map = GetServiceMap<ServiceType>();
-      if (service_map.find(instance_name) != service_map.end())
-      {
-        throw std::runtime_error(
-          "ObjectManager::RegisterFactoryFunction: instance name already registered");
-      }
-      service_map[instance_name] = internal::WrapIntoContainer(std::move(p_instance));
+      RegisterInstance(std::move(p_instance), instance_name);
     };
+}
+
+template <typename ServiceType>
+void ObjectManager::RegisterInstance(
+  std::unique_ptr<ServiceType>&& instance, const std::string& instance_name)
+{
+  auto& service_map = GetServiceMap<ServiceType>();
+  if (service_map.find(instance_name) != service_map.end())
+  {
+    throw std::runtime_error(
+      "ObjectManager::RegisterFactoryFunction: instance name already registered");
+  }
+  service_map[instance_name] = internal::WrapIntoContainer(std::move(instance));
 }
 
 template<typename ServiceType, typename Deleter, typename... Deps, std::size_t... I>
