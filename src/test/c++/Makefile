@@ -1,7 +1,6 @@
 .PHONY: all
 
 UNIT_TEST_EXE=unit-tests
-PERFORMANCE_TEST_EXE=performance-tests
 
 TARGET=../../../target
 
@@ -9,7 +8,6 @@ BIN_DIR := $(TARGET)/bin
 BUILD_DIR := ./build
 
 UNIT_TEST := $(BUILD_DIR)/unit/$(UNIT_TEST_EXE)
-PERFORMANCE_TEST := $(BUILD_DIR)/performance/$(PERFORMANCE_TEST_EXE)
 
 BUILD_TYPE = RelWithDebInfo
 
@@ -21,15 +19,11 @@ else
 CMAKE_FLAGS += -DCOVERAGE=false
 endif
 
-all: unit-tests performance-tests
+all: unit-tests
 
 unit-tests: cmake-target
 	@mkdir -p $(BIN_DIR)
 	cp $(UNIT_TEST) $(BIN_DIR)/
-
-performance-tests: cmake-target
-	@mkdir -p $(BIN_DIR)
-	cp $(PERFORMANCE_TEST) $(BIN_DIR)/
 
 cmake-target:
 	@mkdir -p $(BUILD_DIR)
