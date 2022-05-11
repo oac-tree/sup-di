@@ -48,12 +48,6 @@ using RegisteredFactoryFunction =
 
 }  // namespace internal
 
-template <typename ServiceType, typename ConcreteType, typename... Deps>
-std::unique_ptr<ServiceType> GenericInstanceFactoryFunction(Deps*... dependencies)
-{
-  return std::unique_ptr<ServiceType>(new ConcreteType(dependencies...));
-}
-
 class ObjectManager
 {
 public:
@@ -91,6 +85,14 @@ private:
   template <typename ServiceType>
   ServiceMap& GetServiceMap();
 };
+
+template <typename ServiceType, typename ConcreteType, typename... Deps>
+std::unique_ptr<ServiceType> GenericInstanceFactoryFunction(Deps*... dependencies)
+{
+  return std::unique_ptr<ServiceType>(new ConcreteType(dependencies...));
+}
+
+ObjectManager& GlobalObjectManager();
 
 template <typename T>
 T* ObjectManager::GetInstance(const std::string& instance_name)

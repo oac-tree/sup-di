@@ -41,6 +41,12 @@ void ObjectManager::CreateInstance(
   it->second(instance_name, dependency_names);
 }
 
+ObjectManager& GlobalObjectManager()
+{
+  static ObjectManager global_object_manager;
+  return global_object_manager;
+}
+
 }  // namespace di
 
 }  // namespace sup
