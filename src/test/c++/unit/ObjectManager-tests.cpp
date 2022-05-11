@@ -44,7 +44,7 @@ const std::string PrinterAggregatorInstanceName = "PrinterAggregatorInstance";
 
 TEST_F(ObjectManagerTest, NoDependencies)
 {
-  EXPECT_NO_THROW(object_manager.RegisterFactoryFunction(
+  EXPECT_TRUE(object_manager.RegisterFactoryFunction(
     HelloPrinterName, HelloPrinterFactoryFunction));
   EXPECT_THROW(object_manager.GetInstance<IPrinter>(HelloPrinterInstanceName), std::runtime_error);
   EXPECT_NO_THROW(object_manager.CreateInstance(HelloPrinterName, HelloPrinterInstanceName, {}));
@@ -56,9 +56,9 @@ TEST_F(ObjectManagerTest, NoDependencies)
 
 TEST_F(ObjectManagerTest, Decorator)
 {
-  EXPECT_NO_THROW(object_manager.RegisterFactoryFunction(
+  EXPECT_TRUE(object_manager.RegisterFactoryFunction(
     HelloPrinterName, HelloPrinterFactoryFunction));
-  EXPECT_NO_THROW(object_manager.RegisterFactoryFunction(
+  EXPECT_TRUE(object_manager.RegisterFactoryFunction(
     PrinterDecoratorName, PrinterDecoratorFactoryFunction));
   EXPECT_NO_THROW(object_manager.CreateInstance(HelloPrinterName, HelloPrinterInstanceName, {}));
   EXPECT_NO_THROW(object_manager.CreateInstance(PrinterDecoratorName, PrinterDecoratorInstanceName,
@@ -72,9 +72,9 @@ TEST_F(ObjectManagerTest, Decorator)
 
 TEST_F(ObjectManagerTest, GenericFactoryFunction)
 {
-  EXPECT_NO_THROW(object_manager.RegisterFactoryFunction(
+  EXPECT_TRUE(object_manager.RegisterFactoryFunction(
     HelloPrinterName, GenericInstanceFactoryFunction<IPrinter, HelloPrinter>));
-  EXPECT_NO_THROW(object_manager.RegisterFactoryFunction(
+  EXPECT_TRUE(object_manager.RegisterFactoryFunction(
     PrinterDecoratorName, GenericInstanceFactoryFunction<IPrinter, PrinterDecorator, IPrinter>));
   EXPECT_NO_THROW(object_manager.CreateInstance(HelloPrinterName, HelloPrinterInstanceName, {}));
   EXPECT_NO_THROW(object_manager.CreateInstance(PrinterDecoratorName, PrinterDecoratorInstanceName,
@@ -88,11 +88,11 @@ TEST_F(ObjectManagerTest, GenericFactoryFunction)
 
 TEST_F(ObjectManagerTest, ComplexObjectTree)
 {
-  EXPECT_NO_THROW(object_manager.RegisterFactoryFunction(
+  EXPECT_TRUE(object_manager.RegisterFactoryFunction(
     HelloPrinterName, GenericInstanceFactoryFunction<IPrinter, HelloPrinter>));
-  EXPECT_NO_THROW(object_manager.RegisterFactoryFunction(
+  EXPECT_TRUE(object_manager.RegisterFactoryFunction(
     PrinterDecoratorName, GenericInstanceFactoryFunction<IPrinter, PrinterDecorator, IPrinter>));
-  EXPECT_NO_THROW(object_manager.RegisterFactoryFunction(PrinterAggregatorName,
+  EXPECT_TRUE(object_manager.RegisterFactoryFunction(PrinterAggregatorName,
     GenericInstanceFactoryFunction<IPrinter, PrinterAggregator, IPrinter, IPrinter>));
 
   EXPECT_NO_THROW(object_manager.CreateInstance(HelloPrinterName, HelloPrinterInstanceName, {}));

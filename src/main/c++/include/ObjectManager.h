@@ -60,12 +60,12 @@ public:
   template <typename T> T* GetInstance(const std::string& instance_name);
 
   template <typename ServiceType, typename Deleter, typename... Deps>
-  void RegisterFactoryFunction(const std::string& registered_typename,
+  bool RegisterFactoryFunction(const std::string& registered_typename,
                                internal::InstanceFactoryFunction<ServiceType, Deleter, Deps...>
                                  factory_function);
 
   template <typename ServiceType>
-  void RegisterInstance(std::unique_ptr<ServiceType>&& instance, const std::string& instance_name);
+  bool RegisterInstance(std::unique_ptr<ServiceType>&& instance, const std::string& instance_name);
 
 private:
   using ServiceMap = std::map<std::string, std::unique_ptr<internal::AbstractInstanceContainer>>;
@@ -111,7 +111,7 @@ T* ObjectManager::GetInstance(const std::string& instance_name)
 }
 
 template <typename ServiceType, typename Deleter, typename... Deps>
-void ObjectManager::RegisterFactoryFunction(
+bool ObjectManager::RegisterFactoryFunction(
   const std::string& registered_typename,
   internal::InstanceFactoryFunction<ServiceType, Deleter, Deps...> factory_function)
 {
@@ -128,10 +128,11 @@ void ObjectManager::RegisterFactoryFunction(
         factory_function, type_string_list, index_sequence);
       RegisterInstance(std::move(p_instance), instance_name);
     };
+  return true;
 }
 
 template <typename ServiceType>
-void ObjectManager::RegisterInstance(
+bool ObjectManager::RegisterInstance(
   std::unique_ptr<ServiceType>&& instance, const std::string& instance_name)
 {
   auto& service_map = GetServiceMap<ServiceType>();
@@ -141,6 +142,7 @@ void ObjectManager::RegisterInstance(
       "ObjectManager::RegisterFactoryFunction: instance name already registered");
   }
   service_map[instance_name] = internal::WrapIntoContainer(std::move(instance));
+  return true;
 }
 
 template<typename ServiceType, typename Deleter, typename... Deps, std::size_t... I>

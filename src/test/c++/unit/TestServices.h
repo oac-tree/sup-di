@@ -33,6 +33,10 @@ public:
 const std::string HelloWorld = "Hello, world!";
 const std::string DecoratedPrefix = "Decorated:";
 
+const std::string HelloPrinterName = "HelloPrinter";
+const std::string PrinterDecoratorName = "PrinterDecorator";
+const std::string PrinterAggregatorName = "PrinterAggregator";
+
 class HelloPrinter : public IPrinter
 {
 public:
@@ -74,10 +78,6 @@ private:
   IPrinter* printer_1;
   IPrinter* printer_2;
 };
-
-const std::string HelloPrinterName = "HelloPrinter";
-const std::string PrinterDecoratorName = "PrinterDecorator";
-const std::string PrinterAggregatorName = "PrinterAggregator";
 
 std::unique_ptr<IPrinter> HelloPrinterFactoryFunction()
 {

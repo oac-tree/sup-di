@@ -16,4 +16,8 @@ endif()
 set(SUP_DI_AUTOGEN_DIR ${CMAKE_BINARY_DIR}/autogen)
 file(MAKE_DIRECTORY ${SUP_DI_AUTOGEN_DIR})
 
+add_subdirectory(services)
 add_subdirectory(unit)
+
+install(TARGETS sup-di-testservices DESTINATION lib)
+install(TARGETS unit-tests DESTINATION bin)
