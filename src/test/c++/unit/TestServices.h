@@ -59,8 +59,25 @@ private:
   IPrinter* printer;
 };
 
+class PrinterAggregator : public IPrinter
+{
+public:
+  PrinterAggregator(IPrinter* printer_1_, IPrinter* printer_2_)
+    : printer_1{printer_1_}, printer_2{printer_2_} {}
+  ~PrinterAggregator() = default;
+
+  std::string Print() override
+  {
+    return printer_1->Print() + printer_2->Print();
+  }
+private:
+  IPrinter* printer_1;
+  IPrinter* printer_2;
+};
+
 const std::string HelloPrinterName = "HelloPrinter";
 const std::string PrinterDecoratorName = "PrinterDecorator";
+const std::string PrinterAggregatorName = "PrinterAggregator";
 
 std::unique_ptr<IPrinter> HelloPrinterFactoryFunction()
 {
