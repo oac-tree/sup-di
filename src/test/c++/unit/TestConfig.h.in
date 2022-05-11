@@ -33,9 +33,7 @@ namespace di
 {
 namespace testconfig {
 
-inline std::string CMakeSourceDir() { return "@CMAKE_SOURCE_DIR@"; }
-inline std::string CMakeBinaryDir() { return "@CMAKE_BINARY_DIR@"; }
-inline std::string CMakeAutogenDir() { return "@CMAKE_BINARY_DIR@/autogen"; }
+inline std::string CMakeLibraryInstallDir() { return "@CMAKE_INSTALL_PREFIX@/lib"; }
 
 }  // namespace testconfig
 
