@@ -33,7 +33,7 @@ namespace di
 {
 namespace testconfig {
 
-inline std::string CMakeLibraryInstallDir() { return "@CMAKE_INSTALL_PREFIX@/lib"; }
+inline std::string CMakeLibraryInstallDir() { return "@TARGET_DIRECTORY@/lib"; }
 
 }  // namespace testconfig
 
