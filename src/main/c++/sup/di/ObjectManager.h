@@ -43,13 +43,15 @@ namespace internal
 template <typename ServiceType, typename Deleter, typename... Deps>
 using InstanceFactoryFunction = std::unique_ptr<ServiceType, Deleter>(*)(Deps*...);
 
-using RegisteredFactoryFunction =
-  std::function<void(const std::string&, const std::vector<std::string>&)>;
-
+template <typename ServiceType, typename... Deps>
+using InstanceRunFunction = bool(*)(ServiceType*, Deps*...);
 }  // namespace internal
 
 class ObjectManager
 {
+  using ServiceMap = std::map<std::string, std::unique_ptr<internal::AbstractInstanceContainer>>;
+  using RegisteredFactoryFunction =
+    std::function<void(const std::string&, const std::vector<std::string>&)>;
 public:
   ObjectManager();
   ~ObjectManager();
@@ -68,8 +70,7 @@ public:
   bool RegisterInstance(std::unique_ptr<ServiceType>&& instance, const std::string& instance_name);
 
 private:
-  using ServiceMap = std::map<std::string, std::unique_ptr<internal::AbstractInstanceContainer>>;
-  std::map<std::string, internal::RegisteredFactoryFunction> factory_functions;
+  std::map<std::string, RegisteredFactoryFunction> factory_functions;
   internal::TypeMap<ServiceMap> instance_map;
 
   template <typename ServiceType, typename Deleter, typename... Deps, std::size_t... I>
