@@ -4,6 +4,8 @@ if(EXPLICIT_TEST_BUILD_DEPENDENCIES)
     add_dependencies(unit-tests sup-di)
 endif()
 
+configure_file(${CMAKE_CURRENT_LIST_DIR}/TestConfig.h.in ${SUP_DI_AUTOGEN_DIR}/TestConfig.h @ONLY)
+
 target_sources(unit-tests
     PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/ObjectManager-tests.cpp
