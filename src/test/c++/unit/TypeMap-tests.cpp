@@ -22,7 +22,7 @@
 #include <gtest/gtest.h>
 #include <string>
 
-#include "TypeMap.h"
+#include "sup/di/TypeMap.h"
 
 using namespace sup::di::internal;
 

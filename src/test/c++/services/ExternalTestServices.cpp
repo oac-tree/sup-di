@@ -21,7 +21,7 @@
 
 #include "ExternalTestServices.h"
 
-#include "ObjectManager.h"
+#include "sup/di/ObjectManager.h"
 
 using namespace sup::di::test::external;
 

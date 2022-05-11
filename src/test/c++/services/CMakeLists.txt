@@ -18,7 +18,7 @@ target_sources(sup-di-testservices
 target_include_directories(sup-di-testservices
     PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}
-        ${CMAKE_CURRENT_LIST_DIR}/../../../main/c++/include
+        ${CMAKE_CURRENT_LIST_DIR}/../../../main/c++
 )
 
 target_link_directories(sup-di-testservices

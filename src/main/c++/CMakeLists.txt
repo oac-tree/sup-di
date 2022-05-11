@@ -15,7 +15,7 @@ endif()
 
 add_library(sup-di SHARED)
 
-add_subdirectory(include)
+add_subdirectory(sup)
 
 set_target_properties(sup-di PROPERTIES
     VERSION ${LIBVERSION}
@@ -24,5 +24,5 @@ set_target_properties(sup-di PROPERTIES
 )
 
 install(TARGETS sup-di DESTINATION lib)
-install(DIRECTORY include/ DESTINATION include
+install(DIRECTORY sup/di/ DESTINATION include/sup/di
         FILES_MATCHING PATTERN "*.h")

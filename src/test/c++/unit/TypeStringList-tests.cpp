@@ -21,7 +21,7 @@
 
 #include <gtest/gtest.h>
 
-#include "TypeStringList.h"
+#include "sup/di/TypeStringList.h"
 
 #include <type_traits>
 
