@@ -108,6 +108,29 @@ TEST_F(ObjectManagerTest, ComplexObjectTree)
   EXPECT_EQ(print_service->Print(), HelloWorld + DecoratedPrefix + HelloWorld);
 }
 
+TEST_F(ObjectManagerTest, Exceptions)
+{
+  EXPECT_TRUE(object_manager.RegisterFactoryFunction(
+    HelloPrinterName, HelloPrinterFactoryFunction));
+  EXPECT_THROW(object_manager.RegisterFactoryFunction(
+    HelloPrinterName, PrinterDecoratorFactoryFunction), std::runtime_error);
+  EXPECT_TRUE(object_manager.RegisterFactoryFunction(
+    PrinterDecoratorName, PrinterDecoratorFactoryFunction));
+  EXPECT_NO_THROW(object_manager.CreateInstance(HelloPrinterName, HelloPrinterInstanceName, {}));
+  EXPECT_THROW(object_manager.CreateInstance(PrinterDecoratorName, HelloPrinterInstanceName,
+    {HelloPrinterInstanceName}), std::runtime_error);
+  EXPECT_NO_THROW(object_manager.CreateInstance(PrinterDecoratorName, PrinterDecoratorInstanceName,
+                                                {HelloPrinterInstanceName}));
+  IPrinter* print_service = nullptr;
+  EXPECT_NO_THROW(print_service = object_manager.GetInstance<IPrinter>(HelloPrinterInstanceName));
+  EXPECT_NO_THROW(print_service =
+    object_manager.GetInstance<IPrinter>(PrinterDecoratorInstanceName));
+  EXPECT_THROW(print_service =
+    object_manager.GetInstance<IPrinter>(PrinterAggregatorInstanceName), std::runtime_error);
+  EXPECT_THROW(object_manager.CreateInstance(PrinterAggregatorName, PrinterAggregatorInstanceName,
+    {HelloPrinterInstanceName, PrinterDecoratorInstanceName}), std::runtime_error);
+}
+
 ObjectManagerTest::ObjectManagerTest()
 {}
 
