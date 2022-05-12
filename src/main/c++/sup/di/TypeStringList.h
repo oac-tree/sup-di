@@ -23,6 +23,7 @@
 #define _SUP_TypeStringList_h_
 
 #include <array>
+#include <stdexcept>
 #include <string>
 #include <vector>
 
