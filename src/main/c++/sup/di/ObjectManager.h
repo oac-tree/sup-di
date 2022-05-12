@@ -44,7 +44,7 @@ template <typename ServiceType, typename Deleter, typename... Deps>
 using InstanceFactoryFunction = std::unique_ptr<ServiceType, Deleter>(*)(Deps*...);
 
 template <typename... Deps>
-using GlobalRunFunction = bool(*)(Deps*...);
+using GlobalFunction = bool(*)(Deps*...);
 }  // namespace internal
 
 class ObjectManager
@@ -75,7 +75,7 @@ public:
 
   template <typename... Deps>
   bool RegisterGlobalFunction(const std::string& registered_function_name,
-                              internal::GlobalRunFunction<Deps...> global_function);
+                              internal::GlobalFunction<Deps...> global_function);
 
 private:
   std::map<std::string, RegisteredFactoryFunction> factory_functions;
@@ -89,7 +89,7 @@ private:
     internal::IndexSequence<I...> index_sequence);
 
   template <typename... Deps, std::size_t... I>
-  bool CallFromTypeStringList(internal::GlobalRunFunction<Deps...> global_function,
+  bool CallFromTypeStringList(internal::GlobalFunction<Deps...> global_function,
                               const internal::TypeStringList<Deps...>& type_string_list,
                               internal::IndexSequence<I...> index_sequence);
 
@@ -163,7 +163,7 @@ bool ObjectManager::RegisterInstance(
 template <typename... Deps>
 bool ObjectManager::RegisterGlobalFunction(
   const std::string& registered_function_name,
-  internal::GlobalRunFunction<Deps...> global_function)
+  internal::GlobalFunction<Deps...> global_function)
 {
   if (global_functions.find(registered_function_name) != global_functions.end())
   {
@@ -191,7 +191,7 @@ std::unique_ptr<ServiceType, Deleter> ObjectManager::CreateFromTypeStringList(
 
 template<typename... Deps, std::size_t... I>
 bool ObjectManager::CallFromTypeStringList(
-  internal::GlobalRunFunction<Deps...> global_function,
+  internal::GlobalFunction<Deps...> global_function,
   const internal::TypeStringList<Deps...>& type_string_list,
   internal::IndexSequence<I...> index_sequence)
 {

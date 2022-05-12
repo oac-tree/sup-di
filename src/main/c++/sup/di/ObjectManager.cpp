@@ -47,7 +47,7 @@ bool ObjectManager::CallGlobalFunction(const std::string& registered_function_na
   auto it = global_functions.find(registered_function_name);
   if (it == global_functions.end())
   {
-    throw std::runtime_error("ObjectManager::RunGlobalFunction: function name not registered");
+    throw std::runtime_error("ObjectManager::CallGlobalFunction: function name not registered");
   }
   return it->second(dependency_names);
 }
