@@ -40,6 +40,10 @@ static const std::string HelloPrinterName = "HelloPrinter";
 static const std::string PrinterDecoratorName = "PrinterDecorator";
 static const std::string PrinterAggregatorName = "PrinterAggregator";
 
+static const std::string HelloTestName = "HelloTest";
+static const std::string DecoratedHelloTestName = "DecoratoredHelloTest";
+static const std::string AggregatedPrinterTestName = "AggregatedPrinterTest";
+
 class ObjectManagerExternalTest : public ::testing::Test
 {
 protected:
@@ -71,6 +75,13 @@ TEST_F(ObjectManagerExternalTest, CreateInstances)
   EXPECT_NO_THROW(global_object_manager.CreateInstance(
     PrinterAggregatorName, PrinterAggregatorInstanceName,
     {HelloPrinterInstanceName, PrinterDecoratorInstanceName}));
+
+  // Call global functions
+  EXPECT_TRUE(global_object_manager.CallGlobalFunction(HelloTestName, {HelloPrinterInstanceName}));
+  EXPECT_TRUE(global_object_manager.CallGlobalFunction(DecoratedHelloTestName,
+                                                       {PrinterDecoratorInstanceName}));
+  EXPECT_TRUE(global_object_manager.CallGlobalFunction(AggregatedPrinterTestName,
+                                                       {PrinterAggregatorInstanceName}));
 }
 
 ObjectManagerExternalTest::ObjectManagerExternalTest()

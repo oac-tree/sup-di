@@ -70,6 +70,12 @@ private:
   IPrinter* printer_2;
 };
 
+bool TestHelloPrinter(IPrinter* printer);
+
+bool TestDecoratedHelloPrinter(IPrinter* printer);
+
+bool TestAggregatedPrinter(IPrinter* printer);
+
 }  // namespace external
 
 }  // namespace test
@@ -77,4 +83,3 @@ private:
 }  // namespace di
 
 }  // namespace sup
-

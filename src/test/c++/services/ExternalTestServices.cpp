@@ -23,7 +23,14 @@
 
 #include "sup/di/ObjectManager.h"
 
-using namespace sup::di::test::external;
+namespace sup
+{
+namespace di
+{
+namespace test
+{
+namespace external
+{
 
 static const std::string HelloWorld = "Hello, world!";
 static const std::string DecoratedPrefix = "Decorated:";
@@ -31,6 +38,10 @@ static const std::string DecoratedPrefix = "Decorated:";
 static const std::string HelloPrinterName = "HelloPrinter";
 static const std::string PrinterDecoratorName = "PrinterDecorator";
 static const std::string PrinterAggregatorName = "PrinterAggregator";
+
+static const std::string HelloTestName = "HelloTest";
+static const std::string DecoratedHelloTestName = "DecoratoredHelloTest";
+static const std::string AggregatedPrinterTestName = "AggregatedPrinterTest";
 
 // Factory function registration
 static bool HelloPrinter_Globally_Registered_ =
@@ -42,6 +53,16 @@ static bool PrinterDecorator_Globally_Registered_ =
 static bool PrinterAggregator_Globally_Registered_ =
   sup::di::GlobalObjectManager().RegisterFactoryFunction(PrinterAggregatorName,
     sup::di::GenericInstanceFactoryFunction<IPrinter, PrinterAggregator, IPrinter, IPrinter>);
+
+// Global function registration
+static bool HelloTest_Globally_Registered_ =
+  sup::di::GlobalObjectManager().RegisterGlobalFunction(HelloTestName, TestHelloPrinter);
+static bool DecoratedHelloTest_Globally_Registered_ =
+  sup::di::GlobalObjectManager().RegisterGlobalFunction(DecoratedHelloTestName,
+                                                        TestDecoratedHelloPrinter);
+static bool AggregatedPrinterTest_Globally_Registered_ =
+  sup::di::GlobalObjectManager().RegisterGlobalFunction(AggregatedPrinterTestName,
+                                                        TestAggregatedPrinter);
 
 IPrinter::~IPrinter() = default;
 
@@ -74,3 +95,26 @@ std::string PrinterAggregator::Print()
 {
   return printer_1->Print() + printer_2->Print();
 }
+
+bool TestHelloPrinter(IPrinter* printer)
+{
+  return printer->Print() == HelloWorld;
+}
+
+bool TestDecoratedHelloPrinter(IPrinter* printer)
+{
+  return printer->Print() == DecoratedPrefix + HelloWorld;
+}
+
+bool TestAggregatedPrinter(IPrinter* printer)
+{
+  return printer->Print() == HelloWorld + DecoratedPrefix + HelloWorld;
+}
+
+}  // namespace external
+
+}  // namespace test
+
+}  // namespace di
+
+}  // namespace sup
