@@ -61,7 +61,10 @@ const std::string PrinterAggregatorInstanceName = "PrinterAggregatorInstance";
 
 TEST_F(ObjectManagerExternalTest, CreateInstances)
 {
+  // Load external library at runtime
   EXPECT_TRUE(library_loaded);
+
+  // Create instances of externally registered types
   EXPECT_NO_THROW(global_object_manager.CreateInstance(HelloPrinterName, HelloPrinterInstanceName, {}));
   EXPECT_NO_THROW(global_object_manager.CreateInstance(
     PrinterDecoratorName, PrinterDecoratorInstanceName, {HelloPrinterInstanceName}));

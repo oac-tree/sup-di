@@ -88,3 +88,18 @@ std::unique_ptr<IPrinter> PrinterDecoratorFactoryFunction(IPrinter* printer)
 {
   return std::unique_ptr<IPrinter>(new PrinterDecorator(printer));
 }
+
+bool TestHelloPrinter(IPrinter* printer)
+{
+  return printer->Print() == HelloWorld;
+}
+
+bool TestDecoratedHelloPrinter(IPrinter* printer)
+{
+  return printer->Print() == DecoratedPrefix + HelloWorld;
+}
+
+bool TestAggregatedPrinter(IPrinter* printer)
+{
+  return printer->Print() == HelloWorld + DecoratedPrefix + HelloWorld;
+}

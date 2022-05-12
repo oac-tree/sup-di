@@ -60,7 +60,7 @@ public:
   void CreateInstance(const std::string& registered_typename, const std::string& instance_name,
                       const std::vector<std::string>& dependency_names);
 
-  bool RunGlobalFunction(const std::string& registered_function_name,
+  bool CallGlobalFunction(const std::string& registered_function_name,
                          const std::vector<std::string>& dependency_names);
 
   template <typename T> T* GetInstance(const std::string& instance_name);

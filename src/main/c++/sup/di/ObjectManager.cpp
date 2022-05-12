@@ -41,7 +41,7 @@ void ObjectManager::CreateInstance(
   it->second(instance_name, dependency_names);
 }
 
-bool ObjectManager::RunGlobalFunction(const std::string& registered_function_name,
+bool ObjectManager::CallGlobalFunction(const std::string& registered_function_name,
                                       const std::vector<std::string>& dependency_names)
 {
   auto it = global_functions.find(registered_function_name);
