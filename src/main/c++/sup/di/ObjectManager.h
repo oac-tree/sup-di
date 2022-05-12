@@ -43,8 +43,8 @@ namespace internal
 template <typename ServiceType, typename Deleter, typename... Deps>
 using InstanceFactoryFunction = std::unique_ptr<ServiceType, Deleter>(*)(Deps*...);
 
-template <typename ServiceType, typename... Deps>
-using InstanceRunFunction = bool(*)(ServiceType*, Deps*...);
+template <typename... Deps>
+using GlobalRunFunction = bool(*)(Deps*...);
 }  // namespace internal
 
 class ObjectManager
@@ -52,12 +52,16 @@ class ObjectManager
   using ServiceMap = std::map<std::string, std::unique_ptr<internal::AbstractInstanceContainer>>;
   using RegisteredFactoryFunction =
     std::function<void(const std::string&, const std::vector<std::string>&)>;
+  using RegisteredGlobalFunction = std::function<bool(const std::vector<std::string>&)>;
 public:
   ObjectManager();
   ~ObjectManager();
 
   void CreateInstance(const std::string& registered_typename, const std::string& instance_name,
                       const std::vector<std::string>& dependency_names);
+
+  bool RunGlobalFunction(const std::string& registered_function_name,
+                         const std::vector<std::string>& dependency_names);
 
   template <typename T> T* GetInstance(const std::string& instance_name);
 
@@ -69,8 +73,13 @@ public:
   template <typename ServiceType>
   bool RegisterInstance(std::unique_ptr<ServiceType>&& instance, const std::string& instance_name);
 
+  template <typename... Deps>
+  bool RegisterGlobalFunction(const std::string& registered_function_name,
+                              internal::GlobalRunFunction<Deps...> global_function);
+
 private:
   std::map<std::string, RegisteredFactoryFunction> factory_functions;
+  std::map<std::string, RegisteredGlobalFunction> global_functions;
   internal::TypeMap<ServiceMap> instance_map;
 
   template <typename ServiceType, typename Deleter, typename... Deps, std::size_t... I>
@@ -78,6 +87,11 @@ private:
     internal::InstanceFactoryFunction<ServiceType, Deleter, Deps...> factory_function,
     const internal::TypeStringList<Deps...>& type_string_list,
     internal::IndexSequence<I...> index_sequence);
+
+  template <typename... Deps, std::size_t... I>
+  bool CallFromTypeStringList(internal::GlobalRunFunction<Deps...> global_function,
+                              const internal::TypeStringList<Deps...>& type_string_list,
+                              internal::IndexSequence<I...> index_sequence);
 
   template <std::size_t I, typename... Deps>
   typename internal::TypeStringList<Deps...>::template IndexedType<I>*
@@ -146,6 +160,26 @@ bool ObjectManager::RegisterInstance(
   return true;
 }
 
+template <typename... Deps>
+bool ObjectManager::RegisterGlobalFunction(
+  const std::string& registered_function_name,
+  internal::GlobalRunFunction<Deps...> global_function)
+{
+  if (global_functions.find(registered_function_name) != global_functions.end())
+  {
+    throw std::runtime_error(
+      "ObjectManager::RegisterGlobalFunction: function name already registered");
+  }
+  global_functions[registered_function_name] =
+    [this, global_function](const std::vector<std::string>& dependency_names)
+    {
+      internal::TypeStringList<Deps...> type_string_list(dependency_names);
+      typename internal::MakeIndexSequence<sizeof...(Deps)>::type index_sequence;
+      return CallFromTypeStringList(global_function, type_string_list, index_sequence);
+    };
+  return true;
+}
+
 template<typename ServiceType, typename Deleter, typename... Deps, std::size_t... I>
 std::unique_ptr<ServiceType, Deleter> ObjectManager::CreateFromTypeStringList(
   internal::InstanceFactoryFunction<ServiceType, Deleter, Deps...> factory_function,
@@ -153,6 +187,15 @@ std::unique_ptr<ServiceType, Deleter> ObjectManager::CreateFromTypeStringList(
   internal::IndexSequence<I...> index_sequence)
 {
   return factory_function(IndexedArgument<I>(type_string_list)...);
+}
+
+template<typename... Deps, std::size_t... I>
+bool ObjectManager::CallFromTypeStringList(
+  internal::GlobalRunFunction<Deps...> global_function,
+  const internal::TypeStringList<Deps...>& type_string_list,
+  internal::IndexSequence<I...> index_sequence)
+{
+  return global_function(IndexedArgument<I>(type_string_list)...);
 }
 
 template <std::size_t I, typename... Deps>

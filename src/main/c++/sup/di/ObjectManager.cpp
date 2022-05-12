@@ -41,6 +41,17 @@ void ObjectManager::CreateInstance(
   it->second(instance_name, dependency_names);
 }
 
+bool ObjectManager::RunGlobalFunction(const std::string& registered_function_name,
+                                      const std::vector<std::string>& dependency_names)
+{
+  auto it = global_functions.find(registered_function_name);
+  if (it == global_functions.end())
+  {
+    throw std::runtime_error("ObjectManager::RunGlobalFunction: function name not registered");
+  }
+  return it->second(dependency_names);
+}
+
 ObjectManager& GlobalObjectManager()
 {
   static ObjectManager global_object_manager;
