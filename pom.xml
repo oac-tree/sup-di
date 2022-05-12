@@ -78,7 +78,7 @@
                         <package>
                             <!-- Libraries -->
                             <include type="file" source="lib" target="lib">
-                                <include>*.so.*</include>
+                                <include>libsup-di.so.*</include>
                             </include>
                             <!-- Package dependencies -->
                             <requires version="current" buildOnly="true">cmake</requires>
@@ -86,17 +86,20 @@
                         <package name="devel">
                             <!-- Libraries -->
                             <include type="file" source="lib" target="lib">
-                                <include>*.a</include>
-                                <include>*.so</include>
+                                <include>libsup-di.so</include>
                             </include>
                             <!-- Public API headers -->
-                            <include type="file" source="include" target="include/sup">
+                            <include type="file" source="include/sup/di" target="include/sup/di">
                                 <include>*.h</include>
                             </include>
                             <!-- Package dependencies -->
                             <requires version="current">%{codac_rpm_prefix}-${project.artifactId}</requires>
-                        </package>
+                        </package>libsup-di-testservices
                         <package name="tests">
+                            <!-- Libraries -->
+                            <include type="file" source="lib" target="lib">
+                                <include>libsup-di-testservices.so*</include>
+                            </include>
                             <!-- Unit Test -->
                             <include type="file" source="bin/unit-tests" target="tests/${project.artifactId}/unit-tests"/>
                             <!-- Package dependencies -->
