@@ -37,6 +37,7 @@ public:
   virtual ~AbstractInstanceContainer() = default;
 
   virtual void* Get() = 0;
+  virtual void* Release() = 0;
 };
 
 template <class T, class Deleter>
@@ -51,6 +52,11 @@ public:
   void* Get() override
   {
     return pointer.get();
+  }
+
+  void* Release() override
+  {
+    return pointer.release();
   }
 
 private:
