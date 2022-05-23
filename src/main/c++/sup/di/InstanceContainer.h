@@ -31,6 +31,9 @@ namespace di
 namespace internal
 {
 
+/**
+ * @brief Interface for a container that owns a single pointer with type erasure.
+ */
 class AbstractInstanceContainer
 {
 public:
@@ -40,6 +43,9 @@ public:
   virtual void* Release() = 0;
 };
 
+/**
+ * @brief Class template for a container that owns a single pointer of the provided type.
+ */
 template <class T, class Deleter>
 class InstanceContainer : public AbstractInstanceContainer
 {
@@ -63,6 +69,10 @@ private:
   std::unique_ptr<T, Deleter> pointer;
 };
 
+/**
+ * @brief Function template that wraps a unique_ptr to a type into a unique_ptr to an
+ * AbstractInstanceContainer.
+ */
 template <class T, class Deleter>
 std::unique_ptr<AbstractInstanceContainer> WrapIntoContainer(std::unique_ptr<T, Deleter>&& p)
 {

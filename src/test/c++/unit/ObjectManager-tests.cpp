@@ -140,9 +140,9 @@ TEST_F(ObjectManagerTest, GenericFactoryFunction)
 {
   // Factory function registration
   EXPECT_TRUE(object_manager.RegisterFactoryFunction(
-      HelloPrinterName, GenericInstanceFactoryFunction<IPrinter, HelloPrinter>));
+      HelloPrinterName, GenericInstanceFactoryFunctionShared<IPrinter, HelloPrinter>));
   EXPECT_TRUE(object_manager.RegisterFactoryFunction(
-      PrinterDecoratorName, GenericInstanceFactoryFunction<IPrinter, PrinterDecorator, IPrinter>));
+      PrinterDecoratorName, GenericInstanceFactoryFunctionShared<IPrinter, PrinterDecorator, IPrinter>));
 
   // Create instances
   EXPECT_NO_THROW(object_manager.CreateInstance(HelloPrinterName, HelloPrinterInstanceName, {}));
@@ -161,12 +161,12 @@ TEST_F(ObjectManagerTest, ComplexObjectTree)
 {
   // Factory function registration
   EXPECT_TRUE(object_manager.RegisterFactoryFunction(
-      HelloPrinterName, GenericInstanceFactoryFunction<IPrinter, HelloPrinter>));
+      HelloPrinterName, GenericInstanceFactoryFunctionShared<IPrinter, HelloPrinter>));
   EXPECT_TRUE(object_manager.RegisterFactoryFunction(
-      PrinterDecoratorName, GenericInstanceFactoryFunction<IPrinter, PrinterDecorator, IPrinter>));
+      PrinterDecoratorName, GenericInstanceFactoryFunctionShared<IPrinter, PrinterDecorator, IPrinter>));
   EXPECT_TRUE(object_manager.RegisterFactoryFunction(
                 PrinterAggregatorName,
-                GenericInstanceFactoryFunction<IPrinter, PrinterAggregator, IPrinter, IPrinter>));
+                GenericInstanceFactoryFunctionShared<IPrinter, PrinterAggregator, IPrinter, IPrinter>));
 
   // Global function registration
   EXPECT_TRUE(object_manager.RegisterGlobalFunction(HelloTestName, TestHelloPrinter));

@@ -34,16 +34,35 @@ namespace di
 namespace internal
 {
 
+/**
+ * @brief Class template that holds a list of types and corresponding string names.
+ *
+ * @details The length of both lists is enforced to be equal during construction.
+ */
 template <typename... Args>
 class TypeStringList
 {
 public:
+  /**
+   * @brief Constructor.
+   *
+   * @param string_list List of names that corresponds to the list of types.
+   */
   TypeStringList(const std::vector<std::string>& string_list);
   ~TypeStringList() = default;
 
+  /**
+   * @brief Alias template to retrieve type with given index.
+   */
   template<std::size_t I> using IndexedType =
     typename std::tuple_element<I, std::tuple<Args...>>::type;
 
+  /**
+   * @brief Retrieve name for given index.
+   *
+   * @param i Index of name to be retrieved.
+   * @return Name for index i.
+   */
   std::string IndexedString(std::size_t i) const
   {
     return names[i];

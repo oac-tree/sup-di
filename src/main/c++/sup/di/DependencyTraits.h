@@ -32,22 +32,37 @@ namespace di
 namespace internal
 {
 
+/**
+ * @brief Class template for handling different types of dependency injection.
+ *
+ * @details This template is specialized for two types of dependency injection:
+ * Injection without ownership passing:
+ *    Dep is of type (const) T*
+ *    With ValueType = T
+ *         InjectionType = T*
+ *         TransferOwnership = false_type
+ * Injection with ownership passing:
+ *    Dep is of type std::unique_ptr<(const) T>&&
+ *    With ValueType = T
+ *         InjectionType = std::unique_ptr<T>
+ *         TransferOwnership = true_type
+ */
 template <typename Dep>
 struct DependencyTraits {};
 
-template <typename Dep>
-struct DependencyTraits<Dep*>
+template <typename T>
+struct DependencyTraits<T*>
 {
-  using ValueType = typename std::remove_cv<Dep>::type;
+  using ValueType = typename std::remove_cv<T>::type;
   using InjectionType = typename std::add_pointer<ValueType>::type;
   using TransferOwnership = std::false_type;
 };
 
-template <typename Dep>
-struct DependencyTraits<std::unique_ptr<Dep>&&>
+template <typename T>
+struct DependencyTraits<std::unique_ptr<T>&&>
 {
-  using ValueType = typename std::remove_cv<Dep>::type;
-  using InjectionType = std::unique_ptr<Dep>;
+  using ValueType = typename std::remove_cv<T>::type;
+  using InjectionType = std::unique_ptr<ValueType>;
   using TransferOwnership = std::true_type;
 };
 

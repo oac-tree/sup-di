@@ -41,13 +41,31 @@ namespace di
 {
 namespace internal
 {
+/**
+ * @brief Alias template for a factory function to create an object with constructor dependencies.
+ *
+ * @details Each dependency in Deps needs to be either a (const) pointer (when ownership is not
+ * transferred to the created object) or a std::unique_ptr<T>&& (for ownership transfer).
+ */
 template <typename ServiceType, typename Deleter, typename... Deps>
 using InstanceFactoryFunction = std::unique_ptr<ServiceType, Deleter>(*)(Deps...);
 
+/**
+ * @brief Alias template for a global function with specified dependencies.
+ *
+ * @details Each dependency in Deps needs to be either a (const) pointer (when ownership is not
+ * transferred to the created object) or a std::unique_ptr<T>&& (for ownership transfer).
+ *
+ * The boolean return value can be used by client software to handle a failure to execute the
+ * function.
+ */
 template <typename... Deps>
 using GlobalFunction = bool(*)(Deps...);
 }  // namespace internal
 
+/**
+ * @brief Class that manages string-based instantiation of objects and calling of global functions.
+ */
 class ObjectManager
 {
   using ServiceMap = std::map<std::string, std::unique_ptr<internal::AbstractInstanceContainer>>;
@@ -56,27 +74,77 @@ class ObjectManager
     std::function<void(const std::string&, const std::vector<std::string>&)>;
   using RegisteredGlobalFunction = std::function<bool(const std::vector<std::string>&)>;
 public:
+  /**
+   * @brief Constructor.
+   */
   ObjectManager();
   ~ObjectManager();
 
+  /**
+   * @brief Create an instance and store it under the given name.
+   *
+   * @param registered_typename Name under which the factory function was registered.
+   * @param instance_name Name under which to store the created instance.
+   * @param dependency_names List of instance names that need to be injected as dependencies.
+   */
   void CreateInstance(const std::string& registered_typename, const std::string& instance_name,
                       const std::vector<std::string>& dependency_names);
 
+  /**
+   * @brief Call a global function on the named instances.
+   *
+   * @param registered_function_name Name under which the global function was registered.
+   * @param dependency_names List of instance names that need to be injected as dependencies.
+   */
   bool CallGlobalFunction(const std::string& registered_function_name,
                          const std::vector<std::string>& dependency_names);
 
+  /**
+   * @brief Retrieve instance of specific type and name from the underlying registry.
+   *
+   * @param instance_name Name under which the instance was registered.
+   * @return Depending on the required transfer of ownership, a pointer or a unique_ptr to the found
+   * instance.
+   *
+   * @note The template type parameter T must be one of:
+   *   (const) T*: for retrieving a pointer to the instance whose lifetime is handled by the
+   *               ObjectManager
+   *   std::unique_ptr<T>&& : for transferring ownership out of ObjectManager
+   */
   template <typename T>
   typename internal::DependencyTraits<T>::InjectionType
     GetInstance(const std::string& instance_name);
 
+  /**
+   * @brief Register a factory function that requires dependencies.
+   *
+   * @param registered_typename Name under which the factory function will be registered.
+   * @param factory_function Factory function that creates a new instance and possibly requires
+   * dependencies.
+   * @return true on successful registration.
+   */
   template <typename ServiceType, typename Deleter, typename... Deps>
   bool RegisterFactoryFunction(const std::string& registered_typename,
                                internal::InstanceFactoryFunction<ServiceType, Deleter, Deps...>
                                  factory_function);
 
+  /**
+   * @brief Register an instance of an object directly.
+   *
+   * @param instance rvalue to unique_ptr to an object.
+   * @param instance_name Name under which the instance will be registered.
+   * @return true on successful registration.
+   */
   template <typename ServiceType>
   bool RegisterInstance(std::unique_ptr<ServiceType>&& instance, const std::string& instance_name);
 
+  /**
+   * @brief Register a global function that requires dependencies.
+   *
+   * @param registered_function_name Name under which the global function will be registered.
+   * @param global_function Global function to register.
+   * @return true on successful registration.
+   */
   template <typename... Deps>
   bool RegisterGlobalFunction(const std::string& registered_function_name,
                               internal::GlobalFunction<Deps...> global_function);
@@ -86,47 +154,91 @@ private:
   std::map<std::string, RegisteredGlobalFunction> global_functions;
   internal::TypeMap<ServiceMap> instance_map;
 
+  /**
+   * @brief Helper method to inject retrieved instances into the factory function.
+   */
   template <typename ServiceType, typename Deleter, typename... Deps, std::size_t... I>
   std::unique_ptr<ServiceType, Deleter> CreateFromTypeStringList(
     internal::InstanceFactoryFunction<ServiceType, Deleter, Deps...> factory_function,
     const internal::TypeStringList<Deps...>& type_string_list,
     internal::IndexSequence<I...> index_sequence);
 
+  /**
+   * @brief Helper method to inject retrieved instances into the global function.
+   */
   template <typename... Deps, std::size_t... I>
   bool CallFromTypeStringList(internal::GlobalFunction<Deps...> global_function,
                               const internal::TypeStringList<Deps...>& type_string_list,
                               internal::IndexSequence<I...> index_sequence);
 
+  /**
+   * @brief Helper method to retrieve an instance of the correct type, based on an index.
+   */
   template <std::size_t I, typename... Deps>
   typename internal::DependencyTraits<typename internal::TypeStringList<Deps...>::template
                                         IndexedType<I>>::InjectionType
     IndexedArgument(const internal::TypeStringList<Deps...>& type_string_list);
 
+  /**
+   * @brief Helper method to retrieve an instance when ownership needs to be passed.
+   */
   template <typename T>
   typename internal::DependencyTraits<T>::InjectionType
     GetInstanceImpl(const std::string& instance_name, std::true_type transfer_ownership);
 
+  /**
+   * @brief Helper method to retrieve an instance when ownership is managed by the ObjectManager.
+   */
   template <typename T>
   typename internal::DependencyTraits<T>::InjectionType
     GetInstanceImpl(const std::string& instance_name,
                     std::false_type do_not_transfer_ownership);
 
+  /**
+   * @brief Helper method to retrieve an iterator to a named and typed instance.
+   */
   template <typename T>
   ServiceMapIterator FindInstance(const std::string& instance_name);
 
+  /**
+   * @brief Helper method to remove a named and typed instance.
+   */
   template <typename T>
   void RemoveInstance(ServiceMapIterator it);
 
+  /**
+   * @brief Helper method to retrieve the service map for a given type.
+   */
   template <typename ServiceType>
   ServiceMap& GetServiceMap();
 };
 
+/**
+ * @brief Function template for a factory function with shared dependencies.
+ *
+ * @details The dependencies' lifetime will not be managed by the created object and needs to be
+ * managed elsewhere (e.g. in an ObjectManager).
+ */
 template <typename ServiceType, typename ConcreteType, typename... Deps>
-std::unique_ptr<ServiceType> GenericInstanceFactoryFunction(Deps*... dependencies)
+std::unique_ptr<ServiceType> GenericInstanceFactoryFunctionShared(Deps*... dependencies)
 {
   return std::unique_ptr<ServiceType>(new ConcreteType(dependencies...));
 }
 
+/**
+ * @brief Function template for a factory function with ownership transfer of dependencies.
+ *
+ * @details The dependencies' lifetime needs to be managed by the created object.
+ */
+template <typename ServiceType, typename ConcreteType, typename... Deps>
+std::unique_ptr<ServiceType> GenericInstanceFactoryFunction(std::unique_ptr<Deps>&&... dependencies)
+{
+  return std::unique_ptr<ServiceType>(new ConcreteType(std::move(dependencies)...));
+}
+
+/**
+ * @brief Retrieve global ObjectManager instance.
+ */
 ObjectManager& GlobalObjectManager();
 
 template <typename T>
@@ -261,10 +373,6 @@ template <typename T>
 void ObjectManager::RemoveInstance(ObjectManager::ServiceMapIterator it)
 {
   auto service_map_it = instance_map.find<T>();
-  if (service_map_it == instance_map.end())
-  {
-    throw std::runtime_error("ObjectManager::RemoveInstance: accessing unknow service type");
-  }
   service_map_it->second.erase(it);
 }
 

@@ -46,13 +46,13 @@ static const std::string AggregatedPrinterTestName = "AggregatedPrinterTest";
 // Factory function registration
 static bool HelloPrinter_Globally_Registered_ =
   sup::di::GlobalObjectManager().RegisterFactoryFunction(HelloPrinterName,
-    sup::di::GenericInstanceFactoryFunction<IPrinter, HelloPrinter>);
+    sup::di::GenericInstanceFactoryFunctionShared<IPrinter, HelloPrinter>);
 static bool PrinterDecorator_Globally_Registered_ =
   sup::di::GlobalObjectManager().RegisterFactoryFunction(PrinterDecoratorName,
-    sup::di::GenericInstanceFactoryFunction<IPrinter, PrinterDecorator, IPrinter>);
+    sup::di::GenericInstanceFactoryFunctionShared<IPrinter, PrinterDecorator, IPrinter>);
 static bool PrinterAggregator_Globally_Registered_ =
   sup::di::GlobalObjectManager().RegisterFactoryFunction(PrinterAggregatorName,
-    sup::di::GenericInstanceFactoryFunction<IPrinter, PrinterAggregator, IPrinter, IPrinter>);
+    sup::di::GenericInstanceFactoryFunctionShared<IPrinter, PrinterAggregator, IPrinter, IPrinter>);
 
 // Global function registration
 static bool HelloTest_Globally_Registered_ =

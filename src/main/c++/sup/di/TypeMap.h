@@ -31,6 +31,9 @@ namespace di
 namespace internal
 {
 
+/**
+ * @brief Class template for a map whose keys are types instead of values.
+ */
 template <typename ValueType>
 class TypeMap
 {

@@ -31,9 +31,17 @@ namespace di
 namespace internal
 {
 
+/**
+ * @brief Class template representing a sequence of unsigned integers.
+ */
 template<std::size_t... >
 struct IndexSequence {};
 
+/**
+ * @brief Class template generating a sequence of unsigned integers.
+ *
+ * @details MakeIndexSequence<N>::type represents IndexSequence<0, 1, ..., N-1>.
+ */
 template<std::size_t N, std::size_t ...S>
 struct MakeIndexSequence
 {
