@@ -38,11 +38,14 @@ using namespace sup::di;
 
 static const std::string HelloPrinterName = "HelloPrinter";
 static const std::string PrinterDecoratorName = "PrinterDecorator";
+static const std::string PrinterOwnerName = "PrinterOwner";
 static const std::string PrinterAggregatorName = "PrinterAggregator";
 
 static const std::string HelloTestName = "HelloTest";
 static const std::string DecoratedHelloTestName = "DecoratoredHelloTest";
+static const std::string OwnedPrinterTestName = "OwnedPrinterTest";
 static const std::string AggregatedPrinterTestName = "AggregatedPrinterTest";
+static const std::string DiscardPrinterName = "DiscardPrinter";
 
 class ObjectManagerExternalTest : public ::testing::Test
 {
@@ -60,7 +63,10 @@ protected:
 bool ObjectManagerExternalTest::library_loaded = false;
 
 const std::string HelloPrinterInstanceName = "HelloPrinterInstance";
+const std::string HelloPrinterInstanceName2 = "HelloPrinterInstance2";
 const std::string PrinterDecoratorInstanceName = "PrinterDecoratorInstance";
+const std::string PrinterDecoratorInstanceName2 = "PrinterDecoratorInstance2";
+const std::string PrinterOwnerInstanceName = "PrinterOwnerInstance";
 const std::string PrinterAggregatorInstanceName = "PrinterAggregatorInstance";
 
 TEST_F(ObjectManagerExternalTest, CreateInstances)
@@ -69,9 +75,14 @@ TEST_F(ObjectManagerExternalTest, CreateInstances)
   EXPECT_TRUE(library_loaded);
 
   // Create instances of externally registered types
-  EXPECT_NO_THROW(global_object_manager.CreateInstance(HelloPrinterName, HelloPrinterInstanceName, {}));
+  EXPECT_NO_THROW(global_object_manager.CreateInstance(HelloPrinterName,
+                                                       HelloPrinterInstanceName, {}));
+  EXPECT_NO_THROW(global_object_manager.CreateInstance(HelloPrinterName,
+                                                       HelloPrinterInstanceName2, {}));
   EXPECT_NO_THROW(global_object_manager.CreateInstance(
     PrinterDecoratorName, PrinterDecoratorInstanceName, {HelloPrinterInstanceName}));
+  EXPECT_NO_THROW(global_object_manager.CreateInstance(
+    PrinterOwnerName, PrinterOwnerInstanceName, {HelloPrinterInstanceName2}));
   EXPECT_NO_THROW(global_object_manager.CreateInstance(
     PrinterAggregatorName, PrinterAggregatorInstanceName,
     {HelloPrinterInstanceName, PrinterDecoratorInstanceName}));
@@ -80,8 +91,17 @@ TEST_F(ObjectManagerExternalTest, CreateInstances)
   EXPECT_TRUE(global_object_manager.CallGlobalFunction(HelloTestName, {HelloPrinterInstanceName}));
   EXPECT_TRUE(global_object_manager.CallGlobalFunction(DecoratedHelloTestName,
                                                        {PrinterDecoratorInstanceName}));
+  EXPECT_TRUE(global_object_manager.CallGlobalFunction(OwnedPrinterTestName,
+                                                       {PrinterOwnerInstanceName}));
   EXPECT_TRUE(global_object_manager.CallGlobalFunction(AggregatedPrinterTestName,
                                                        {PrinterAggregatorInstanceName}));
+
+  // Discard instance through global function
+  EXPECT_TRUE(global_object_manager.CallGlobalFunction(DiscardPrinterName,
+                                                       {PrinterOwnerInstanceName}));
+  EXPECT_THROW(global_object_manager.CreateInstance(
+    PrinterDecoratorName, PrinterDecoratorInstanceName2, {PrinterOwnerInstanceName}),
+    std::runtime_error);
 }
 
 ObjectManagerExternalTest::ObjectManagerExternalTest()

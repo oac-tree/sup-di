@@ -111,7 +111,7 @@ TEST_F(ObjectManagerTest, PassOwnership)
   EXPECT_TRUE(object_manager.RegisterFactoryFunction(
       HelloPrinterName, HelloPrinterFactoryFunction));
   EXPECT_TRUE(object_manager.RegisterFactoryFunction(
-      PrinterOwnerName, OwnedPrinterFactoryFunction));
+      PrinterOwnerName, GenericInstanceFactoryFunction<IPrinter, PrinterOwner, IPrinter>));
 
   // Global function registration
   EXPECT_TRUE(object_manager.RegisterGlobalFunction(HelloTestName, TestHelloPrinter));
@@ -141,8 +141,8 @@ TEST_F(ObjectManagerTest, GenericFactoryFunction)
   // Factory function registration
   EXPECT_TRUE(object_manager.RegisterFactoryFunction(
       HelloPrinterName, GenericInstanceFactoryFunctionShared<IPrinter, HelloPrinter>));
-  EXPECT_TRUE(object_manager.RegisterFactoryFunction(
-      PrinterDecoratorName, GenericInstanceFactoryFunctionShared<IPrinter, PrinterDecorator, IPrinter>));
+  EXPECT_TRUE(object_manager.RegisterFactoryFunction(PrinterDecoratorName,
+    GenericInstanceFactoryFunctionShared<IPrinter, PrinterDecorator, IPrinter>));
 
   // Create instances
   EXPECT_NO_THROW(object_manager.CreateInstance(HelloPrinterName, HelloPrinterInstanceName, {}));
@@ -162,11 +162,10 @@ TEST_F(ObjectManagerTest, ComplexObjectTree)
   // Factory function registration
   EXPECT_TRUE(object_manager.RegisterFactoryFunction(
       HelloPrinterName, GenericInstanceFactoryFunctionShared<IPrinter, HelloPrinter>));
-  EXPECT_TRUE(object_manager.RegisterFactoryFunction(
-      PrinterDecoratorName, GenericInstanceFactoryFunctionShared<IPrinter, PrinterDecorator, IPrinter>));
-  EXPECT_TRUE(object_manager.RegisterFactoryFunction(
-                PrinterAggregatorName,
-                GenericInstanceFactoryFunctionShared<IPrinter, PrinterAggregator, IPrinter, IPrinter>));
+  EXPECT_TRUE(object_manager.RegisterFactoryFunction(PrinterDecoratorName,
+    GenericInstanceFactoryFunctionShared<IPrinter, PrinterDecorator, IPrinter>));
+  EXPECT_TRUE(object_manager.RegisterFactoryFunction(PrinterAggregatorName,
+    GenericInstanceFactoryFunctionShared<IPrinter, PrinterAggregator, IPrinter, IPrinter>));
 
   // Global function registration
   EXPECT_TRUE(object_manager.RegisterGlobalFunction(HelloTestName, TestHelloPrinter));

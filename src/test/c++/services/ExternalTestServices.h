@@ -19,6 +19,7 @@
  * of the distribution package.
  ******************************************************************************/
 
+#include <memory>
 #include <string>
 
 namespace sup
@@ -35,7 +36,7 @@ class IPrinter
 public:
   virtual ~IPrinter();
 
-  virtual std::string Print() = 0;
+  virtual std::string Print() const = 0;
 };
 
 class HelloPrinter : public IPrinter
@@ -44,7 +45,7 @@ public:
   HelloPrinter();
   ~HelloPrinter();
 
-  std::string Print() override;
+  std::string Print() const override;
 };
 
 class PrinterDecorator : public IPrinter
@@ -53,9 +54,20 @@ public:
   PrinterDecorator(IPrinter* printer);
   ~PrinterDecorator();
 
-  std::string Print() override;
+  std::string Print() const override;
 private:
   IPrinter* printer;
+};
+
+class PrinterOwner : public IPrinter
+{
+public:
+  PrinterOwner(std::unique_ptr<IPrinter>&& printer);
+  ~PrinterOwner();
+
+  std::string Print() const override;
+private:
+  std::unique_ptr<IPrinter> printer;
 };
 
 class PrinterAggregator : public IPrinter
@@ -64,7 +76,7 @@ public:
   PrinterAggregator(IPrinter* printer_1, IPrinter* printer_2);
   ~PrinterAggregator();
 
-  std::string Print() override;
+  std::string Print() const override;
 private:
   IPrinter* printer_1;
   IPrinter* printer_2;
@@ -74,7 +86,11 @@ bool TestHelloPrinter(IPrinter* printer);
 
 bool TestDecoratedHelloPrinter(IPrinter* printer);
 
+bool TestOwnedPrinter(IPrinter* printer);
+
 bool TestAggregatedPrinter(IPrinter* printer);
+
+bool DiscardPrinter(std::unique_ptr<IPrinter>&& printer);
 
 }  // namespace external
 

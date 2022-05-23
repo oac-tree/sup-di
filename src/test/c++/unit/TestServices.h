@@ -105,11 +105,6 @@ std::unique_ptr<IPrinter> PrinterDecoratorFactoryFunction(const IPrinter* printe
   return std::unique_ptr<IPrinter>(new PrinterDecorator(printer));
 }
 
-std::unique_ptr<IPrinter> OwnedPrinterFactoryFunction(std::unique_ptr<IPrinter>&& printer)
-{
-  return std::unique_ptr<IPrinter>(new PrinterOwner(std::move(printer)));
-}
-
 bool TestHelloPrinter(const IPrinter* printer)
 {
   return printer->Print() == HelloWorld;
