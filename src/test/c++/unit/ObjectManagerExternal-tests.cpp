@@ -86,6 +86,10 @@ TEST_F(ObjectManagerExternalTest, CreateInstances)
   EXPECT_NO_THROW(global_object_manager.CreateInstance(
     PrinterAggregatorName, PrinterAggregatorInstanceName,
     {HelloPrinterInstanceName, PrinterDecoratorInstanceName}));
+  // Second instance of HelloPrinter is no longer in the registry
+  EXPECT_THROW(global_object_manager.CreateInstance(
+    PrinterDecoratorName, PrinterDecoratorInstanceName2, {HelloPrinterInstanceName2}),
+    std::runtime_error);
 
   // Call global functions
   EXPECT_TRUE(global_object_manager.CallGlobalFunction(HelloTestName, {HelloPrinterInstanceName}));
