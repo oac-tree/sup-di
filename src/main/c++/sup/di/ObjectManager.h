@@ -22,6 +22,7 @@
 #ifndef _SUP_ObjectManager_h_
 #define _SUP_ObjectManager_h_
 
+#include "DependencyTraits.h"
 #include "IndexSequence.h"
 #include "InstanceContainer.h"
 #include "TypeMap.h"
@@ -41,15 +42,16 @@ namespace di
 namespace internal
 {
 template <typename ServiceType, typename Deleter, typename... Deps>
-using InstanceFactoryFunction = std::unique_ptr<ServiceType, Deleter>(*)(Deps*...);
+using InstanceFactoryFunction = std::unique_ptr<ServiceType, Deleter>(*)(Deps...);
 
 template <typename... Deps>
-using GlobalFunction = bool(*)(Deps*...);
+using GlobalFunction = bool(*)(Deps...);
 }  // namespace internal
 
 class ObjectManager
 {
   using ServiceMap = std::map<std::string, std::unique_ptr<internal::AbstractInstanceContainer>>;
+  using ServiceMapIterator = typename ServiceMap::iterator;
   using RegisteredFactoryFunction =
     std::function<void(const std::string&, const std::vector<std::string>&)>;
   using RegisteredGlobalFunction = std::function<bool(const std::vector<std::string>&)>;
@@ -63,7 +65,9 @@ public:
   bool CallGlobalFunction(const std::string& registered_function_name,
                          const std::vector<std::string>& dependency_names);
 
-  template <typename T> T* GetInstance(const std::string& instance_name);
+  template <typename T>
+  typename internal::DependencyTraits<T>::InjectionType
+    GetInstance(const std::string& instance_name);
 
   template <typename ServiceType, typename Deleter, typename... Deps>
   bool RegisterFactoryFunction(const std::string& registered_typename,
@@ -94,8 +98,21 @@ private:
                               internal::IndexSequence<I...> index_sequence);
 
   template <std::size_t I, typename... Deps>
-  typename internal::TypeStringList<Deps...>::template IndexedType<I>*
+  typename internal::DependencyTraits<typename internal::TypeStringList<Deps...>::template
+                                        IndexedType<I>>::InjectionType
     IndexedArgument(const internal::TypeStringList<Deps...>& type_string_list);
+
+  template <typename T>
+  typename internal::DependencyTraits<T>::InjectionType
+    GetInstanceImpl(const std::string& instance_name, std::true_type transfer_ownership);
+
+  template <typename T>
+  typename internal::DependencyTraits<T>::InjectionType
+    GetInstanceImpl(const std::string& instance_name,
+                    std::false_type do_not_transfer_ownership);
+
+  template <typename T>
+  ServiceMapIterator FindInstance(const std::string& instance_name);
 
   template <typename ServiceType>
   ServiceMap& GetServiceMap();
@@ -110,19 +127,11 @@ std::unique_ptr<ServiceType> GenericInstanceFactoryFunction(Deps*... dependencie
 ObjectManager& GlobalObjectManager();
 
 template <typename T>
-T* ObjectManager::GetInstance(const std::string& instance_name)
+typename internal::DependencyTraits<T>::InjectionType
+ObjectManager::GetInstance(const std::string& instance_name)
 {
-  auto service_map_it = instance_map.find<T>();
-  if (service_map_it == instance_map.end())
-  {
-    throw std::runtime_error("ObjectManager::GetInstance: accessing unknow service type");
-  }
-  auto instance_it = service_map_it->second.find(instance_name);
-  if (instance_it == service_map_it->second.end())
-  {
-    throw std::runtime_error("ObjectManager::GetInstance: accessing unknow instance");
-  }
-  return static_cast<T*>(instance_it->second->Get());
+  return GetInstanceImpl<T>(instance_name,
+    typename internal::DependencyTraits<T>::TransferOwnership{});
 }
 
 template <typename ServiceType, typename Deleter, typename... Deps>
@@ -199,11 +208,45 @@ bool ObjectManager::CallFromTypeStringList(
 }
 
 template <std::size_t I, typename... Deps>
-typename internal::TypeStringList<Deps...>::template IndexedType<I>*
+typename internal::DependencyTraits<typename internal::TypeStringList<Deps...>::template
+                                      IndexedType<I>>::InjectionType
   ObjectManager::IndexedArgument(const internal::TypeStringList<Deps...>& type_string_list)
 {
   return GetInstance<typename internal::TypeStringList<Deps...>::template IndexedType<I>>(
     type_string_list.IndexedString(I) );
+}
+
+template <typename T>
+typename internal::DependencyTraits<T>::InjectionType
+  ObjectManager::GetInstanceImpl(const std::string& instance_name, std::true_type)
+{
+  // move instance out of map;
+}
+
+template <typename T>
+typename internal::DependencyTraits<T>::InjectionType
+  ObjectManager::GetInstanceImpl(const std::string& instance_name, std::false_type)
+{
+  auto instance_it = FindInstance<typename internal::DependencyTraits<T>::ValueType>(instance_name);
+  return static_cast<typename internal::DependencyTraits<T>::InjectionType>(
+    instance_it->second->Get());
+}
+
+template <typename T>
+ObjectManager::ServiceMapIterator
+ObjectManager::FindInstance(const std::string& instance_name)
+{
+  auto service_map_it = instance_map.find<T>();
+  if (service_map_it == instance_map.end())
+  {
+    throw std::runtime_error("ObjectManager::FindInstance: accessing unknow service type");
+  }
+  auto instance_it = service_map_it->second.find(instance_name);
+  if (instance_it == service_map_it->second.end())
+  {
+    throw std::runtime_error("ObjectManager::FindInstance: accessing unknow instance");
+  }
+  return instance_it;
 }
 
 template <typename ServiceType>
