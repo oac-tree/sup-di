@@ -27,14 +27,16 @@ class IPrinter
 public:
   virtual ~IPrinter() = default;
 
-  virtual std::string Print() = 0;
+  virtual std::string Print() const = 0;
 };
 
 const std::string HelloWorld = "Hello, world!";
 const std::string DecoratedPrefix = "Decorated:";
+const std::string OwnedPrinterPrefix = "Owned printer:";
 
 const std::string HelloPrinterName = "HelloPrinter";
 const std::string PrinterDecoratorName = "PrinterDecorator";
+const std::string PrinterOwnerName = "PrinterOwner";
 const std::string PrinterAggregatorName = "PrinterAggregator";
 
 class HelloPrinter : public IPrinter
@@ -43,7 +45,7 @@ public:
   HelloPrinter() = default;
   ~HelloPrinter() = default;
 
-  std::string Print() override
+  std::string Print() const override
   {
     return HelloWorld;
   }
@@ -52,15 +54,29 @@ public:
 class PrinterDecorator : public IPrinter
 {
 public:
-  PrinterDecorator(IPrinter* printer_) : printer{printer_} {}
+  PrinterDecorator(const IPrinter* printer_) : printer{printer_} {}
   ~PrinterDecorator() = default;
 
-  std::string Print() override
+  std::string Print() const override
   {
     return DecoratedPrefix + printer->Print();
   }
 private:
-  IPrinter* printer;
+  const IPrinter* printer;
+};
+
+class PrinterOwner : public IPrinter
+{
+public:
+  PrinterOwner(std::unique_ptr<IPrinter>&& printer_) : printer{std::move(printer_)} {}
+  ~PrinterOwner() = default;
+
+  std::string Print() const override
+  {
+    return OwnedPrinterPrefix + printer->Print();
+  }
+private:
+  std::unique_ptr<IPrinter> printer;
 };
 
 class PrinterAggregator : public IPrinter
@@ -70,7 +86,7 @@ public:
     : printer_1{printer_1_}, printer_2{printer_2_} {}
   ~PrinterAggregator() = default;
 
-  std::string Print() override
+  std::string Print() const override
   {
     return printer_1->Print() + printer_2->Print();
   }
@@ -84,12 +100,17 @@ std::unique_ptr<IPrinter> HelloPrinterFactoryFunction()
   return std::unique_ptr<IPrinter>(new HelloPrinter());
 }
 
-std::unique_ptr<IPrinter> PrinterDecoratorFactoryFunction(IPrinter* printer)
+std::unique_ptr<IPrinter> PrinterDecoratorFactoryFunction(const IPrinter* printer)
 {
   return std::unique_ptr<IPrinter>(new PrinterDecorator(printer));
 }
 
-bool TestHelloPrinter(IPrinter* printer)
+std::unique_ptr<IPrinter> OwnedPrinterFactoryFunction(std::unique_ptr<IPrinter>&& printer)
+{
+  return std::unique_ptr<IPrinter>(new PrinterOwner(std::move(printer)));
+}
+
+bool TestHelloPrinter(const IPrinter* printer)
 {
   return printer->Print() == HelloWorld;
 }
@@ -97,6 +118,11 @@ bool TestHelloPrinter(IPrinter* printer)
 bool TestDecoratedHelloPrinter(IPrinter* printer)
 {
   return printer->Print() == DecoratedPrefix + HelloWorld;
+}
+
+bool TestOwnedPrinter(IPrinter* printer)
+{
+  return printer->Print() == OwnedPrinterPrefix + HelloWorld;
 }
 
 bool TestAggregatedPrinter(IPrinter* printer)

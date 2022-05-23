@@ -40,11 +40,13 @@ protected:
 
 const std::string HelloPrinterInstanceName = "HelloPrinterInstance";
 const std::string PrinterDecoratorInstanceName = "PrinterDecoratorInstance";
+const std::string PrinterOwnerInstanceName = "PrinterOwnerInstance";
 const std::string PrinterAggregatorInstanceName = "PrinterAggregatorInstance";
 const std::string IntInstanceName = "IntInstance";
 
 const std::string HelloTestName = "HelloTest";
 const std::string DecoratorHelloTestName = "DecoratorHelloTest";
+const std::string OwnedPrinterTestName = "OwnedPrinterTest";
 const std::string AggregatorPrinterTestName = "AggregatorPrinterTest";
 
 TEST_F(ObjectManagerTest, NoDependencies)
@@ -66,7 +68,7 @@ TEST_F(ObjectManagerTest, NoDependencies)
   EXPECT_THROW(object_manager.CallGlobalFunction(HelloTestName, {}), std::runtime_error);
 
   // Access instances of known type
-  IPrinter*print_service = nullptr;
+  IPrinter* print_service = nullptr;
   EXPECT_NO_THROW(print_service = object_manager.GetInstance<IPrinter*>(HelloPrinterInstanceName));
   EXPECT_NE(print_service, nullptr);
   EXPECT_EQ(print_service->Print(), HelloWorld);
@@ -96,11 +98,42 @@ TEST_F(ObjectManagerTest, Decorator)
                                                 {PrinterDecoratorInstanceName}));
 
   // Access instances of known type
-  IPrinter*print_service = nullptr;
+  IPrinter* print_service = nullptr;
   EXPECT_NO_THROW(print_service =
                     object_manager.GetInstance<IPrinter*>(PrinterDecoratorInstanceName));
   EXPECT_NE(print_service, nullptr);
   EXPECT_EQ(print_service->Print(), DecoratedPrefix + HelloWorld);
+}
+
+TEST_F(ObjectManagerTest, PassOwnership)
+{
+  // Factory function registration
+  EXPECT_TRUE(object_manager.RegisterFactoryFunction(
+      HelloPrinterName, HelloPrinterFactoryFunction));
+  EXPECT_TRUE(object_manager.RegisterFactoryFunction(
+      PrinterOwnerName, OwnedPrinterFactoryFunction));
+
+  // Global function registration
+  EXPECT_TRUE(object_manager.RegisterGlobalFunction(HelloTestName, TestHelloPrinter));
+  EXPECT_TRUE(object_manager.RegisterGlobalFunction(OwnedPrinterTestName, TestOwnedPrinter));
+
+  // Create instances
+  EXPECT_NO_THROW(object_manager.CreateInstance(HelloPrinterName, HelloPrinterInstanceName, {}));
+  EXPECT_NO_THROW(object_manager.CreateInstance(PrinterOwnerName, PrinterOwnerInstanceName,
+                                                {HelloPrinterInstanceName}));
+
+  // Call global functions
+  EXPECT_THROW(object_manager.CallGlobalFunction(HelloTestName, {HelloPrinterInstanceName}),
+               std::runtime_error);
+  EXPECT_TRUE(object_manager.CallGlobalFunction(OwnedPrinterTestName,
+                                                {PrinterOwnerInstanceName}));
+
+  // Access instances of known type
+  IPrinter* print_service = nullptr;
+  EXPECT_NO_THROW(print_service =
+                    object_manager.GetInstance<IPrinter*>(PrinterOwnerInstanceName));
+  EXPECT_NE(print_service, nullptr);
+  EXPECT_EQ(print_service->Print(), OwnedPrinterPrefix + HelloWorld);
 }
 
 TEST_F(ObjectManagerTest, GenericFactoryFunction)
@@ -117,7 +150,7 @@ TEST_F(ObjectManagerTest, GenericFactoryFunction)
                                                 {HelloPrinterInstanceName}));
 
   // Access instances of known type
-  IPrinter*print_service = nullptr;
+  IPrinter* print_service = nullptr;
   EXPECT_NO_THROW(print_service =
                     object_manager.GetInstance<IPrinter*>(PrinterDecoratorInstanceName));
   EXPECT_NE(print_service, nullptr);
@@ -158,7 +191,7 @@ TEST_F(ObjectManagerTest, ComplexObjectTree)
                                                 {PrinterAggregatorInstanceName}));
 
   // Access instances of known type
-  IPrinter*print_service = nullptr;
+  IPrinter* print_service = nullptr;
   EXPECT_NO_THROW(print_service =
                       object_manager.GetInstance<IPrinter*>(PrinterAggregatorInstanceName));
   EXPECT_NE(print_service, nullptr);
@@ -185,7 +218,7 @@ TEST_F(ObjectManagerTest, Exceptions)
                                                 {HelloPrinterInstanceName}));
 
   // Retrieve unknown instance
-  IPrinter*print_service = nullptr;
+  IPrinter* print_service = nullptr;
   EXPECT_NO_THROW(print_service = object_manager.GetInstance<IPrinter*>(HelloPrinterInstanceName));
   EXPECT_NO_THROW(print_service =
                     object_manager.GetInstance<IPrinter*>(PrinterDecoratorInstanceName));

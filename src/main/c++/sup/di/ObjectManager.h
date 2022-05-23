@@ -114,6 +114,9 @@ private:
   template <typename T>
   ServiceMapIterator FindInstance(const std::string& instance_name);
 
+  template <typename T>
+  void RemoveInstance(ServiceMapIterator it);
+
   template <typename ServiceType>
   ServiceMap& GetServiceMap();
 };
@@ -220,7 +223,12 @@ template <typename T>
 typename internal::DependencyTraits<T>::InjectionType
   ObjectManager::GetInstanceImpl(const std::string& instance_name, std::true_type)
 {
-  // move instance out of map;
+  auto instance_it = FindInstance<typename internal::DependencyTraits<T>::ValueType>(instance_name);
+  typename internal::DependencyTraits<T>::InjectionType result(
+    static_cast<typename internal::DependencyTraits<T>::ValueType*>(
+      instance_it->second->Release()));
+  RemoveInstance<typename internal::DependencyTraits<T>::ValueType>(instance_it);
+  return std::move(result);
 }
 
 template <typename T>
@@ -247,6 +255,17 @@ ObjectManager::FindInstance(const std::string& instance_name)
     throw std::runtime_error("ObjectManager::FindInstance: accessing unknow instance");
   }
   return instance_it;
+}
+
+template <typename T>
+void ObjectManager::RemoveInstance(ObjectManager::ServiceMapIterator it)
+{
+  auto service_map_it = instance_map.find<T>();
+  if (service_map_it == instance_map.end())
+  {
+    throw std::runtime_error("ObjectManager::RemoveInstance: accessing unknow service type");
+  }
+  service_map_it->second.erase(it);
 }
 
 template <typename ServiceType>
