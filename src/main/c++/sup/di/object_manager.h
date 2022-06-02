@@ -22,11 +22,11 @@
 #ifndef _SUP_ObjectManager_h_
 #define _SUP_ObjectManager_h_
 
-#include "DependencyTraits.h"
-#include "IndexSequence.h"
-#include "InstanceContainer.h"
-#include "TypeMap.h"
-#include "TypeStringList.h"
+#include "sup/di/dependency_traits.h"
+#include "sup/di/index_sequence.h"
+#include "sup/di/instance_container.h"
+#include "sup/di/type_map.h"
+#include "sup/di/type_string_list.h"
 
 #include <functional>
 #include <map>

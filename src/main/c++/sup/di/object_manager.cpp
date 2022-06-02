@@ -19,7 +19,7 @@
  * of the distribution package.
  ******************************************************************************/
 
-#include "ObjectManager.h"
+#include "sup/di/object_manager.h"
 
 namespace sup
 {

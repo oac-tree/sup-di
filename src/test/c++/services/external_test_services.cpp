@@ -19,9 +19,9 @@
  * of the distribution package.
  ******************************************************************************/
 
-#include "ExternalTestServices.h"
+#include "external_test_services.h"
 
-#include "sup/di/ObjectManager.h"
+#include "sup/di/object_manager.h"
 
 namespace sup
 {

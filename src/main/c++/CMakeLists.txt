@@ -15,6 +15,11 @@ endif()
 
 add_library(sup-di SHARED)
 
+target_include_directories(sup-di
+    PUBLIC
+        ${CMAKE_CURRENT_LIST_DIR}
+)
+
 add_subdirectory(sup)
 
 set_target_properties(sup-di PROPERTIES

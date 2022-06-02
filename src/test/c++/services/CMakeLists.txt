@@ -12,7 +12,7 @@ endif()
 
 target_sources(sup-di-testservices
     PRIVATE
-        ${CMAKE_CURRENT_LIST_DIR}/ExternalTestServices.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/external_test_services.cpp
 )
 
 target_include_directories(sup-di-testservices

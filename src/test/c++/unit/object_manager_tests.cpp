@@ -21,8 +21,8 @@
 
 #include <gtest/gtest.h>
 
-#include "sup/di/ObjectManager.h"
-#include "TestServices.h"
+#include "sup/di/object_manager.h"
+#include "test_services.h"
 
 #include <memory>
 #include <string>

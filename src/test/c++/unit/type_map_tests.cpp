@@ -20,32 +20,39 @@
  ******************************************************************************/
 
 #include <gtest/gtest.h>
+#include <string>
 
-#include "sup/di/TypeStringList.h"
-
-#include <type_traits>
+#include "sup/di/type_map.h"
 
 using namespace sup::di::internal;
 
-class TypeStringListTest : public ::testing::Test
+class TypeMapTest : public ::testing::Test
 {
 protected:
-  TypeStringListTest();
-  virtual ~TypeStringListTest();
+  TypeMapTest();
+  virtual ~TypeMapTest();
 
-  TypeStringList<int, std::string> type_string_list;
+  TypeMap<std::string> type_map;
 };
 
-TEST_F(TypeStringListTest, MemberFunctions)
+TEST_F(TypeMapTest, TypeId)
 {
-  EXPECT_EQ(type_string_list.IndexedString(0), "int");
-  EXPECT_EQ(type_string_list.IndexedString(1), "std::string");
-  EXPECT_TRUE((std::is_same<int, decltype(type_string_list)::IndexedType<0>>::value));
-  EXPECT_TRUE((std::is_same<std::string, decltype(type_string_list)::IndexedType<1>>::value));
+  auto int_id = type_map.TypeId<int>();
+  auto string_id = type_map.TypeId<std::string>();
+  EXPECT_EQ(int_id, type_map.TypeId<int>());
+  EXPECT_EQ(string_id, type_map.TypeId<std::string>());
+  type_map.put<int>("integer");
+  type_map.put<std::string>("string");
+  EXPECT_EQ(int_id, type_map.TypeId<int>());
+  EXPECT_EQ(string_id, type_map.TypeId<std::string>());
+  auto it = type_map.find<int>();
+  EXPECT_NE(it, type_map.end());
+  EXPECT_EQ(it->second, "integer");
+  it = type_map.find<std::string>();
+  EXPECT_NE(it, type_map.end());
+  EXPECT_EQ(it->second, "string");
 }
 
-TypeStringListTest::TypeStringListTest()
-  : type_string_list({"int", "std::string"})
-{}
+TypeMapTest::TypeMapTest() = default;
 
-TypeStringListTest::~TypeStringListTest() = default;
+TypeMapTest::~TypeMapTest() = default;
