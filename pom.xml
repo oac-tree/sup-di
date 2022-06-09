@@ -94,7 +94,7 @@
                             </include>
                             <!-- Package dependencies -->
                             <requires version="current">%{codac_rpm_prefix}-${project.artifactId}</requires>
-                        </package>libsup-di-testservices
+                        </package>
                         <package name="tests">
                             <!-- Libraries -->
                             <include type="file" source="lib" target="lib">
