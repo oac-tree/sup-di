@@ -6,7 +6,7 @@ set(LIBVERSION ${CMAKE_PROJECT_VERSION})
 set(LIBSOVERSION ${CMAKE_PROJECT_VERSION_MAJOR})
 set(CMAKE_BUILD_TYPE "RelWithDebInfo")
 
-set(TARGET_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/target)
+set(TARGET_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${TARGET_DIRECTORY}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${TARGET_DIRECTORY}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${TARGET_DIRECTORY}/bin)
@@ -16,5 +16,5 @@ file(MAKE_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 
 option(COVERAGE "Generate unit test coverage information" FALSE)
 
-add_subdirectory(src/main/c++)
-add_subdirectory(src/test/c++)
+add_subdirectory(main/c++)
+add_subdirectory(test/c++)

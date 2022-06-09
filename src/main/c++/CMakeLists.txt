@@ -1,7 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(SUP-DI LANGUAGES CXX)
-
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
@@ -28,6 +26,6 @@ set_target_properties(sup-di PROPERTIES
     OUTPUT_NAME sup-di
 )
 
-install(TARGETS sup-di DESTINATION lib)
-install(DIRECTORY sup/di/ DESTINATION include/sup/di
+install(DIRECTORY sup/di/
+        DESTINATION include/sup/di
         FILES_MATCHING PATTERN "*.h")

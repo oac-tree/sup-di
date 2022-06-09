@@ -21,8 +21,6 @@
 #
 #-======================================================================
 
-TEST_SCRIPT_DIR=`dirname $0`
-
 no_error=0
 error=1
 retcode=${no_error}

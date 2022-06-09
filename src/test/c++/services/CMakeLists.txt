@@ -6,10 +6,6 @@ set_target_properties(sup-di-testservices PROPERTIES
     OUTPUT_NAME sup-di-testservices
 )
 
-if(EXPLICIT_TEST_BUILD_DEPENDENCIES)
-    add_dependencies(sup-di-testservices sup-di)
-endif()
-
 target_sources(sup-di-testservices
     PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/external_test_services.cpp
@@ -18,12 +14,6 @@ target_sources(sup-di-testservices
 target_include_directories(sup-di-testservices
     PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}
-        ${CMAKE_CURRENT_LIST_DIR}/../../../main/c++
-)
-
-target_link_directories(sup-di-testservices
-    PRIVATE
-        ${CMAKE_CURRENT_LIST_DIR}/../../../../target/lib
 )
 
 target_link_libraries(sup-di-testservices

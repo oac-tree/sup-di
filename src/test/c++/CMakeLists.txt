@@ -1,7 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(SUP-DI-tests LANGUAGES CXX)
-
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
@@ -18,6 +16,3 @@ file(MAKE_DIRECTORY ${SUP_DI_AUTOGEN_DIR})
 
 add_subdirectory(services)
 add_subdirectory(unit)
-
-install(TARGETS sup-di-testservices DESTINATION lib)
-install(TARGETS unit-tests DESTINATION bin)

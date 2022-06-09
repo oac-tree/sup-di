@@ -1,9 +1,5 @@
 add_executable(unit-tests)
 
-if(EXPLICIT_TEST_BUILD_DEPENDENCIES)
-    add_dependencies(unit-tests sup-di sup-di-testservices)
-endif()
-
 configure_file(${CMAKE_CURRENT_LIST_DIR}/test_config.h.in ${SUP_DI_AUTOGEN_DIR}/test_config.h @ONLY)
 
 target_sources(unit-tests
@@ -17,13 +13,7 @@ target_sources(unit-tests
 target_include_directories(unit-tests
     PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}
-        ${CMAKE_CURRENT_LIST_DIR}/../../../main/c++
         ${SUP_DI_AUTOGEN_DIR}
-)
-
-target_link_directories(unit-tests
-    PRIVATE
-        ${CMAKE_CURRENT_LIST_DIR}/../../../../target/lib
 )
 
 find_package(GTest REQUIRED)
