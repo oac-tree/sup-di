@@ -42,6 +42,8 @@ public:
   using iterator = typename Container::iterator;
   using const_iterator = typename Container::const_iterator;
 
+  TypeMap();
+
   iterator begin() { return container.begin(); }
   iterator end() { return container.end(); }
   const_iterator begin() const { return container.begin(); }
@@ -73,6 +75,11 @@ private:
 
 template <class T>
 int TypeMap<T>::last_type_id{0};
+
+template <class T>
+TypeMap<T>::TypeMap()
+  : container{}
+{}
 
 }  // namespace internal
 

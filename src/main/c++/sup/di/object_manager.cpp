@@ -25,7 +25,11 @@ namespace sup
 {
 namespace di
 {
-ObjectManager::ObjectManager() = default;
+ObjectManager::ObjectManager()
+  : factory_functions{}
+  , global_functions{}
+  , instance_map{}
+{}
 
 ObjectManager::~ObjectManager() = default;
 
