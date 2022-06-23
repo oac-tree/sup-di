@@ -76,37 +76,48 @@ TEST_F(ObjectManagerExternalTest, CreateInstances)
   EXPECT_TRUE(library_loaded);
 
   // Create instances of externally registered types
-  EXPECT_NO_THROW(global_object_manager.CreateInstance(HelloPrinterName,
-                                                       HelloPrinterInstanceName, {}));
-  EXPECT_NO_THROW(global_object_manager.CreateInstance(HelloPrinterName,
-                                                       HelloPrinterInstanceName2, {}));
-  EXPECT_NO_THROW(global_object_manager.CreateInstance(
-    PrinterDecoratorName, PrinterDecoratorInstanceName, {HelloPrinterInstanceName}));
-  EXPECT_NO_THROW(global_object_manager.CreateInstance(
-    PrinterOwnerName, PrinterOwnerInstanceName, {HelloPrinterInstanceName2}));
-  EXPECT_NO_THROW(global_object_manager.CreateInstance(
-    PrinterAggregatorName, PrinterAggregatorInstanceName,
-    {HelloPrinterInstanceName, PrinterDecoratorInstanceName}));
+  EXPECT_EQ(global_object_manager.CreateInstance(HelloPrinterName,
+                                                 HelloPrinterInstanceName, {}),
+            ErrorCode::kSuccess);
+  EXPECT_EQ(global_object_manager.CreateInstance(HelloPrinterName,
+                                                 HelloPrinterInstanceName2, {}),
+            ErrorCode::kSuccess);
+  EXPECT_EQ(global_object_manager.CreateInstance(
+      PrinterDecoratorName, PrinterDecoratorInstanceName, {HelloPrinterInstanceName}),
+    ErrorCode::kSuccess);
+  EXPECT_EQ(global_object_manager.CreateInstance(
+      PrinterOwnerName, PrinterOwnerInstanceName, {HelloPrinterInstanceName2}),
+    ErrorCode::kSuccess);
+  EXPECT_EQ(global_object_manager.CreateInstance(
+      PrinterAggregatorName, PrinterAggregatorInstanceName,
+      {HelloPrinterInstanceName, PrinterDecoratorInstanceName}),
+    ErrorCode::kSuccess);
   // Second instance of HelloPrinter is no longer in the registry
-  EXPECT_THROW(global_object_manager.CreateInstance(
-    PrinterDecoratorName, PrinterDecoratorInstanceName2, {HelloPrinterInstanceName2}),
-    std::runtime_error);
+  EXPECT_EQ(global_object_manager.CreateInstance(
+      PrinterDecoratorName, PrinterDecoratorInstanceName2, {HelloPrinterInstanceName2}),
+    ErrorCode::kDependencyNotFound);
 
   // Call global functions
-  EXPECT_TRUE(global_object_manager.CallGlobalFunction(HelloTestName, {HelloPrinterInstanceName}));
-  EXPECT_TRUE(global_object_manager.CallGlobalFunction(DecoratedHelloTestName,
-                                                       {PrinterDecoratorInstanceName}));
-  EXPECT_TRUE(global_object_manager.CallGlobalFunction(OwnedPrinterTestName,
-                                                       {PrinterOwnerInstanceName}));
-  EXPECT_TRUE(global_object_manager.CallGlobalFunction(AggregatedPrinterTestName,
-                                                       {PrinterAggregatorInstanceName}));
+  EXPECT_EQ(global_object_manager.CallGlobalFunction(
+      HelloTestName, {HelloPrinterInstanceName}),
+    ErrorCode::kSuccess);
+  EXPECT_EQ(global_object_manager.CallGlobalFunction(DecoratedHelloTestName,
+                                                     {PrinterDecoratorInstanceName}),
+    ErrorCode::kSuccess);
+  EXPECT_EQ(global_object_manager.CallGlobalFunction(OwnedPrinterTestName,
+                                                     {PrinterOwnerInstanceName}),
+    ErrorCode::kSuccess);
+  EXPECT_EQ(global_object_manager.CallGlobalFunction(AggregatedPrinterTestName,
+                                                     {PrinterAggregatorInstanceName}),
+    ErrorCode::kSuccess);
 
   // Discard instance through global function
-  EXPECT_TRUE(global_object_manager.CallGlobalFunction(DiscardPrinterName,
-                                                       {PrinterOwnerInstanceName}));
-  EXPECT_THROW(global_object_manager.CreateInstance(
-    PrinterDecoratorName, PrinterDecoratorInstanceName2, {PrinterOwnerInstanceName}),
-    std::runtime_error);
+  EXPECT_EQ(global_object_manager.CallGlobalFunction(DiscardPrinterName,
+                                                     {PrinterOwnerInstanceName}),
+    ErrorCode::kSuccess);
+  EXPECT_EQ(global_object_manager.CreateInstance(
+      PrinterDecoratorName, PrinterDecoratorInstanceName2, {PrinterOwnerInstanceName}),
+    ErrorCode::kDependencyNotFound);
 }
 
 ObjectManagerExternalTest::ObjectManagerExternalTest()

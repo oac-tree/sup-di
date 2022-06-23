@@ -75,11 +75,6 @@ private:
 template <typename... Args>
 TypeStringList<Args...>::TypeStringList(const std::vector<std::string>& string_list)
 {
-  if (string_list.size() != sizeof...(Args))
-  {
-    throw std::runtime_error("TypeStringList constructor: size of argument names doesn't "
-                             "match number of expected argument types");
-  }
   for(std::size_t i=0; i<sizeof...(Args); ++i)
   {
     names[i] = string_list[i];

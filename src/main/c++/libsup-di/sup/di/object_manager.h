@@ -23,6 +23,7 @@
 #define SUP_DI_OBJECT_MANAGER_H_
 
 #include <sup/di/dependency_traits.h>
+#include <sup/di/error_codes.h>
 #include <sup/di/index_sequence.h>
 #include <sup/di/instance_container.h>
 #include <sup/di/type_map.h>
@@ -71,8 +72,8 @@ class ObjectManager
   using ServiceMap = std::map<std::string, std::unique_ptr<internal::AbstractInstanceContainer>>;
   using ServiceMapIterator = typename ServiceMap::iterator;
   using RegisteredFactoryFunction =
-    std::function<bool(const std::string&, const std::vector<std::string>&)>;
-  using RegisteredGlobalFunction = std::function<bool(const std::vector<std::string>&)>;
+    std::function<ErrorCode(const std::string&, const std::vector<std::string>&)>;
+  using RegisteredGlobalFunction = std::function<ErrorCode(const std::vector<std::string>&)>;
 public:
   /**
    * @brief Constructor.
@@ -86,18 +87,23 @@ public:
    * @param registered_typename Name under which the factory function was registered.
    * @param instance_name Name under which to store the created instance.
    * @param dependency_names List of instance names that need to be injected as dependencies.
+   *
+   * @return ErrorCode representing success or a specific failure.
    */
-  bool CreateInstance(const std::string& registered_typename, const std::string& instance_name,
-                      const std::vector<std::string>& dependency_names);
+  ErrorCode CreateInstance(const std::string& registered_typename,
+                           const std::string& instance_name,
+                           const std::vector<std::string>& dependency_names);
 
   /**
    * @brief Call a global function on the named instances.
    *
    * @param registered_function_name Name under which the global function was registered.
    * @param dependency_names List of instance names that need to be injected as dependencies.
+   *
+   * @return ErrorCode representing success or a specific failure.
    */
-  bool CallGlobalFunction(const std::string& registered_function_name,
-                         const std::vector<std::string>& dependency_names);
+  ErrorCode CallGlobalFunction(const std::string& registered_function_name,
+                               const std::vector<std::string>& dependency_names);
 
   /**
    * @brief Retrieve instance of specific type and name from the underlying registry.
@@ -167,9 +173,9 @@ private:
    * @brief Helper method to inject retrieved instances into the global function.
    */
   template <typename... Deps, std::size_t... I>
-  bool CallFromTypeStringList(internal::GlobalFunction<Deps...> global_function,
-                              const internal::TypeStringList<Deps...>& type_string_list,
-                              internal::IndexSequence<I...> index_sequence);
+  ErrorCode CallFromTypeStringList(internal::GlobalFunction<Deps...> global_function,
+                                   const internal::TypeStringList<Deps...>& type_string_list,
+                                   internal::IndexSequence<I...> index_sequence);
 
   /**
    * @brief Helper method to retrieve an instance of the correct type, based on an index.
@@ -261,11 +267,28 @@ bool ObjectManager::RegisterFactoryFunction(
   factory_functions[registered_typename] =
     [this, factory_function](const std::string& instance_name, const std::vector<std::string>& dependency_names)
     {
+      if (dependency_names.size() != sizeof...(Deps))
+      {
+        return ErrorCode::kWrongNumberOfDependencies;
+      }
       internal::TypeStringList<Deps...> type_string_list(dependency_names);
       typename internal::MakeIndexSequence<sizeof...(Deps)>::type index_sequence;
-      auto p_instance = CreateFromTypeStringList(
-        factory_function, type_string_list, index_sequence);
-      return RegisterInstance(std::move(p_instance), instance_name);
+      bool register_succes;
+      try
+      {
+        auto p_instance = CreateFromTypeStringList(
+          factory_function, type_string_list, index_sequence);
+        register_succes = RegisterInstance(std::move(p_instance), instance_name);
+      }
+      catch(const std::runtime_error&)
+      {
+        return ErrorCode::kDependencyNotFound;
+      }
+      if (!register_succes)
+      {
+        return ErrorCode::kInvalidInstanceName;
+      }
+      return ErrorCode::kSuccess;
     };
   return true;
 }
@@ -277,8 +300,7 @@ bool ObjectManager::RegisterInstance(
   auto& service_map = GetServiceMap<ServiceType>();
   if (service_map.find(instance_name) != service_map.end())
   {
-    throw std::runtime_error(
-      "ObjectManager::RegisterFactoryFunction: instance name already registered");
+    return false;
   }
   service_map[instance_name] = internal::WrapIntoContainer(std::move(instance));
   return true;
@@ -297,6 +319,10 @@ bool ObjectManager::RegisterGlobalFunction(
   global_functions[registered_function_name] =
     [this, global_function](const std::vector<std::string>& dependency_names)
     {
+      if (dependency_names.size() != sizeof...(Deps))
+      {
+        return ErrorCode::kWrongNumberOfDependencies;
+      }
       internal::TypeStringList<Deps...> type_string_list(dependency_names);
       typename internal::MakeIndexSequence<sizeof...(Deps)>::type index_sequence;
       return CallFromTypeStringList(global_function, type_string_list, index_sequence);
@@ -314,12 +340,25 @@ std::unique_ptr<ServiceType, Deleter> ObjectManager::CreateFromTypeStringList(
 }
 
 template<typename... Deps, std::size_t... I>
-bool ObjectManager::CallFromTypeStringList(
+ErrorCode ObjectManager::CallFromTypeStringList(
   internal::GlobalFunction<Deps...> global_function,
   const internal::TypeStringList<Deps...>& type_string_list,
   internal::IndexSequence<I...> index_sequence)
 {
-  return global_function(IndexedArgument<I>(type_string_list)...);
+  bool function_result;
+  try
+  {
+    function_result = global_function(IndexedArgument<I>(type_string_list)...);
+  }
+  catch(const std::runtime_error&)
+  {
+    return ErrorCode::kDependencyNotFound;
+  }
+  if (!function_result)
+  {
+    return ErrorCode::kGlobalFunctionFailed;
+  }
+  return ErrorCode::kSuccess;
 }
 
 template <std::size_t I, typename... Deps>

@@ -26,6 +26,18 @@ namespace sup
 {
 namespace di
 {
+
+enum class ErrorCode
+{
+  kSuccess = 0,
+  kFactoryFunctionNotFound,
+  kGlobalFunctionNotFound,
+  kDependencyNotFound,
+  kWrongNumberOfDependencies,
+  kInvalidInstanceName,
+  kGlobalFunctionFailed
+};
+
 }  // namespace di
 
 }  // namespace sup
