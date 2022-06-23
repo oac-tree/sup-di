@@ -19,14 +19,14 @@
  * of the distribution package.
  ******************************************************************************/
 
-#ifndef _SUP_ObjectManager_h_
-#define _SUP_ObjectManager_h_
+#ifndef SUP_DI_OBJECT_MANAGER_H_
+#define SUP_DI_OBJECT_MANAGER_H_
 
-#include "sup/di/dependency_traits.h"
-#include "sup/di/index_sequence.h"
-#include "sup/di/instance_container.h"
-#include "sup/di/type_map.h"
-#include "sup/di/type_string_list.h"
+#include <sup/di/dependency_traits.h>
+#include <sup/di/index_sequence.h>
+#include <sup/di/instance_container.h>
+#include <sup/di/type_map.h>
+#include <sup/di/type_string_list.h>
 
 #include <functional>
 #include <map>
@@ -71,7 +71,7 @@ class ObjectManager
   using ServiceMap = std::map<std::string, std::unique_ptr<internal::AbstractInstanceContainer>>;
   using ServiceMapIterator = typename ServiceMap::iterator;
   using RegisteredFactoryFunction =
-    std::function<void(const std::string&, const std::vector<std::string>&)>;
+    std::function<bool(const std::string&, const std::vector<std::string>&)>;
   using RegisteredGlobalFunction = std::function<bool(const std::vector<std::string>&)>;
 public:
   /**
@@ -87,7 +87,7 @@ public:
    * @param instance_name Name under which to store the created instance.
    * @param dependency_names List of instance names that need to be injected as dependencies.
    */
-  void CreateInstance(const std::string& registered_typename, const std::string& instance_name,
+  bool CreateInstance(const std::string& registered_typename, const std::string& instance_name,
                       const std::vector<std::string>& dependency_names);
 
   /**
@@ -265,7 +265,7 @@ bool ObjectManager::RegisterFactoryFunction(
       typename internal::MakeIndexSequence<sizeof...(Deps)>::type index_sequence;
       auto p_instance = CreateFromTypeStringList(
         factory_function, type_string_list, index_sequence);
-      RegisterInstance(std::move(p_instance), instance_name);
+      return RegisterInstance(std::move(p_instance), instance_name);
     };
   return true;
 }
@@ -392,4 +392,4 @@ ObjectManager::ServiceMap& ObjectManager::GetServiceMap()
 
 }  // namespace sup
 
-#endif  // _SUP_ObjectManager_h_
+#endif  // SUP_DI_OBJECT_MANAGER_H_

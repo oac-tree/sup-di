@@ -19,10 +19,11 @@
  * of the distribution package.
  ******************************************************************************/
 
-#include <gtest/gtest.h>
-
 #include "sup/di/object_manager.h"
-#include "test_services.h"
+
+#include <test_services.h>
+
+#include <gtest/gtest.h>
 
 #include <memory>
 #include <string>
@@ -225,9 +226,8 @@ TEST_F(ObjectManagerTest, Exceptions)
                std::runtime_error);
 
   // Create unknown instance
-  EXPECT_THROW(object_manager.CreateInstance(PrinterAggregatorName, PrinterAggregatorInstanceName,
-                {HelloPrinterInstanceName, PrinterDecoratorInstanceName}),
-               std::runtime_error);
+  EXPECT_FALSE(object_manager.CreateInstance(PrinterAggregatorName, PrinterAggregatorInstanceName,
+                {HelloPrinterInstanceName, PrinterDecoratorInstanceName}));
 
   // Duplicate name for global function registration
   EXPECT_TRUE(object_manager.RegisterGlobalFunction(HelloTestName, TestHelloPrinter));

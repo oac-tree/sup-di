@@ -33,16 +33,16 @@ ObjectManager::ObjectManager()
 
 ObjectManager::~ObjectManager() = default;
 
-void ObjectManager::CreateInstance(
+bool ObjectManager::CreateInstance(
   const std::string& registered_typename, const std::string& instance_name,
   const std::vector<std::string>& dependency_names)
 {
   auto it = factory_functions.find(registered_typename);
   if (it == factory_functions.end())
   {
-    throw std::runtime_error("ObjectManager::CreateInstance: typename not registered");
+    return false;
   }
-  it->second(instance_name, dependency_names);
+  return it->second(instance_name, dependency_names);
 }
 
 bool ObjectManager::CallGlobalFunction(const std::string& registered_function_name,
