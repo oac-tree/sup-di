@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ObjectManager xmlns="http://codac.iter.org/sup/di" version="1.0"
+           name="Example configuration file for the SUP dependency injection framework"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema-instance"
+           xs:schemaLocation="http://codac.iter.org/sup/di sup-di.xsd">
+    <LoadLibrary>libservice-wrapper.so</LoadLibrary>
+    <StringInstance>
+        <InstanceName>ClientName</InstanceName>
+        <Value>Test::Client</Value>
+    </StringInstance>
+    <Instance>
+        <TypeName>Service</TypeName>
+        <InstanceName>MyService</InstanceName>
+    </Instance>
+    <Instance>
+        <TypeName>Client</TypeName>
+        <InstanceName>MyClient</InstanceName>
+        <Dependency>ClientName</Dependency>
+        <Dependency>MyService</Dependency>
+    </Instance>
+    <CallFunction>
+        <FunctionName>LaunchClient</FunctionName>
+        <Dependency>MyClient</Dependency>
+    </CallFunction>
+</ObjectManager>
