@@ -19,8 +19,8 @@
  * of the distribution package.
  ******************************************************************************/
 
-#ifndef _SUP_TypeStringList_h_
-#define _SUP_TypeStringList_h_
+#ifndef SUP_DI_TYPE_STRING_LIST_H_
+#define SUP_DI_TYPE_STRING_LIST_H_
 
 #include <array>
 #include <stdexcept>
@@ -92,4 +92,4 @@ TypeStringList<Args...>::TypeStringList(const std::vector<std::string>& string_l
 
 }  // namespace sup
 
-#endif  // _SUP_TypeStringList_h_
+#endif  // SUP_DI_TYPE_STRING_LIST_H_

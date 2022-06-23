@@ -19,8 +19,8 @@
  * of the distribution package.
  ******************************************************************************/
 
-#ifndef _SUP_DependencyTraits_h_
-#define _SUP_DependencyTraits_h_
+#ifndef SUP_DI_DEPENDENCY_TRAITS_H_
+#define SUP_DI_DEPENDENCY_TRAITS_H_
 
 #include <memory>
 #include <type_traits>
@@ -72,4 +72,4 @@ struct DependencyTraits<std::unique_ptr<T>&&>
 
 }  // namespace sup
 
-#endif  // _SUP_DependencyTraits_h_
+#endif  // SUP_DI_DEPENDENCY_TRAITS_H_

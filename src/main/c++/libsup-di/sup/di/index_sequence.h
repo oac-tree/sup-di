@@ -19,8 +19,8 @@
  * of the distribution package.
  ******************************************************************************/
 
-#ifndef _SUP_IndexSequence_h_
-#define _SUP_IndexSequence_h_
+#ifndef SUP_DI_INDEX_SEQUENCE_H_
+#define SUP_DI_INDEX_SEQUENCE_H_
 
 #include <cstddef>
 
@@ -60,4 +60,4 @@ struct MakeIndexSequence<0, S...>
 
 }  // namespace sup
 
-#endif  // _SUP_IndexSequence_h_
+#endif  // SUP_DI_INDEX_SEQUENCE_H_

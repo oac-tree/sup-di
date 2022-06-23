@@ -19,8 +19,8 @@
  * of the distribution package.
  ******************************************************************************/
 
-#ifndef _SUP_DI_TestConfig_h_
-#define _SUP_DI_TestConfig_h_
+#ifndef SUP_DI_TEST_CONFIG_H_
+#define SUP_DI_TEST_CONFIG_H_
 
 #include <string>
 
@@ -41,4 +41,4 @@ inline std::string CMakeLibraryInstallDir() { return "@TARGET_DIRECTORY@/lib"; }
 
 }  // namespace sup
 
-#endif  // _SUP_DI_TestConfig_h_
+#endif  // SUP_DI_TEST_CONFIG_H_

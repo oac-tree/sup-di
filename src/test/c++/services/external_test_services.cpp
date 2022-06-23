@@ -21,7 +21,7 @@
 
 #include "external_test_services.h"
 
-#include "sup/di/object_manager.h"
+#include <sup/di/object_manager.h>
 
 namespace sup
 {

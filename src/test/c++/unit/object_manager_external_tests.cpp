@@ -19,14 +19,15 @@
  * of the distribution package.
  ******************************************************************************/
 
+#include "sup/di/object_manager.h"
+
+#include <test_config.h>
+
 #include <gtest/gtest.h>
 
-#include "sup/di/object_manager.h"
-#include "test_config.h"
-
 #include <dlfcn.h>
-#include <string>
 
+#include <string>
 #include <iostream>
 
 namespace

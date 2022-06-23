@@ -19,9 +19,9 @@
  * of the distribution package.
  ******************************************************************************/
 
-#include <gtest/gtest.h>
-
 #include "sup/di/type_string_list.h"
+
+#include <gtest/gtest.h>
 
 #include <type_traits>
 

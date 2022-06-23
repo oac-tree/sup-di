@@ -19,8 +19,8 @@
  * of the distribution package.
  ******************************************************************************/
 
-#ifndef _SUP_InstanceContainer_h_
-#define _SUP_InstanceContainer_h_
+#ifndef SUP_DI_INSTANCE_CONTAINER_H_
+#define SUP_DI_INSTANCE_CONTAINER_H_
 
 #include <memory>
 
@@ -86,4 +86,4 @@ std::unique_ptr<AbstractInstanceContainer> WrapIntoContainer(std::unique_ptr<T, 
 
 }  // namespace sup
 
-#endif  // _SUP_InstanceContainer_h_
+#endif  // SUP_DI_INSTANCE_CONTAINER_H_

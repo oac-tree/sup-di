@@ -19,8 +19,8 @@
  * of the distribution package.
  ******************************************************************************/
 
-#ifndef _SUP_TypeMap_h_
-#define _SUP_TypeMap_h_
+#ifndef SUP_DI_TYPE_MAP_H_
+#define SUP_DI_TYPE_MAP_H_
 
 #include <map>
 
@@ -87,4 +87,4 @@ TypeMap<T>::TypeMap()
 
 }  // namespace sup
 
-#endif  // _SUP_TypeMap_h_
+#endif  // SUP_DI_TYPE_MAP_H_

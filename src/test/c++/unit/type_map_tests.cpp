@@ -19,10 +19,11 @@
  * of the distribution package.
  ******************************************************************************/
 
-#include <gtest/gtest.h>
-#include <string>
-
 #include "sup/di/type_map.h"
+
+#include <gtest/gtest.h>
+
+#include <string>
 
 using namespace sup::di::internal;
 
