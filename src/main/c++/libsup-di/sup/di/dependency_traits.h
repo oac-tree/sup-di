@@ -53,7 +53,8 @@ struct DependencyTraits {};
 template <typename T>
 struct DependencyTraits<T*>
 {
-  using ValueType = typename std::remove_cv<T>::type;
+  using ValueType = typename std::enable_if<!std::is_volatile<T>::value,
+                               typename std::remove_const<T>::type>::type;
   using InjectionType = typename std::add_pointer<ValueType>::type;
   using TransferOwnership = std::false_type;
 };
@@ -61,7 +62,8 @@ struct DependencyTraits<T*>
 template <typename T>
 struct DependencyTraits<std::unique_ptr<T>&&>
 {
-  using ValueType = typename std::remove_cv<T>::type;
+  using ValueType = typename std::enable_if<!std::is_volatile<T>::value,
+                               typename std::remove_const<T>::type>::type;
   using InjectionType = std::unique_ptr<ValueType>;
   using TransferOwnership = std::true_type;
 };

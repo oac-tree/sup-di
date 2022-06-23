@@ -10,9 +10,9 @@ std::unique_ptr<IService> CreateService()
 
 // Registered as creator with typename "Client"
 std::unique_ptr<Client> CreateClient(
-  const std::string& name, std::unique_ptr<IService>&& service)
+  const std::string* name, std::unique_ptr<IService>&& service)
 {
-  return std::unique_ptr<Client>(new Client(name, std::move(service)));
+  return std::unique_ptr<Client>(new Client(*name, std::move(service)));
 }
 
 // Registered as global function with function name "LaunchClient"
