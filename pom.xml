@@ -34,7 +34,7 @@
         <unit.type>module</unit.type>
         <integrity.level>1</integrity.level>
         <cppcheck.args>--enable=all --suppress=missingInclude --inline-suppr</cppcheck.args>
-        <sonar.exclusions>src/test/**</sonar.exclusions>
+        <sonar.exclusions>src/test/**, src/main/c++/sup-di-object-manager/**</sonar.exclusions>
     </properties>
 
     <!-- parent pom.xml -->
