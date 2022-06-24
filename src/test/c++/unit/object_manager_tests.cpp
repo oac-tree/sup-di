@@ -101,6 +101,8 @@ TEST_F(ObjectManagerTest, Decorator)
   // Call global functions
   EXPECT_EQ(object_manager.CallGlobalFunction(HelloTestName, {HelloPrinterInstanceName}),
     ErrorCode::kSuccess);
+  EXPECT_EQ(object_manager.CallGlobalFunction(HelloTestName, {PrinterDecoratorInstanceName}),
+    ErrorCode::kGlobalFunctionFailed);
   EXPECT_EQ(object_manager.CallGlobalFunction(DecoratorHelloTestName,
                                                 {PrinterDecoratorInstanceName}),
     ErrorCode::kSuccess);
