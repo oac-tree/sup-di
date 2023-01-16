@@ -2,8 +2,6 @@ cmake_minimum_required(VERSION 3.5)
 
 project(SUP-DI-PROJECT VERSION 0.1.0)
 
-set(TARGET_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
-
 option(COVERAGE "Generate unit test coverage information" FALSE)
 option(SUP_DI_EXPORT_BUILDTREE "Export build tree in /home/user/.cmake registry" OFF)
 
