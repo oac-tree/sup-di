@@ -1,20 +1,16 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(sup-di-project VERSION 0.1.0)
-
-set(LIBVERSION ${CMAKE_PROJECT_VERSION})
-set(LIBSOVERSION ${CMAKE_PROJECT_VERSION_MAJOR})
-set(CMAKE_BUILD_TYPE "RelWithDebInfo")
+project(SUP-DI-PROJECT VERSION 0.1.0)
 
 set(TARGET_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${TARGET_DIRECTORY}/lib)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${TARGET_DIRECTORY}/lib)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${TARGET_DIRECTORY}/bin)
-
-file(MAKE_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
-file(MAKE_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 
 option(COVERAGE "Generate unit test coverage information" FALSE)
+option(SUP_DI_EXPORT_BUILDTREE "Export build tree in /home/user/.cmake registry" OFF)
+
+set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/../src/cmake)
+include(configuration)
 
 add_subdirectory(main/c++)
 add_subdirectory(test/c++)
+
+include(installation)

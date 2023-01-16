@@ -1,0 +1,15 @@
+#  SUP_DI_INCLUDE_DIRS - include directories
+#  SUP_DI_LIBRARIES    - libraries to link against
+
+get_filename_component(SUP_DI_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+
+if(TARGET sup-di::sup-di)
+else()
+  message(STATUS "sup-di-config.cmake including ${SUP_DI_CMAKE_DIR}/sup-di-targets.cmake")
+  include("${SUP_DI_CMAKE_DIR}/sup-di-targets.cmake")
+endif()
+
+set(SUP_DI_LIBRARIES sup-di::sup-di)
+
+message(STATUS "sup-di-config.cmake in ${CMAKE_CURRENT_LIST_FILE}")
+message(STATUS "SUP_DI_LIBRARIES ${SUP_DI_LIBRARIES}")
