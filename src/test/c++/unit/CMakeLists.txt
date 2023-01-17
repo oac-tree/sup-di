@@ -1,7 +1,5 @@
 add_executable(unit-tests)
 
-configure_file(${CMAKE_CURRENT_LIST_DIR}/test_config.h.in ${SUP_DI_AUTOGEN_DIR}/test_config.h @ONLY)
-
 target_sources(unit-tests
     PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/object_manager_tests.cpp

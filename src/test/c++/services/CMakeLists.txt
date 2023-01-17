@@ -1,5 +1,7 @@
 add_library(sup-di-testservices SHARED)
 
+configure_file(${CMAKE_CURRENT_LIST_DIR}/test_config.h.in ${SUP_DI_AUTOGEN_DIR}/test_config.h @ONLY)
+
 set_target_properties(sup-di-testservices PROPERTIES
     VERSION ${LIBVERSION}
     SOVERSION ${LIBSOVERSION}
