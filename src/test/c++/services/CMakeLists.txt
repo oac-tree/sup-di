@@ -22,6 +22,3 @@ target_link_libraries(sup-di-testservices
     PRIVATE
         sup-di
 )
-
-install(TARGETS sup-di-testservices LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
-set_target_properties(sup-di-testservices PROPERTIES EXPORT_NAME sup-di-testservices)
