@@ -19,34 +19,23 @@
  * of the distribution package.
  ******************************************************************************/
 
-#ifndef SUP_DI_COMPOSER_UTILS_H_
-#define SUP_DI_COMPOSER_UTILS_H_
+#ifndef SUP_DI_COMPOSER_OBJECT_COMPOSER_H_
+#define SUP_DI_COMPOSER_OBJECT_COMPOSER_H_
 
 #include <sup/xml/tree_data.h>
-
-#include <memory>
-#include <string>
 
 namespace sup
 {
 namespace di
 {
-
-std::unique_ptr<sup::xml::TreeData> ComposerTreeFromFile(const std::string& filename);
-
-std::unique_ptr<sup::xml::TreeData> ComposerTreeFromString(const std::string& representation);
-
-void ExecuteComposerTree(const sup::xml::TreeData& tree);
-
 namespace utils
 {
-void LoadLibrary(const std::string& library_name);
 
-void CreateStringInstance(const sup::xml::TreeData& instance_tree);
+void ValidateLoadLibraryTree(const sup::xml::TreeData& load_library_tree);
 
-void CreateInstance(const sup::xml::TreeData& instance_tree);
+void ValidateComposerTree(const sup::xml::TreeData& composer_tree);
 
-void CallFunction(const sup::xml::TreeData& instance_tree);
+void ExecuteComposerTree(const sup::xml::TreeData& composer_tree);
 
 }  // namespace utils
 
@@ -54,4 +43,4 @@ void CallFunction(const sup::xml::TreeData& instance_tree);
 
 }  // namespace sup
 
-#endif  // SUP_DI_COMPOSER_UTILS_H_
+#endif  // SUP_DI_COMPOSER_OBJECT_COMPOSER_H_

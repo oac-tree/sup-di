@@ -22,7 +22,6 @@
 #include "global_function.h"
 
 #include "constants.h"
-#include "exceptions.h"
 #include "tree_extract.h"
 
 #include <sup/xml/tree_data_validate.h>

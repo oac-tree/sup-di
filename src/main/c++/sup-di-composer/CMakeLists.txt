@@ -13,6 +13,7 @@ target_sources(sup-di-composer
         ${CMAKE_CURRENT_LIST_DIR}/global_function.cpp
         ${CMAKE_CURRENT_LIST_DIR}/instances.cpp
         ${CMAKE_CURRENT_LIST_DIR}/main.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/object_composer.cpp
         ${CMAKE_CURRENT_LIST_DIR}/tree_extract.cpp
         ${CMAKE_CURRENT_LIST_DIR}/utils.cpp
 )

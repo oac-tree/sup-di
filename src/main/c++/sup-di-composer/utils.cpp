@@ -48,11 +48,6 @@ void ExecuteComposerTree(const sup::xml::TreeData& tree)
 
 namespace utils
 {
-void ValidateComposerTree(const sup::xml::TreeData& tree)
-{
-  (void)tree;
-}
-
 void LoadLibrary(const std::string& library_name)
 {
   if (library_name.empty())
