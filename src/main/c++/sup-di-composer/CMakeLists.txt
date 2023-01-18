@@ -10,6 +10,7 @@ target_include_directories(sup-di-composer
 target_sources(sup-di-composer
     PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/exceptions.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/instances.cpp
         ${CMAKE_CURRENT_LIST_DIR}/main.cpp
         ${CMAKE_CURRENT_LIST_DIR}/utils.cpp
 )

@@ -19,34 +19,37 @@
  * of the distribution package.
  ******************************************************************************/
 
-#include "exceptions.h"
+#ifndef SUP_DI_COMPOSER_INSTANCES_H_
+#define SUP_DI_COMPOSER_INSTANCES_H_
+
+#include <sup/xml/tree_data.h>
+
+#include <vector>
 
 namespace sup
 {
 namespace di
 {
-
-MessageException::MessageException(std::string message)
-  : m_message{std::move(message)}
-{}
-
-const char* MessageException::what() const noexcept
+namespace utils
 {
-  return m_message.c_str();
-}
 
-ParseException::ParseException(const std::string& message)
-  : MessageException{message}
-{}
+struct InstanceDefinition
+{
+public:
+  InstanceDefinition();
+  std::string m_type_name;
+  std::string m_instance_name;
+  std::vector<std::string> m_dependencies;
+};
 
-InvalidOperationException::InvalidOperationException(const std::string& message)
-  : MessageException{message}
-{}
+void ValidateInstanceTree(const sup::xml::TreeData& instance_tree);
 
-RuntimeException::RuntimeException(const std::string& message)
-  : MessageException{message}
-{}
+InstanceDefinition ParseInstanceDefinition(const sup::xml::TreeData& instance_tree);
+
+}  // namespace utils
 
 }  // namespace di
 
 }  // namespace sup
+
+#endif  // SUP_DI_COMPOSER_INSTANCES_H_
