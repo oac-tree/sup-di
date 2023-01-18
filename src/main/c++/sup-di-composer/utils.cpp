@@ -20,14 +20,15 @@
  ******************************************************************************/
 
 #include "utils.h"
+#include "exceptions.h"
 
 #include <sup/xml/tree_data_parser.h>
+
+#include <dlfcn.h>
 
 namespace sup
 {
 namespace di
-{
-namespace utils
 {
 
 std::unique_ptr<sup::xml::TreeData> ComposerTreeFromFile(const std::string& filename)
@@ -43,6 +44,45 @@ std::unique_ptr<sup::xml::TreeData> ComposerTreeFromString(const std::string& re
 void ExecuteComposerTree(const sup::xml::TreeData& tree)
 {
   (void)tree;
+}
+
+namespace utils
+{
+void ValidateComposerTree(const sup::xml::TreeData& tree)
+{
+  (void)tree;
+}
+
+void LoadLibrary(const std::string& library_name)
+{
+  if (library_name.empty())
+  {
+    std::string error_message =
+      "sup::di::utils::LoadLibrary(): trying to load library with empty name";
+    throw InvalidOperationException(error_message);
+  }
+  auto handle = dlopen(library_name.c_str(), RTLD_NOW);
+  if (handle == nullptr)
+  {
+    std::string error_message =
+    "sup::di::utils::LoadLibrary(): could not load library with name [" + library_name + "]";
+    throw RuntimeException(error_message);
+  }
+}
+
+void CreateStringInstance(const sup::xml::TreeData& instance_tree)
+{
+  (void)instance_tree;
+}
+
+void CreateInstance(const sup::xml::TreeData& instance_tree)
+{
+  (void)instance_tree;
+}
+
+void CallFunction(const sup::xml::TreeData& function_tree)
+{
+  (void)function_tree;
 }
 
 }  // namespace utils

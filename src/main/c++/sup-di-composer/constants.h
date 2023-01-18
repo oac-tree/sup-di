@@ -19,41 +19,37 @@
  * of the distribution package.
  ******************************************************************************/
 
-#ifndef SUP_DI_COMPOSER_UTILS_H_
-#define SUP_DI_COMPOSER_UTILS_H_
+#ifndef SUP_DI_COMPOSER_CONSTANTS_H_
+#define SUP_DI_COMPOSER_CONSTANTS_H_
 
-#include <sup/xml/tree_data.h>
-
-#include <memory>
 #include <string>
 
 namespace sup
 {
 namespace di
 {
-
-std::unique_ptr<sup::xml::TreeData> ComposerTreeFromFile(const std::string& filename);
-
-std::unique_ptr<sup::xml::TreeData> ComposerTreeFromString(const std::string& representation);
-
-void ExecuteComposerTree(const sup::xml::TreeData& tree);
-
-namespace utils
+namespace constants
 {
-void ValidateComposerTree(const sup::xml::TreeData& tree);
 
-void LoadLibrary(const std::string& library_name);
+// XML tags
+const std::string OBJECT_COMPOSER_TAG = "ObjectComposer";
+const std::string LOAD_LIBRARY_TAG = "LoadLibrary";
 
-void CreateStringInstance(const sup::xml::TreeData& instance_tree);
+const std::string CREATE_INSTANCE_TAG = "Instance";
+const std::string TYPE_NAME_TAG = "TypeName";
+const std::string INSTANCE_NAME_TAG = "InstanceName";
+const std::string DEPENDENCY_TAG = "Dependency";
 
-void CreateInstance(const sup::xml::TreeData& instance_tree);
+const std::string STRING_INSTANCE_TAG = "StringInstance";
+const std::string VALUE_TAG = "Value";
 
-void CallFunction(const sup::xml::TreeData& instance_tree);
+const std::string CALL_FUNCTION_TAG = "CallFunction";
+const std::string FUNCTION_NAME_TAG = "FunctionName";
 
-}  // namespace utils
+}  // namespace constants
 
 }  // namespace di
 
 }  // namespace sup
 
-#endif  // SUP_DI_COMPOSER_UTILS_H_
+#endif  // SUP_DI_COMPOSER_CONSTANTS_H_

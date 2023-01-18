@@ -19,41 +19,34 @@
  * of the distribution package.
  ******************************************************************************/
 
-#ifndef SUP_DI_COMPOSER_UTILS_H_
-#define SUP_DI_COMPOSER_UTILS_H_
-
-#include <sup/xml/tree_data.h>
-
-#include <memory>
-#include <string>
+#include "exceptions.h"
 
 namespace sup
 {
 namespace di
 {
 
-std::unique_ptr<sup::xml::TreeData> ComposerTreeFromFile(const std::string& filename);
+MessageException::MessageException(std::string message)
+  : m_message{std::move(message)}
+{}
 
-std::unique_ptr<sup::xml::TreeData> ComposerTreeFromString(const std::string& representation);
-
-void ExecuteComposerTree(const sup::xml::TreeData& tree);
-
-namespace utils
+const char* MessageException::what() const noexcept
 {
-void ValidateComposerTree(const sup::xml::TreeData& tree);
+  return m_message.c_str();
+}
 
-void LoadLibrary(const std::string& library_name);
+RuntimeException::RuntimeException(const std::string& message)
+  : MessageException{message}
+{}
 
-void CreateStringInstance(const sup::xml::TreeData& instance_tree);
+InvalidOperationException::InvalidOperationException(const std::string& message)
+  : MessageException{message}
+{}
 
-void CreateInstance(const sup::xml::TreeData& instance_tree);
-
-void CallFunction(const sup::xml::TreeData& instance_tree);
-
-}  // namespace utils
+ParseException::ParseException(const std::string& message)
+  : MessageException{message}
+{}
 
 }  // namespace di
 
 }  // namespace sup
-
-#endif  // SUP_DI_COMPOSER_UTILS_H_
