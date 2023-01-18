@@ -19,33 +19,31 @@
  * of the distribution package.
  ******************************************************************************/
 
-#include "sup/di/type_string_list.h"
+#ifndef SUP_DI_COMPOSER_UTILS_H_
+#define SUP_DI_COMPOSER_UTILS_H_
 
-#include <gtest/gtest.h>
+#include <sup/xml/tree_data.h>
 
-#include <type_traits>
+#include <memory>
+#include <string>
 
-using namespace sup::di::internal;
-
-class TypeStringListTest : public ::testing::Test
+namespace sup
 {
-protected:
-  TypeStringListTest();
-  virtual ~TypeStringListTest();
-
-  TypeStringList<int, std::string> type_string_list;
-};
-
-TEST_F(TypeStringListTest, MemberFunctions)
+namespace di
 {
-  EXPECT_EQ(type_string_list.IndexedString(0), "int");
-  EXPECT_EQ(type_string_list.IndexedString(1), "std::string");
-  EXPECT_TRUE((std::is_same<int, decltype(type_string_list)::IndexedType<0>>::value));
-  EXPECT_TRUE((std::is_same<std::string, decltype(type_string_list)::IndexedType<1>>::value));
-}
+namespace utils
+{
 
-TypeStringListTest::TypeStringListTest()
-  : type_string_list({"int", "std::string"})
-{}
+std::unique_ptr<sup::xml::TreeData> ComposerTreeFromFile(const std::string& filename);
 
-TypeStringListTest::~TypeStringListTest() = default;
+std::unique_ptr<sup::xml::TreeData> ComposerTreeFromString(const std::string& representation);
+
+void ExecuteComposerTree(const sup::xml::TreeData& tree);
+
+}  // namespace utils
+
+}  // namespace di
+
+}  // namespace sup
+
+#endif  // SUP_DI_COMPOSER_UTILS_H_
