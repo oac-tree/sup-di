@@ -19,12 +19,9 @@
  * of the distribution package.
  ******************************************************************************/
 
-#ifndef SUP_DI_COMPOSER_INSTANCES_H_
-#define SUP_DI_COMPOSER_INSTANCES_H_
+#include "tree_extract.h"
 
-#include <sup/xml/tree_data.h>
-
-#include <vector>
+#include "exceptions.h"
 
 namespace sup
 {
@@ -33,30 +30,29 @@ namespace di
 namespace utils
 {
 
-struct InstanceDefinition
+void SetFromTreeNodeContent(std::string& dest, const sup::xml::TreeData& tree)
 {
-public:
-  InstanceDefinition();
-  std::string m_type_name;
-  std::string m_instance_name;
-  std::vector<std::string> m_dependencies;
-};
+  auto content = tree.GetContent();
+  if (content.empty())
+  {
+    std::string error_message = "SetFromTreeNodeContent(): content of tag [" +
+      tree.GetNodeName() + "] must not be empty";
+    throw sup::di::ParseException(error_message);
+  }
+  dest = content;
+}
 
-struct StringInstanceDefinition
+void AppendFromTreeNodeContent(std::vector<std::string>& dest, const sup::xml::TreeData& tree)
 {
-public:
-  StringInstanceDefinition();
-  std::string m_instance_name;
-  std::string m_value;
-};
-
-void ValidateInstanceTree(const sup::xml::TreeData& instance_tree);
-
-void ValidateStringInstanceTree(const sup::xml::TreeData& instance_tree);
-
-InstanceDefinition ParseInstanceDefinition(const sup::xml::TreeData& instance_tree);
-
-StringInstanceDefinition ParseStringInstanceDefinition(const sup::xml::TreeData& instance_tree);
+  auto content = tree.GetContent();
+  if (content.empty())
+  {
+    std::string error_message = "AppendFromTreeNodeContent: content of tag [" +
+       tree.GetNodeName() + "] must not be empty";
+    throw sup::di::ParseException(error_message);
+  }
+  dest.push_back(content);
+}
 
 }  // namespace utils
 
@@ -64,4 +60,3 @@ StringInstanceDefinition ParseStringInstanceDefinition(const sup::xml::TreeData&
 
 }  // namespace sup
 
-#endif  // SUP_DI_COMPOSER_INSTANCES_H_

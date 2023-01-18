@@ -23,22 +23,9 @@
 
 #include "constants.h"
 #include "exceptions.h"
+#include "tree_extract.h"
 
 #include <sup/xml/tree_data_validate.h>
-
-#include <algorithm>
-
-namespace
-{
-
-void SetTypeNameOfInstance(sup::di::utils::InstanceDefinition& instance_def,
-                           const sup::xml::TreeData& type_tree);
-void SetInstanceNameOfInstance(sup::di::utils::InstanceDefinition& instance_def,
-                               const sup::xml::TreeData& name_tree);
-void AddDependencyOfInstance(sup::di::utils::InstanceDefinition& instance_def,
-                             const sup::xml::TreeData& dep_tree);
-
-}  // unnamed namespace
 
 namespace sup
 {
@@ -51,6 +38,11 @@ InstanceDefinition::InstanceDefinition()
   : m_type_name{}
   , m_instance_name{}
   , m_dependencies{}
+{}
+
+StringInstanceDefinition::StringInstanceDefinition()
+  : m_instance_name{}
+  , m_value{}
 {}
 
 void ValidateInstanceTree(const sup::xml::TreeData& instance_tree)
@@ -68,6 +60,21 @@ void ValidateInstanceTree(const sup::xml::TreeData& instance_tree)
   }
 }
 
+void ValidateStringInstanceTree(const sup::xml::TreeData& instance_tree)
+{
+  sup::xml::ValidateNoContent(instance_tree);
+  sup::xml::ValidateNoAttributes(instance_tree);
+  sup::xml::ValidateAllowedChildTags(instance_tree,
+    { constants::INSTANCE_NAME_TAG, constants::VALUE_TAG });
+  sup::xml::ValidateSingleChildWithTag(instance_tree, constants::INSTANCE_NAME_TAG);
+  sup::xml::ValidateSingleChildWithTag(instance_tree, constants::VALUE_TAG);
+  for (const auto& child : instance_tree.Children())
+  {
+    sup::xml::ValidateNoAttributes(child);
+    sup::xml::ValidateNoChildren(child);
+  }
+}
+
 InstanceDefinition ParseInstanceDefinition(const sup::xml::TreeData& instance_tree)
 {
   InstanceDefinition result;
@@ -76,15 +83,33 @@ InstanceDefinition ParseInstanceDefinition(const sup::xml::TreeData& instance_tr
     auto nodename = child.GetNodeName();
     if (nodename == constants::TYPE_NAME_TAG)
     {
-      SetTypeNameOfInstance(result, child);
+      SetFromTreeNodeContent(result.m_type_name, child);
     }
     else if (nodename == constants::INSTANCE_NAME_TAG)
     {
-      SetInstanceNameOfInstance(result, child);
+      SetFromTreeNodeContent(result.m_instance_name, child);
     }
     else if (nodename == constants::DEPENDENCY_TAG)
     {
-      AddDependencyOfInstance(result, child);
+      AppendFromTreeNodeContent(result.m_dependencies, child);
+    }
+  }
+  return result;
+}
+
+StringInstanceDefinition ParseStringInstanceDefinition(const sup::xml::TreeData& instance_tree)
+{
+  StringInstanceDefinition result;
+  for (const auto& child : instance_tree.Children())
+  {
+    auto nodename = child.GetNodeName();
+    if (nodename == constants::INSTANCE_NAME_TAG)
+    {
+      SetFromTreeNodeContent(result.m_instance_name, child);
+    }
+    else if (nodename == constants::VALUE_TAG)
+    {
+      SetFromTreeNodeContent(result.m_value, child);
     }
   }
   return result;
@@ -95,49 +120,3 @@ InstanceDefinition ParseInstanceDefinition(const sup::xml::TreeData& instance_tr
 }  // namespace di
 
 }  // namespace sup
-
-namespace
-{
-void SetTypeNameOfInstance(sup::di::utils::InstanceDefinition& instance_def,
-                           const sup::xml::TreeData& type_tree)
-{
-  auto instance_type = type_tree.GetContent();
-  if (instance_type.empty())
-  {
-    std::string error_message =
-      "sup::di::utils::SetTypeNameOfInstance(): content of tag [" +
-      sup::di::constants::TYPE_NAME_TAG + "] must not be empty";
-    throw sup::di::ParseException(error_message);
-  }
-  instance_def.m_type_name = instance_type;
-}
-
-void SetInstanceNameOfInstance(sup::di::utils::InstanceDefinition& instance_def,
-                               const sup::xml::TreeData& name_tree)
-{
-  auto instance_name = name_tree.GetContent();
-  if (instance_name.empty())
-  {
-    std::string error_message =
-      "sup::di::utils::SetInstanceNameOfInstance(): content of tag [" +
-      sup::di::constants::INSTANCE_NAME_TAG +"] must not be empty";
-    throw sup::di::ParseException(error_message);
-  }
-  instance_def.m_instance_name = instance_name;
-}
-
-void AddDependencyOfInstance(sup::di::utils::InstanceDefinition& instance_def,
-                             const sup::xml::TreeData& dep_tree)
-{
-  auto dependency_name = dep_tree.GetContent();
-  if (dependency_name.empty())
-  {
-    std::string error_message =
-      "sup::di::utils::AddDependencyOfInstance(): content of tag [" +
-       sup::di::constants::DEPENDENCY_TAG + "] must not be empty";
-    throw sup::di::ParseException(error_message);
-  }
-  instance_def.m_dependencies.push_back(dependency_name);
-}
-
-}  // unnamed namespace

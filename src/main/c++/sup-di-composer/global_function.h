@@ -19,8 +19,8 @@
  * of the distribution package.
  ******************************************************************************/
 
-#ifndef SUP_DI_COMPOSER_INSTANCES_H_
-#define SUP_DI_COMPOSER_INSTANCES_H_
+#ifndef SUP_DI_COMPOSER_GLOBAL_FUNCTION_H_
+#define SUP_DI_COMPOSER_GLOBAL_FUNCTION_H_
 
 #include <sup/xml/tree_data.h>
 
@@ -33,30 +33,17 @@ namespace di
 namespace utils
 {
 
-struct InstanceDefinition
+struct FunctionDefinition
 {
 public:
-  InstanceDefinition();
-  std::string m_type_name;
-  std::string m_instance_name;
+  FunctionDefinition();
+  std::string m_function_name;
   std::vector<std::string> m_dependencies;
 };
 
-struct StringInstanceDefinition
-{
-public:
-  StringInstanceDefinition();
-  std::string m_instance_name;
-  std::string m_value;
-};
+void ValidateFunctionTree(const sup::xml::TreeData& function_tree);
 
-void ValidateInstanceTree(const sup::xml::TreeData& instance_tree);
-
-void ValidateStringInstanceTree(const sup::xml::TreeData& instance_tree);
-
-InstanceDefinition ParseInstanceDefinition(const sup::xml::TreeData& instance_tree);
-
-StringInstanceDefinition ParseStringInstanceDefinition(const sup::xml::TreeData& instance_tree);
+FunctionDefinition ParseFunctionDefinition(const sup::xml::TreeData& function_tree);
 
 }  // namespace utils
 
@@ -64,4 +51,4 @@ StringInstanceDefinition ParseStringInstanceDefinition(const sup::xml::TreeData&
 
 }  // namespace sup
 
-#endif  // SUP_DI_COMPOSER_INSTANCES_H_
+#endif  // SUP_DI_COMPOSER_GLOBAL_FUNCTION_H_
