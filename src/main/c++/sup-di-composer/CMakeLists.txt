@@ -16,3 +16,12 @@ target_link_libraries(sup-di-composer
     PRIVATE
         sup-di
 )
+
+if (SUP_DI_CODAC)
+  target_include_directories(sup-di-composer PUBLIC $ENV{CODAC_ROOT}/include)
+  target_link_directories(sup-di-composer PUBLIC $ENV{CODAC_ROOT}/lib)
+  target_link_libraries(sup-di-composer PRIVATE sup-xml)
+else()
+  find_package(sup-utils REQUIRED)
+  target_link_libraries(sup-di-composer PRIVATE sup-utils::sup-xml)
+endif()
