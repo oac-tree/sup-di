@@ -11,6 +11,7 @@ target_sources(sup-di-composer
     PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/exceptions.cpp
         ${CMAKE_CURRENT_LIST_DIR}/global_function.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/i_composer_element.cpp
         ${CMAKE_CURRENT_LIST_DIR}/instances.cpp
         ${CMAKE_CURRENT_LIST_DIR}/main.cpp
         ${CMAKE_CURRENT_LIST_DIR}/object_composer.cpp

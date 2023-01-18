@@ -19,37 +19,30 @@
  * of the distribution package.
  ******************************************************************************/
 
-#ifndef SUP_DI_COMPOSER_GLOBAL_FUNCTION_H_
-#define SUP_DI_COMPOSER_GLOBAL_FUNCTION_H_
-
-#include "i_composer_element.h"
+#ifndef SUP_DI_COMPOSER_I_COMPOSER_ELEMENT_H_
+#define SUP_DI_COMPOSER_I_COMPOSER_ELEMENT_H_
 
 #include <sup/xml/tree_data.h>
 
-#include <vector>
+#include <memory>
 
 namespace sup
 {
 namespace di
 {
 
-class FunctionElement : public IComposerElement
+class IComposerElement
 {
 public:
-  FunctionElement(const sup::xml::TreeData& function_tree);
-  ~FunctionElement();
+  virtual ~IComposerElement();
 
-  void Execute() override;
-
-private:
-  std::string m_function_name;
-  std::vector<std::string> m_dependencies;
+  virtual void Execute() = 0;
 };
 
-void ValidateFunctionTree(const sup::xml::TreeData& function_tree);
+std::unique_ptr<IComposerElement> CreateComposerElement(const sup::xml::TreeData& tree);
 
 }  // namespace di
 
 }  // namespace sup
 
-#endif  // SUP_DI_COMPOSER_GLOBAL_FUNCTION_H_
+#endif  // SUP_DI_COMPOSER_I_COMPOSER_ELEMENT_H_

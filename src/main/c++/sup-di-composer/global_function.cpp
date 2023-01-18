@@ -30,12 +30,29 @@ namespace sup
 {
 namespace di
 {
-namespace utils
-{
 
-FunctionDefinition::FunctionDefinition()
+FunctionElement::FunctionElement(const sup::xml::TreeData& function_tree)
   : m_function_name{}
   , m_dependencies{}
+{
+  ValidateFunctionTree(function_tree);
+  for (const auto& child : function_tree.Children())
+  {
+    auto nodename = child.GetNodeName();
+    if (nodename == constants::FUNCTION_NAME_TAG)
+    {
+      utils::SetFromTreeNodeContent(m_function_name, child);
+    }
+    else if (nodename == constants::DEPENDENCY_TAG)
+    {
+      utils::AppendFromTreeNodeContent(m_dependencies, child);
+    }
+  }
+}
+
+FunctionElement::~FunctionElement() = default;
+
+void FunctionElement::Execute()
 {}
 
 void ValidateFunctionTree(const sup::xml::TreeData& function_tree)
@@ -51,26 +68,6 @@ void ValidateFunctionTree(const sup::xml::TreeData& function_tree)
     sup::xml::ValidateNoChildren(child);
   }
 }
-
-FunctionDefinition ParseFunctionDefinition(const sup::xml::TreeData& function_tree)
-{
-  FunctionDefinition result;
-  for (const auto& child : function_tree.Children())
-  {
-    auto nodename = child.GetNodeName();
-    if (nodename == constants::FUNCTION_NAME_TAG)
-    {
-      SetFromTreeNodeContent(result.m_function_name, child);
-    }
-    else if (nodename == constants::DEPENDENCY_TAG)
-    {
-      AppendFromTreeNodeContent(result.m_dependencies, child);
-    }
-  }
-  return result;
-}
-
-}  // namespace utils
 
 }  // namespace di
 
