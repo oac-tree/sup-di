@@ -1,5 +1,7 @@
 add_executable(unit-tests)
 
+target_compile_features(sup-di-testservices PRIVATE cxx_std_11)
+
 target_sources(unit-tests
     PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/object_manager_tests.cpp
