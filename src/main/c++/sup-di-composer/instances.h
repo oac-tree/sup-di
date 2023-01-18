@@ -22,6 +22,8 @@
 #ifndef SUP_DI_COMPOSER_INSTANCES_H_
 #define SUP_DI_COMPOSER_INSTANCES_H_
 
+#include "i_composer_element.h"
+
 #include <sup/xml/tree_data.h>
 
 #include <vector>
@@ -30,13 +32,16 @@ namespace sup
 {
 namespace di
 {
-namespace utils
-{
 
-struct InstanceDefinition
+class InstanceElement : public IComposerElement
 {
 public:
-  InstanceDefinition();
+  InstanceElement(const sup::xml::TreeData& instance_tree);
+  ~InstanceElement();
+
+  void Execute() override;
+
+private:
   std::string m_type_name;
   std::string m_instance_name;
   std::vector<std::string> m_dependencies;
@@ -54,11 +59,7 @@ void ValidateInstanceTree(const sup::xml::TreeData& instance_tree);
 
 void ValidateStringInstanceTree(const sup::xml::TreeData& instance_tree);
 
-InstanceDefinition ParseInstanceDefinition(const sup::xml::TreeData& instance_tree);
-
 StringInstanceDefinition ParseStringInstanceDefinition(const sup::xml::TreeData& instance_tree);
-
-}  // namespace utils
 
 }  // namespace di
 

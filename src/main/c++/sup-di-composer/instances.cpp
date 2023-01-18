@@ -30,13 +30,34 @@ namespace sup
 {
 namespace di
 {
-namespace utils
-{
 
-InstanceDefinition::InstanceDefinition()
+InstanceElement::InstanceElement(const sup::xml::TreeData& instance_tree)
   : m_type_name{}
   , m_instance_name{}
   , m_dependencies{}
+{
+  ValidateInstanceTree(instance_tree);
+  for (const auto& child : instance_tree.Children())
+  {
+    auto nodename = child.GetNodeName();
+    if (nodename == constants::TYPE_NAME_TAG)
+    {
+      utils::SetFromTreeNodeContent(m_type_name, child);
+    }
+    else if (nodename == constants::INSTANCE_NAME_TAG)
+    {
+      utils::SetFromTreeNodeContent(m_instance_name, child);
+    }
+    else if (nodename == constants::DEPENDENCY_TAG)
+    {
+      utils::AppendFromTreeNodeContent(m_dependencies, child);
+    }
+  }
+}
+
+InstanceElement::~InstanceElement() = default;
+
+void InstanceElement::Execute()
 {}
 
 StringInstanceDefinition::StringInstanceDefinition()
@@ -74,28 +95,6 @@ void ValidateStringInstanceTree(const sup::xml::TreeData& instance_tree)
   }
 }
 
-InstanceDefinition ParseInstanceDefinition(const sup::xml::TreeData& instance_tree)
-{
-  InstanceDefinition result;
-  for (const auto& child : instance_tree.Children())
-  {
-    auto nodename = child.GetNodeName();
-    if (nodename == constants::TYPE_NAME_TAG)
-    {
-      SetFromTreeNodeContent(result.m_type_name, child);
-    }
-    else if (nodename == constants::INSTANCE_NAME_TAG)
-    {
-      SetFromTreeNodeContent(result.m_instance_name, child);
-    }
-    else if (nodename == constants::DEPENDENCY_TAG)
-    {
-      AppendFromTreeNodeContent(result.m_dependencies, child);
-    }
-  }
-  return result;
-}
-
 StringInstanceDefinition ParseStringInstanceDefinition(const sup::xml::TreeData& instance_tree)
 {
   StringInstanceDefinition result;
@@ -104,17 +103,15 @@ StringInstanceDefinition ParseStringInstanceDefinition(const sup::xml::TreeData&
     auto nodename = child.GetNodeName();
     if (nodename == constants::INSTANCE_NAME_TAG)
     {
-      SetFromTreeNodeContent(result.m_instance_name, child);
+      utils::SetFromTreeNodeContent(result.m_instance_name, child);
     }
     else if (nodename == constants::VALUE_TAG)
     {
-      SetFromTreeNodeContent(result.m_value, child);
+      utils::SetFromTreeNodeContent(result.m_value, child);
     }
   }
   return result;
 }
-
-}  // namespace utils
 
 }  // namespace di
 
