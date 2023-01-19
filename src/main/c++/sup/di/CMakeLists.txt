@@ -15,7 +15,8 @@ target_include_directories(sup-di PUBLIC
 
 target_sources(sup-di
   PRIVATE
-      ${CMAKE_CURRENT_LIST_DIR}/object_manager.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/error_codes.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/object_manager.cpp
 )
 
 # -- Installation --

@@ -1,6 +1,6 @@
 add_executable(unit-tests)
 
-target_compile_features(sup-di-testservices PRIVATE cxx_std_11)
+target_compile_features(unit-tests PRIVATE cxx_std_11)
 
 target_sources(unit-tests
     PRIVATE

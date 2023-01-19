@@ -19,31 +19,24 @@
  * of the distribution package.
  ******************************************************************************/
 
-#ifndef SUP_DI_ERROR_CODES_H_
-#define SUP_DI_ERROR_CODES_H_
+#include "services.h"
 
-#include <string>
+#include <iostream>
 
-namespace sup
+Client::Client(const std::string& name, std::unique_ptr<IService>&& service)
+  : m_name{name}
+  , m_service{std::move(service)}
+{}
+
+void Client::Launch()
 {
-namespace di
+  std::cout << "Client with name [" << m_name << "] launched." << std::endl;
+  std::cout << "  Injected service type: [" << m_service->GetServiceType() << "]" << std::endl;
+}
+
+Service::Service() = default;
+
+std::string Service::GetServiceType() const
 {
-
-enum class ErrorCode
-{
-  kSuccess = 0,
-  kFactoryFunctionNotFound,
-  kGlobalFunctionNotFound,
-  kDependencyNotFound,
-  kWrongNumberOfDependencies,
-  kInvalidInstanceName,
-  kGlobalFunctionFailed
-};
-
-std::string ErrorString(const ErrorCode& code);
-
-}  // namespace di
-
-}  // namespace sup
-
-#endif  // SUP_DI_ERROR_CODES_H_
+  return "CustomService";
+}

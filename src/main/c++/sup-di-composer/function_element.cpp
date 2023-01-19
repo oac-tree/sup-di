@@ -58,11 +58,11 @@ FunctionElement::~FunctionElement() = default;
 void FunctionElement::Execute()
 {
   auto& global_object_manager = GlobalObjectManager();
-  if (global_object_manager.CallGlobalFunction(m_function_name, m_dependencies) !=
-      ErrorCode::kSuccess)
+  auto result = global_object_manager.CallGlobalFunction(m_function_name, m_dependencies);
+  if ( result != ErrorCode::kSuccess)
   {
     std::string error_message = "FunctionElement::Execute(): calling function with name [" +
-      m_function_name + "] failed";
+      m_function_name + "] failed with error [" + ErrorString(result) + "]";
     throw sup::di::RuntimeException(error_message);
   }
 }

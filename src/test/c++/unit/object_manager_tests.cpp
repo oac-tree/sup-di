@@ -115,6 +115,18 @@ TEST_F(ObjectManagerTest, Decorator)
   EXPECT_EQ(print_service->Print(), DecoratedPrefix + HelloWorld);
 }
 
+TEST_F(ObjectManagerTest, RegisterString)
+{
+  // Register a string instance
+  std::string instance_name = "StringInstanceName";
+  std::string instance_value = "StringValue";
+  std::unique_ptr<std::string> str{new std::string(instance_value)};
+  EXPECT_TRUE(object_manager.RegisterInstance(std::move(str), instance_name));
+  auto str_ref = object_manager.GetInstance<const std::string*>(instance_name);
+  ASSERT_NE(str_ref, nullptr);
+  EXPECT_EQ(*str_ref, instance_value);
+}
+
 TEST_F(ObjectManagerTest, PassOwnership)
 {
   // Factory function registration

@@ -9,5 +9,6 @@ endif()
 set(SUP_DI_AUTOGEN_DIR ${CMAKE_BINARY_DIR}/autogen)
 file(MAKE_DIRECTORY ${SUP_DI_AUTOGEN_DIR})
 
+add_subdirectory(service_wrapper)
 add_subdirectory(services)
 add_subdirectory(unit)

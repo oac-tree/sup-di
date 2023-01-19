@@ -19,31 +19,35 @@
  * of the distribution package.
  ******************************************************************************/
 
-#ifndef SUP_DI_ERROR_CODES_H_
-#define SUP_DI_ERROR_CODES_H_
-
+#include <memory>
 #include <string>
 
-namespace sup
+class IService
 {
-namespace di
-{
+public:
+  virtual ~IService() = default;
 
-enum class ErrorCode
-{
-  kSuccess = 0,
-  kFactoryFunctionNotFound,
-  kGlobalFunctionNotFound,
-  kDependencyNotFound,
-  kWrongNumberOfDependencies,
-  kInvalidInstanceName,
-  kGlobalFunctionFailed
+  virtual std::string GetServiceType() const = 0;
 };
 
-std::string ErrorString(const ErrorCode& code);
+class Client
+{
+public:
+  Client(const std::string& name, std::unique_ptr<IService>&& service);
+  ~Client() = default;
 
-}  // namespace di
+  void Launch();
 
-}  // namespace sup
+private:
+  std::string m_name;
+  std::unique_ptr<IService> m_service;
+};
 
-#endif  // SUP_DI_ERROR_CODES_H_
+class Service : public IService
+{
+public:
+  Service();
+  ~Service() = default;
+
+  std::string GetServiceType() const override;
+};

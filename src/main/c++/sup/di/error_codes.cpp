@@ -19,31 +19,33 @@
  * of the distribution package.
  ******************************************************************************/
 
-#ifndef SUP_DI_ERROR_CODES_H_
-#define SUP_DI_ERROR_CODES_H_
+#include "error_codes.h"
 
-#include <string>
+#include <map>
 
 namespace sup
 {
 namespace di
 {
 
-enum class ErrorCode
+std::string ErrorString(const ErrorCode& code)
 {
-  kSuccess = 0,
-  kFactoryFunctionNotFound,
-  kGlobalFunctionNotFound,
-  kDependencyNotFound,
-  kWrongNumberOfDependencies,
-  kInvalidInstanceName,
-  kGlobalFunctionFailed
-};
-
-std::string ErrorString(const ErrorCode& code);
-
+  static const std::map<ErrorCode, std::string> code_map{
+    { ErrorCode::kSuccess, "Success" },
+    { ErrorCode::kFactoryFunctionNotFound, "Factory function not found" },
+    { ErrorCode::kGlobalFunctionNotFound, "Global function not found" },
+    { ErrorCode::kDependencyNotFound, "Dependency not found" },
+    { ErrorCode::kWrongNumberOfDependencies, "Wrong number of dependencies" },
+    { ErrorCode::kInvalidInstanceName, "Invalid instance name" },
+    { ErrorCode::kGlobalFunctionFailed, "Global function failed" },
+  };
+  auto it = code_map.find(code);
+  if (it == code_map.end())
+  {
+    return "Unknown error code";
+  }
+  return it->second;
+}
 }  // namespace di
 
 }  // namespace sup
-
-#endif  // SUP_DI_ERROR_CODES_H_

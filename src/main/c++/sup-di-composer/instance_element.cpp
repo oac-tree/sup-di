@@ -63,11 +63,12 @@ InstanceElement::~InstanceElement() = default;
 void InstanceElement::Execute()
 {
   auto& global_object_manager = GlobalObjectManager();
-  if (global_object_manager.CreateInstance(m_type_name, m_instance_name, m_dependencies) !=
-      ErrorCode::kSuccess)
+  auto result = global_object_manager.CreateInstance(m_type_name, m_instance_name, m_dependencies);
+  if ( result != ErrorCode::kSuccess)
   {
     std::string error_message = "InstanceElement::Execute(): creating instance with type [" +
-      m_type_name + "] and name [" + m_instance_name + "] failed";
+      m_type_name + "] and name [" + m_instance_name + "] failed with error [" +
+      ErrorString(result) + "]";
     throw sup::di::RuntimeException(error_message);
   }
 }
