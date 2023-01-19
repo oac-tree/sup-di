@@ -19,47 +19,22 @@
  * of the distribution package.
  ******************************************************************************/
 
-#include "library_element.h"
+#ifndef SUP_DI_COMPOSER_COMPOSITION_ROOT_H_
+#define SUP_DI_COMPOSER_COMPOSITION_ROOT_H_
 
-#include "constants.h"
-#include "exceptions.h"
-#include "tree_extract.h"
-
-#include <sup/xml/tree_data_validate.h>
-
-#include <dlfcn.h>
+#include <string>
 
 namespace sup
 {
 namespace di
 {
 
-LibraryElement::LibraryElement(const sup::xml::TreeData& library_tree)
-  : m_library_name{}
-{
-  ValidateLibraryTree(library_tree);
-  utils::SetFromTreeNodeContent(m_library_name, library_tree);
-}
+void ComposeObjectTreeFromFile(const std::string& filename);
 
-LibraryElement::~LibraryElement() = default;
-
-void LibraryElement::Execute()
-{
-  auto handle = dlopen(m_library_name.c_str(), RTLD_NOW);
-  if (handle == nullptr)
-  {
-    std::string error_message =
-    "LibraryElement::Execute(): could not load library with name [" + m_library_name + "]";
-    throw RuntimeException(error_message);
-  }
-}
-
-void ValidateLibraryTree(const sup::xml::TreeData& library_tree)
-{
-  sup::xml::ValidateNoAttributes(library_tree);
-  sup::xml::ValidateNoChildren(library_tree);
-}
+void ComposeObjectTreeFromString(const std::string& representation);
 
 }  // namespace di
 
 }  // namespace sup
+
+#endif  // SUP_DI_COMPOSER_COMPOSITION_ROOT_H_

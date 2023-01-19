@@ -22,7 +22,10 @@
 #include "function_element.h"
 
 #include "constants.h"
+#include "exceptions.h"
 #include "tree_extract.h"
+
+#include <sup/di/object_manager.h>
 
 #include <sup/xml/tree_data_validate.h>
 
@@ -53,7 +56,16 @@ FunctionElement::FunctionElement(const sup::xml::TreeData& function_tree)
 FunctionElement::~FunctionElement() = default;
 
 void FunctionElement::Execute()
-{}
+{
+  auto& global_object_manager = GlobalObjectManager();
+  if (global_object_manager.CallGlobalFunction(m_function_name, m_dependencies) !=
+      ErrorCode::kSuccess)
+  {
+    std::string error_message = "FunctionElement::Execute(): calling function with name [" +
+      m_function_name + "] failed";
+    throw sup::di::RuntimeException(error_message);
+  }
+}
 
 void ValidateFunctionTree(const sup::xml::TreeData& function_tree)
 {

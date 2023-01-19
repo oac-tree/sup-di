@@ -19,39 +19,43 @@
  * of the distribution package.
  ******************************************************************************/
 
-#ifndef SUP_DI_COMPOSER_UTILS_H_
-#define SUP_DI_COMPOSER_UTILS_H_
+#include "composition_root.h"
 
-#include <sup/xml/tree_data.h>
+#include "object_composer_element.h"
 
-#include <memory>
-#include <string>
+#include <sup/xml/tree_data_parser.h>
+
+namespace
+{
+void ExecuteComposerTree(const sup::xml::TreeData& composer_tree);
+}  // unnamed namespace
 
 namespace sup
 {
 namespace di
 {
 
-std::unique_ptr<sup::xml::TreeData> ComposerTreeFromFile(const std::string& filename);
-
-std::unique_ptr<sup::xml::TreeData> ComposerTreeFromString(const std::string& representation);
-
-void ExecuteComposerTree(const sup::xml::TreeData& tree);
-
-namespace utils
+void ComposeObjectTreeFromFile(const std::string& filename)
 {
-void LoadLibrary(const std::string& library_name);
+  auto composer_tree = sup::xml::TreeDataFromFile(filename);
+  ExecuteComposerTree(*composer_tree);
+}
 
-void CreateStringInstance(const sup::xml::TreeData& instance_tree);
-
-void CreateInstance(const sup::xml::TreeData& instance_tree);
-
-void CallFunction(const sup::xml::TreeData& instance_tree);
-
-}  // namespace utils
+void ComposeObjectTreeFromString(const std::string& representation)
+{
+  auto composer_tree = sup::xml::TreeDataFromString(representation);
+  ExecuteComposerTree(*composer_tree);
+}
 
 }  // namespace di
 
 }  // namespace sup
 
-#endif  // SUP_DI_COMPOSER_UTILS_H_
+namespace
+{
+void ExecuteComposerTree(const sup::xml::TreeData& composer_tree)
+{
+  sup::di::ObjectComposerElement object_composer{composer_tree};
+  object_composer.Execute();
+}
+}  // unnamed namespace

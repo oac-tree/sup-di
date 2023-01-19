@@ -22,7 +22,10 @@
 #include "instance_element.h"
 
 #include "constants.h"
+#include "exceptions.h"
 #include "tree_extract.h"
+
+#include <sup/di/object_manager.h>
 
 #include <sup/xml/tree_data_validate.h>
 
@@ -58,7 +61,16 @@ InstanceElement::InstanceElement(const sup::xml::TreeData& instance_tree)
 InstanceElement::~InstanceElement() = default;
 
 void InstanceElement::Execute()
-{}
+{
+  auto& global_object_manager = GlobalObjectManager();
+  if (global_object_manager.CreateInstance(m_type_name, m_instance_name, m_dependencies) !=
+      ErrorCode::kSuccess)
+  {
+    std::string error_message = "InstanceElement::Execute(): creating instance with type [" +
+      m_type_name + "] and name [" + m_instance_name + "] failed";
+    throw sup::di::RuntimeException(error_message);
+  }
+}
 
 void ValidateInstanceTree(const sup::xml::TreeData& instance_tree)
 {
