@@ -19,39 +19,29 @@
  * of the distribution package.
  ******************************************************************************/
 
-#ifndef SUP_DI_COMPOSER_OBJECT_COMPOSER_ELEMENT_H_
-#define SUP_DI_COMPOSER_OBJECT_COMPOSER_ELEMENT_H_
+#ifndef SUP_DI_COMPOSER_ELEMENT_CONSTRUCTOR_MAP_H_
+#define SUP_DI_COMPOSER_ELEMENT_CONSTRUCTOR_MAP_H_
 
 #include "i_composer_element.h"
 
 #include <sup/xml/tree_data.h>
 
+#include <functional>
+#include <map>
 #include <memory>
-#include <vector>
 
 namespace sup
 {
 namespace di
 {
 
-class ObjectComposerElement : public IComposerElement
-{
-public:
-  ObjectComposerElement(const sup::xml::TreeData& composer_tree);
-  ~ObjectComposerElement();
+using ElementConstructor =
+  std::function<std::unique_ptr<IComposerElement>(const sup::xml::TreeData&)>;
 
-  void Execute() override;
-
-private:
-  std::vector<std::unique_ptr<IComposerElement>> m_elements;
-};
-
-void ValidateComposerTree(const sup::xml::TreeData& composer_tree);
-
-std::unique_ptr<IComposerElement> CreateComposerElement(const sup::xml::TreeData& child_tree);
+const std::map<std::string, ElementConstructor>& ElementConstructorMap();
 
 }  // namespace di
 
 }  // namespace sup
 
-#endif  // SUP_DI_COMPOSER_OBJECT_COMPOSER_ELEMENT_H_
+#endif  // SUP_DI_COMPOSER_ELEMENT_CONSTRUCTOR_MAP_H_
