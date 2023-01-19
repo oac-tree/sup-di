@@ -22,10 +22,8 @@
 #include "object_composer_element.h"
 
 #include "constants.h"
+#include "element_constructor_map.h"
 #include "exceptions.h"
-#include "function_element.h"
-#include "instance_element.h"
-#include "string_instance_element.h"
 
 #include <sup/xml/tree_data_validate.h>
 
@@ -40,14 +38,19 @@ ObjectComposerElement::ObjectComposerElement(const sup::xml::TreeData& composer_
   ValidateComposerTree(composer_tree);
   for (const auto& child : composer_tree.Children())
   {
-    // add IComposerElement to m_elements
+    m_elements.push_back(CreateComposerElement(child));
   }
 }
 
 ObjectComposerElement::~ObjectComposerElement() = default;
 
 void ObjectComposerElement::Execute()
-{}
+{
+  for (auto& child : m_elements)
+  {
+    child->Execute();
+  }
+}
 
 void ValidateComposerTree(const sup::xml::TreeData& composer_tree)
 {
@@ -55,6 +58,20 @@ void ValidateComposerTree(const sup::xml::TreeData& composer_tree)
   sup::xml::ValidateAllowedChildTags(composer_tree,
     { constants::LOAD_LIBRARY_TAG, constants::CREATE_INSTANCE_TAG, constants::STRING_INSTANCE_TAG,
       constants::CALL_FUNCTION_TAG });
+}
+
+std::unique_ptr<IComposerElement> CreateComposerElement(const sup::xml::TreeData& child_tree)
+{
+  auto nodename = child_tree.GetNodeName();
+  const auto& constructor_map = ElementConstructorMap();
+  auto it = constructor_map.find(nodename);
+  if (it == constructor_map.end())
+  {
+    std::string error_message = "sup::di::CreateComposerElement(): unknown child tag [" +
+      nodename + "] of [" + constants::OBJECT_COMPOSER_TAG + "] element";
+    throw sup::di::ParseException(error_message);
+  }
+  return it->second(child_tree);
 }
 
 }  // namespace di
