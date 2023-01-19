@@ -19,7 +19,7 @@
  * of the distribution package.
  ******************************************************************************/
 
-#include "instances.h"
+#include "instance_element.h"
 
 #include "constants.h"
 #include "tree_extract.h"
@@ -60,11 +60,6 @@ InstanceElement::~InstanceElement() = default;
 void InstanceElement::Execute()
 {}
 
-StringInstanceDefinition::StringInstanceDefinition()
-  : m_instance_name{}
-  , m_value{}
-{}
-
 void ValidateInstanceTree(const sup::xml::TreeData& instance_tree)
 {
   sup::xml::ValidateNoContent(instance_tree);
@@ -78,39 +73,6 @@ void ValidateInstanceTree(const sup::xml::TreeData& instance_tree)
     sup::xml::ValidateNoAttributes(child);
     sup::xml::ValidateNoChildren(child);
   }
-}
-
-void ValidateStringInstanceTree(const sup::xml::TreeData& instance_tree)
-{
-  sup::xml::ValidateNoContent(instance_tree);
-  sup::xml::ValidateNoAttributes(instance_tree);
-  sup::xml::ValidateAllowedChildTags(instance_tree,
-    { constants::INSTANCE_NAME_TAG, constants::VALUE_TAG });
-  sup::xml::ValidateSingleChildWithTag(instance_tree, constants::INSTANCE_NAME_TAG);
-  sup::xml::ValidateSingleChildWithTag(instance_tree, constants::VALUE_TAG);
-  for (const auto& child : instance_tree.Children())
-  {
-    sup::xml::ValidateNoAttributes(child);
-    sup::xml::ValidateNoChildren(child);
-  }
-}
-
-StringInstanceDefinition ParseStringInstanceDefinition(const sup::xml::TreeData& instance_tree)
-{
-  StringInstanceDefinition result;
-  for (const auto& child : instance_tree.Children())
-  {
-    auto nodename = child.GetNodeName();
-    if (nodename == constants::INSTANCE_NAME_TAG)
-    {
-      utils::SetFromTreeNodeContent(result.m_instance_name, child);
-    }
-    else if (nodename == constants::VALUE_TAG)
-    {
-      utils::SetFromTreeNodeContent(result.m_value, child);
-    }
-  }
-  return result;
 }
 
 }  // namespace di

@@ -23,8 +23,9 @@
 
 #include "constants.h"
 #include "exceptions.h"
-#include "global_function.h"
-#include "instances.h"
+#include "function_element.h"
+#include "instance_element.h"
+#include "string_instance_element.h"
 
 #include <sup/xml/tree_data_validate.h>
 

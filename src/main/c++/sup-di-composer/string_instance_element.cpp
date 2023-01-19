@@ -19,7 +19,7 @@
  * of the distribution package.
  ******************************************************************************/
 
-#include "global_function.h"
+#include "string_instance_element.h"
 
 #include "constants.h"
 #include "tree_extract.h"
@@ -31,38 +31,39 @@ namespace sup
 namespace di
 {
 
-FunctionElement::FunctionElement(const sup::xml::TreeData& function_tree)
-  : m_function_name{}
-  , m_dependencies{}
+StringInstanceElement::StringInstanceElement(const sup::xml::TreeData& string_instance_tree)
+  : m_instance_name{}
+  , m_value{}
 {
-  ValidateFunctionTree(function_tree);
-  for (const auto& child : function_tree.Children())
+  ValidateStringInstanceTree(string_instance_tree);
+  for (const auto& child : string_instance_tree.Children())
   {
     auto nodename = child.GetNodeName();
-    if (nodename == constants::FUNCTION_NAME_TAG)
+    if (nodename == constants::INSTANCE_NAME_TAG)
     {
-      utils::SetFromTreeNodeContent(m_function_name, child);
+      utils::SetFromTreeNodeContent(m_instance_name, child);
     }
-    else if (nodename == constants::DEPENDENCY_TAG)
+    else if (nodename == constants::VALUE_TAG)
     {
-      utils::AppendFromTreeNodeContent(m_dependencies, child);
+      utils::SetFromTreeNodeContent(m_value, child);
     }
   }
 }
 
-FunctionElement::~FunctionElement() = default;
+StringInstanceElement::~StringInstanceElement() = default;
 
-void FunctionElement::Execute()
+void StringInstanceElement::Execute()
 {}
 
-void ValidateFunctionTree(const sup::xml::TreeData& function_tree)
+void ValidateStringInstanceTree(const sup::xml::TreeData& instance_tree)
 {
-  sup::xml::ValidateNoContent(function_tree);
-  sup::xml::ValidateNoAttributes(function_tree);
-  sup::xml::ValidateAllowedChildTags(function_tree,
-    { constants::FUNCTION_NAME_TAG, constants::DEPENDENCY_TAG });
-  sup::xml::ValidateSingleChildWithTag(function_tree, constants::FUNCTION_NAME_TAG);
-  for (const auto& child : function_tree.Children())
+  sup::xml::ValidateNoContent(instance_tree);
+  sup::xml::ValidateNoAttributes(instance_tree);
+  sup::xml::ValidateAllowedChildTags(instance_tree,
+    { constants::INSTANCE_NAME_TAG, constants::VALUE_TAG });
+  sup::xml::ValidateSingleChildWithTag(instance_tree, constants::INSTANCE_NAME_TAG);
+  sup::xml::ValidateSingleChildWithTag(instance_tree, constants::VALUE_TAG);
+  for (const auto& child : instance_tree.Children())
   {
     sup::xml::ValidateNoAttributes(child);
     sup::xml::ValidateNoChildren(child);

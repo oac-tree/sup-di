@@ -19,8 +19,8 @@
  * of the distribution package.
  ******************************************************************************/
 
-#ifndef SUP_DI_COMPOSER_INSTANCES_H_
-#define SUP_DI_COMPOSER_INSTANCES_H_
+#ifndef SUP_DI_COMPOSER_INSTANCE_ELEMENT_H_
+#define SUP_DI_COMPOSER_INSTANCE_ELEMENT_H_
 
 #include "i_composer_element.h"
 
@@ -47,22 +47,10 @@ private:
   std::vector<std::string> m_dependencies;
 };
 
-struct StringInstanceDefinition
-{
-public:
-  StringInstanceDefinition();
-  std::string m_instance_name;
-  std::string m_value;
-};
-
 void ValidateInstanceTree(const sup::xml::TreeData& instance_tree);
-
-void ValidateStringInstanceTree(const sup::xml::TreeData& instance_tree);
-
-StringInstanceDefinition ParseStringInstanceDefinition(const sup::xml::TreeData& instance_tree);
 
 }  // namespace di
 
 }  // namespace sup
 
-#endif  // SUP_DI_COMPOSER_INSTANCES_H_
+#endif  // SUP_DI_COMPOSER_INSTANCE_ELEMENT_H_
