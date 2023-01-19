@@ -19,7 +19,7 @@
  * of the distribution package.
  ******************************************************************************/
 
-#include "object_composer.h"
+#include "object_composer_element.h"
 
 #include "constants.h"
 #include "exceptions.h"
@@ -33,14 +33,21 @@ namespace sup
 {
 namespace di
 {
-namespace utils
-{
 
-void ValidateLoadLibraryTree(const sup::xml::TreeData& load_library_tree)
+ObjectComposerElement::ObjectComposerElement(const sup::xml::TreeData& composer_tree)
+  : m_elements{}
 {
-  sup::xml::ValidateNoAttributes(load_library_tree);
-  sup::xml::ValidateNoChildren(load_library_tree);
+  ValidateComposerTree(composer_tree);
+  for (const auto& child : composer_tree.Children())
+  {
+    // add IComposerElement to m_elements
+  }
 }
+
+ObjectComposerElement::~ObjectComposerElement() = default;
+
+void ObjectComposerElement::Execute()
+{}
 
 void ValidateComposerTree(const sup::xml::TreeData& composer_tree)
 {
@@ -48,34 +55,7 @@ void ValidateComposerTree(const sup::xml::TreeData& composer_tree)
   sup::xml::ValidateAllowedChildTags(composer_tree,
     { constants::LOAD_LIBRARY_TAG, constants::CREATE_INSTANCE_TAG, constants::STRING_INSTANCE_TAG,
       constants::CALL_FUNCTION_TAG });
-  for (const auto& child : composer_tree.Children())
-  {
-    auto child_tag = child.GetNodeName();
-    if (child_tag == constants::LOAD_LIBRARY_TAG)
-    {
-      ValidateLoadLibraryTree(child);
-    }
-    else if (child_tag == constants::CREATE_INSTANCE_TAG)
-    {
-      ValidateInstanceTree(child);
-    }
-    else if (child_tag == constants::STRING_INSTANCE_TAG)
-    {
-      ValidateStringInstanceTree(child);
-    }
-    else if (child_tag == constants::CALL_FUNCTION_TAG)
-    {
-      ValidateFunctionTree(child);
-    }
-  }
 }
-
-void ExecuteComposerTree(const sup::xml::TreeData& composer_tree)
-{
-  (void)composer_tree;
-}
-
-}  // namespace utils
 
 }  // namespace di
 
