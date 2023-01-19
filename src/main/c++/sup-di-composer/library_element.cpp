@@ -19,37 +19,36 @@
  * of the distribution package.
  ******************************************************************************/
 
-#ifndef SUP_DI_COMPOSER_FUNCTION_ELEMENT_H_
-#define SUP_DI_COMPOSER_FUNCTION_ELEMENT_H_
+#include "library_element.h"
 
-#include "i_composer_element.h"
+#include "constants.h"
+#include "tree_extract.h"
 
-#include <sup/xml/tree_data.h>
-
-#include <vector>
+#include <sup/xml/tree_data_validate.h>
 
 namespace sup
 {
 namespace di
 {
 
-class FunctionElement : public IComposerElement
+LibraryElement::LibraryElement(const sup::xml::TreeData& library_tree)
+  : m_library_name{}
 {
-public:
-  FunctionElement(const sup::xml::TreeData& function_tree);
-  ~FunctionElement();
+  ValidateLibraryTree(library_tree);
+  utils::SetFromTreeNodeContent(m_library_name, library_tree);
+}
 
-  void Execute() override;
+LibraryElement::~LibraryElement() = default;
 
-private:
-  std::string m_function_name;
-  std::vector<std::string> m_dependencies;
-};
+void LibraryElement::Execute()
+{}
 
-void ValidateFunctionTree(const sup::xml::TreeData& function_tree);
+void ValidateLibraryTree(const sup::xml::TreeData& library_tree)
+{
+  sup::xml::ValidateNoAttributes(library_tree);
+  sup::xml::ValidateNoChildren(library_tree);
+}
 
 }  // namespace di
 
 }  // namespace sup
-
-#endif  // SUP_DI_COMPOSER_FUNCTION_ELEMENT_H_

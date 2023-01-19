@@ -13,6 +13,7 @@ target_sources(sup-di-composer
         ${CMAKE_CURRENT_LIST_DIR}/function_element.cpp
         ${CMAKE_CURRENT_LIST_DIR}/i_composer_element.cpp
         ${CMAKE_CURRENT_LIST_DIR}/instance_element.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/library_element.cpp
         ${CMAKE_CURRENT_LIST_DIR}/main.cpp
         ${CMAKE_CURRENT_LIST_DIR}/object_composer.cpp
         ${CMAKE_CURRENT_LIST_DIR}/string_instance_element.cpp
