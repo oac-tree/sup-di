@@ -125,6 +125,11 @@ TEST_F(ObjectManagerTest, RegisterString)
   auto str_ref = object_manager.GetInstance<const std::string*>(instance_name);
   ASSERT_NE(str_ref, nullptr);
   EXPECT_EQ(*str_ref, instance_value);
+
+  std::string function_name = "TestStringSize";
+  EXPECT_TRUE(object_manager.RegisterGlobalFunction(function_name, TestString));
+  EXPECT_EQ(object_manager.CallGlobalFunction(function_name, {instance_name}),
+    ErrorCode::kSuccess);
 }
 
 TEST_F(ObjectManagerTest, PassOwnership)

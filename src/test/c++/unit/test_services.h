@@ -124,3 +124,12 @@ bool TestAggregatedPrinter(IPrinter* printer)
 {
   return printer->Print() == HelloWorld + DecoratedPrefix + HelloWorld;
 }
+
+bool TestString(const std::string* str)
+{
+  if (str->size() == 0)
+  {
+    return false;
+  }
+  return true;
+}

@@ -46,7 +46,7 @@ ErrorCode ObjectManager::CreateInstance(
 }
 
 ErrorCode ObjectManager::CallGlobalFunction(const std::string& registered_function_name,
-                                      const std::vector<std::string>& dependency_names)
+                                            const std::vector<std::string>& dependency_names)
 {
   auto it = global_functions.find(registered_function_name);
   if (it == global_functions.end())
