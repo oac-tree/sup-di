@@ -23,6 +23,8 @@
 #define SUP_DI_TYPE_MAP_H_
 
 #include <map>
+#include <typeinfo>
+#include <typeindex>
 
 namespace sup
 {
@@ -37,7 +39,7 @@ namespace internal
 template <typename ValueType>
 class TypeMap
 {
-  using Container = std::map<int, ValueType>;
+  using Container = std::map<std::type_index, ValueType>;
 public:
   using iterator = typename Container::iterator;
   using const_iterator = typename Container::const_iterator;
@@ -62,19 +64,14 @@ public:
   }
 
   template <class Key>
-  static int TypeId()
+  static std::type_index TypeId()
   {
-    static int id = ++last_type_id;
-    return id;
+    return std::type_index(typeid(Key));
   }
 
 private:
-  static int last_type_id;
   Container container;
 };
-
-template <class T>
-int TypeMap<T>::last_type_id{0};
 
 template <class T>
 TypeMap<T>::TypeMap()

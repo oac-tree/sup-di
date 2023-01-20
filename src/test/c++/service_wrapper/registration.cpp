@@ -58,7 +58,7 @@ static const bool Launch_Function_Registered =
 
 bool PrintString(const std::string* str)
 {
-  std::cout << "PrintString called with string [" << str << "]" << std::endl;
+  std::cout << "PrintString called with string [" << *str << "]" << std::endl;
   return true;
 }
 
