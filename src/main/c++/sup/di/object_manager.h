@@ -118,7 +118,7 @@ public:
    *   std::unique_ptr<T>&& : for transferring ownership out of ObjectManager
    */
   template <typename T>
-  typename internal::DependencyTraits<T>::InjectionType
+  typename internal::InjectionType<T>::type
     GetInstance(const std::string& instance_name);
 
   /**
@@ -181,22 +181,22 @@ private:
    * @brief Helper method to retrieve an instance of the correct type, based on an index.
    */
   template <std::size_t I, typename... Deps>
-  typename internal::DependencyTraits<typename internal::TypeStringList<Deps...>::template
-                                        IndexedType<I>>::InjectionType
+  typename internal::InjectionType<typename internal::TypeStringList<Deps...>::template
+                                        IndexedType<I>>::type
     IndexedArgument(const internal::TypeStringList<Deps...>& type_string_list);
 
   /**
    * @brief Helper method to retrieve an instance when ownership needs to be passed.
    */
   template <typename T>
-  typename internal::DependencyTraits<T>::InjectionType
+  typename internal::InjectionType<T>::type
     GetInstanceImpl(const std::string& instance_name, std::true_type transfer_ownership);
 
   /**
    * @brief Helper method to retrieve an instance when ownership is managed by the ObjectManager.
    */
   template <typename T>
-  typename internal::DependencyTraits<T>::InjectionType
+  typename internal::InjectionType<T>::type
     GetInstanceImpl(const std::string& instance_name,
                     std::false_type do_not_transfer_ownership);
 
@@ -248,11 +248,10 @@ std::unique_ptr<ServiceType> GenericInstanceFactoryFunction(std::unique_ptr<Deps
 ObjectManager& GlobalObjectManager();
 
 template <typename T>
-typename internal::DependencyTraits<T>::InjectionType
+typename internal::InjectionType<T>::type
 ObjectManager::GetInstance(const std::string& instance_name)
 {
-  return GetInstanceImpl<T>(instance_name,
-    typename internal::DependencyTraits<T>::TransferOwnership{});
+  return GetInstanceImpl<T>(instance_name, internal::TransferOwnership<T>{});
 }
 
 template <typename ServiceType, typename Deleter, typename... Deps>
@@ -362,8 +361,8 @@ ErrorCode ObjectManager::CallFromTypeStringList(
 }
 
 template <std::size_t I, typename... Deps>
-typename internal::DependencyTraits<typename internal::TypeStringList<Deps...>::template
-                                      IndexedType<I>>::InjectionType
+typename internal::InjectionType<typename internal::TypeStringList<Deps...>::template
+                                      IndexedType<I>>::type
   ObjectManager::IndexedArgument(const internal::TypeStringList<Deps...>& type_string_list)
 {
   return GetInstance<typename internal::TypeStringList<Deps...>::template IndexedType<I>>(
@@ -371,23 +370,23 @@ typename internal::DependencyTraits<typename internal::TypeStringList<Deps...>::
 }
 
 template <typename T>
-typename internal::DependencyTraits<T>::InjectionType
+typename internal::InjectionType<T>::type
   ObjectManager::GetInstanceImpl(const std::string& instance_name, std::true_type)
 {
-  auto instance_it = FindInstance<typename internal::DependencyTraits<T>::ValueType>(instance_name);
-  typename internal::DependencyTraits<T>::InjectionType result(
-    static_cast<typename internal::DependencyTraits<T>::ValueType*>(
+  auto instance_it = FindInstance<typename internal::ValueType<T>::type>(instance_name);
+  typename internal::InjectionType<T>::type result(
+    static_cast<typename internal::ValueType<T>::type*>(
       instance_it->second->Release()));
-  RemoveInstance<typename internal::DependencyTraits<T>::ValueType>(instance_it);
+  RemoveInstance<typename internal::ValueType<T>::type>(instance_it);
   return std::move(result);
 }
 
 template <typename T>
-typename internal::DependencyTraits<T>::InjectionType
+typename internal::InjectionType<T>::type
   ObjectManager::GetInstanceImpl(const std::string& instance_name, std::false_type)
 {
-  auto instance_it = FindInstance<typename internal::DependencyTraits<T>::ValueType>(instance_name);
-  return static_cast<typename internal::DependencyTraits<T>::InjectionType>(
+  auto instance_it = FindInstance<typename internal::ValueType<T>::type>(instance_name);
+  return static_cast<typename internal::InjectionType<T>::type>(
     instance_it->second->Get());
 }
 

@@ -33,40 +33,77 @@ namespace internal
 {
 
 /**
- * @brief Class template for handling different types of dependency injection.
+ * @brief Type trait that provides the underlying value type (as it is registered) from the
+ * type of a function parameter.
  *
- * @details This template is specialized for two types of dependency injection:
- * Injection without ownership passing:
- *    Dep is of type (const) T*
- *    With ValueType = T
- *         InjectionType = T*
- *         TransferOwnership = false_type
- * Injection with ownership passing:
- *    Dep is of type std::unique_ptr<(const) T>&&
- *    With ValueType = T
- *         InjectionType = std::unique_ptr<T>
- *         TransferOwnership = true_type
+ * @details The type trait will in general remove pointers, references and const volatile
+ * qualifiers. A special case is provided for function parameters declared with rvalue references
+ * to a unique_ptr: the value type will then be the underlying type of the unique_ptr without
+ * const/volatile qualifiers.
  */
-template <typename Dep>
-struct DependencyTraits {};
-
 template <typename T>
-struct DependencyTraits<T*>
+struct ValueType
 {
-  using ValueType = typename std::enable_if<!std::is_volatile<T>::value,
-                               typename std::remove_const<T>::type>::type;
-  using InjectionType = typename std::add_pointer<ValueType>::type;
-  using TransferOwnership = std::false_type;
+  using type = typename std::remove_cv<
+                 typename std::remove_reference<
+                   typename std::remove_pointer<T>::type>::type>::type;
 };
 
 template <typename T>
-struct DependencyTraits<std::unique_ptr<T>&&>
+struct ValueType<std::unique_ptr<T>&&>
 {
-  using ValueType = typename std::enable_if<!std::is_volatile<T>::value,
-                               typename std::remove_const<T>::type>::type;
-  using InjectionType = std::unique_ptr<ValueType>;
-  using TransferOwnership = std::true_type;
+  using type = typename std::remove_cv<T>::type;
 };
+
+/**
+ * @brief Type trait that transforms a function parameter type into the type that needs to be
+ * returned to inject it into that function.
+ *
+ * @details The type trait will in general transform the underlying type (for pointers and
+ * lvalue references) by removing the const/volatile qualifiers. For value types, the transformation
+ * returns an lvalue reference to that type. Finally, for rvalue references to a unique_ptr, the
+ * result is a unique_ptr to the underlying type without const/volatile qualifiers.
+ */
+template <typename T>
+struct InjectionType
+{
+  using type = typename std::remove_cv<T>::type&;
+};
+
+template <typename T>
+struct InjectionType<T&>
+{
+  using type = typename std::remove_cv<T>::type&;
+};
+
+template <typename T>
+struct InjectionType<T*>
+{
+  using type = typename std::remove_cv<T>::type*;
+};
+
+template <typename T>
+struct InjectionType<std::unique_ptr<T>&&>
+{
+  using type = std::unique_ptr<typename std::remove_cv<T>::type>;
+};
+
+/**
+ * @brief Type trait that indicates if passing a variable as the given type requires transfer of
+ * ownership.
+ *
+ * @details A boolean member constant value is defined, which is only true for rvalue references
+ * to a unique_ptr.
+ */
+template <typename T>
+struct TransferOwnership : public std::false_type
+{};
+
+template <typename T>
+struct TransferOwnership<std::unique_ptr<T>&&> : public std::true_type
+{};
+
+
 
 }  // namespace internal
 
