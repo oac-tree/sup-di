@@ -3,7 +3,7 @@
            name="Example configuration file for the SUP dependency injection framework"
            xmlns:xs="http://www.w3.org/2001/XMLSchema-instance"
            xs:schemaLocation="http://codac.iter.org/sup/di sup-di.xsd">
-    <LoadLibrary>./libservice-wrapper.so</LoadLibrary>
+    <LoadLibrary>@CMAKE_CURRENT_BINARY_DIR@/libservice-wrapper.so</LoadLibrary>
     <StringInstance>
         <InstanceName>ClientName</InstanceName>
         <Value>Test::Client</Value>

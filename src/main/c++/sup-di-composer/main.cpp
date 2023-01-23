@@ -19,7 +19,7 @@
  * of the distribution package.
  ******************************************************************************/
 
-#include "composition_root.h"
+#include <sup/di-composer-core/composition_root.h>
 
 #include <algorithm>
 #include <iostream>

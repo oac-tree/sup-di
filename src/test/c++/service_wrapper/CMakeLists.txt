@@ -1,5 +1,7 @@
 add_library(service-wrapper SHARED)
 
+configure_file(${CMAKE_CURRENT_LIST_DIR}/example.xml.in ${SUP_DI_AUTOGEN_DIR}/example.xml @ONLY)
+
 target_compile_features(service-wrapper PRIVATE cxx_std_11)
 
 set_target_properties(service-wrapper PROPERTIES
@@ -23,7 +25,3 @@ target_link_libraries(service-wrapper
     PRIVATE
         sup-di
 )
-
-# -- Installation --
-
-install(TARGETS service-wrapper LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})

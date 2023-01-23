@@ -31,6 +31,7 @@ install(FILES
     index_sequence.h
     instance_container.h
     object_manager.h
+    type_functions.h
     type_map.h
     type_string_list.h
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/sup/di
