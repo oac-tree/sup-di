@@ -23,6 +23,7 @@ target_link_libraries(unit-tests
     PRIVATE
         GTest::GTest
         GTest::Main
+        sup-di-composer-core
         sup-di
         dl
 )
