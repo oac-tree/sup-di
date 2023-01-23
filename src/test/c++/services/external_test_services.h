@@ -82,11 +82,11 @@ private:
   IPrinter* printer_2;
 };
 
-bool TestHelloPrinter(IPrinter* printer);
+bool TestHelloPrinter(const IPrinter& printer);
 
 bool TestDecoratedHelloPrinter(IPrinter* printer);
 
-bool TestOwnedPrinter(IPrinter* printer);
+bool TestOwnedPrinter(IPrinter& printer);
 
 bool TestAggregatedPrinter(IPrinter* printer);
 

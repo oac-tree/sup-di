@@ -33,21 +33,16 @@ static const bool Service_Registered =
 
 // Register Client
 
-std::unique_ptr<Client> CreateClient(
-  const std::string* name, std::unique_ptr<IService>&& service)
-{
-  return std::unique_ptr<Client>(new Client(*name, std::move(service)));
-}
-
 static const bool Client_Registered =
   sup::di::GlobalObjectManager().RegisterFactoryFunction(
-    "Client", CreateClient);
+    "Client", sup::di::ForwardingInstanceFactoryFunction<Client, Client, const std::string&,
+      std::unique_ptr<IService>&&>);
 
 // Register global function with function name "LaunchClient"
 
-bool LaunchClient(Client* client)
+bool LaunchClient(Client& client)
 {
-  client->Launch();
+  client.Launch();
   return true;
 }
 
@@ -56,9 +51,9 @@ static const bool Launch_Function_Registered =
 
   // Register global function with function name "PrintString"
 
-bool PrintString(const std::string* str)
+bool PrintString(const std::string& str)
 {
-  std::cout << "PrintString called with string [" << *str << "]" << std::endl;
+  std::cout << "PrintString called with string [" << str << "]" << std::endl;
   return true;
 }
 

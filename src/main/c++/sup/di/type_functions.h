@@ -34,32 +34,33 @@ namespace internal
 {
 
 /**
- * @brief Type function that forwards a pointer to the proper injection type.
+ * @brief Type function that forwards a void pointer to the proper injection type.
  */
 template <typename T>
 struct PointerToInjectionType
 {
-  typename InjectionType<T>::type Forward(typename ValueType<T>::type* arg)
+  static typename InjectionType<T>::type Forward(void* arg)
   {
-    return *arg;
+    return *static_cast<typename ValueType<T>::type*>(arg);
   }
 };
 
 template <typename T>
 struct PointerToInjectionType<T*>
 {
-  typename InjectionType<T*>::type Forward(typename ValueType<T>::type* arg)
+  static typename InjectionType<T*>::type Forward(void* arg)
   {
-    return arg;
+    return static_cast<typename InjectionType<T*>::type>(arg);
   }
 };
 
 template <typename T>
 struct PointerToInjectionType<std::unique_ptr<T>&&>
 {
-  typename InjectionType<std::unique_ptr<T>&&>::type Forward(typename ValueType<T>::type* arg)
+  static typename InjectionType<std::unique_ptr<T>&&>::type Forward(void* arg)
   {
-    return typename InjectionType<std::unique_ptr<T>&&>::type{arg};
+    auto typed_arg = static_cast<typename internal::ValueType<std::unique_ptr<T>&&>::type*>(arg);
+    return typename InjectionType<std::unique_ptr<T>&&>::type{typed_arg};
   }
 };
 

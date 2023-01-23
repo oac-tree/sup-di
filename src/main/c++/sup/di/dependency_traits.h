@@ -119,8 +119,6 @@ template <typename T>
 struct TransferOwnership<std::unique_ptr<T>&&> : public std::true_type
 {};
 
-
-
 }  // namespace internal
 
 }  // namespace di

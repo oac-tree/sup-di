@@ -119,9 +119,9 @@ std::string PrinterAggregator::Print() const
   return printer_1->Print() + printer_2->Print();
 }
 
-bool TestHelloPrinter(IPrinter* printer)
+bool TestHelloPrinter(const IPrinter& printer)
 {
-  return printer->Print() == HelloWorld;
+  return printer.Print() == HelloWorld;
 }
 
 bool TestDecoratedHelloPrinter(IPrinter* printer)
@@ -129,9 +129,9 @@ bool TestDecoratedHelloPrinter(IPrinter* printer)
   return printer->Print() == DecoratedPrefix + HelloWorld;
 }
 
-bool TestOwnedPrinter(IPrinter* printer)
+bool TestOwnedPrinter(IPrinter& printer)
 {
-  return printer->Print() == OwnedPrinterPrefix + HelloWorld;
+  return printer.Print() == OwnedPrinterPrefix + HelloWorld;
 }
 
 bool TestAggregatedPrinter(IPrinter* printer)
