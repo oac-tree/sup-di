@@ -37,7 +37,7 @@ namespace internal
 class AbstractInstanceContainer
 {
 public:
-  virtual ~AbstractInstanceContainer() = default;
+  virtual ~AbstractInstanceContainer();
 
   virtual void* Get() = 0;
   virtual void* Release() = 0;
