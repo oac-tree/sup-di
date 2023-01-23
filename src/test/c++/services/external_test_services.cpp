@@ -50,16 +50,16 @@ static const std::string DiscardPrinterName = "DiscardPrinter";
 // Factory function registration
 static bool HelloPrinter_Globally_Registered_ =
   sup::di::GlobalObjectManager().RegisterFactoryFunction(HelloPrinterName,
-    sup::di::GenericInstanceFactoryFunctionShared<IPrinter, HelloPrinter>);
+    sup::di::ForwardingInstanceFactoryFunction<IPrinter, HelloPrinter>);
 static bool PrinterDecorator_Globally_Registered_ =
   sup::di::GlobalObjectManager().RegisterFactoryFunction(PrinterDecoratorName,
-    sup::di::GenericInstanceFactoryFunctionShared<IPrinter, PrinterDecorator, IPrinter>);
+    sup::di::ForwardingInstanceFactoryFunction<IPrinter, PrinterDecorator, IPrinter*>);
 static bool OwnedPrinter_Globally_Registered_ =
   sup::di::GlobalObjectManager().RegisterFactoryFunction(PrinterOwnerName,
-    sup::di::GenericInstanceFactoryFunction<IPrinter, PrinterOwner, IPrinter>);
+    sup::di::ForwardingInstanceFactoryFunction<IPrinter, PrinterOwner, std::unique_ptr<IPrinter>&&>);
 static bool PrinterAggregator_Globally_Registered_ =
   sup::di::GlobalObjectManager().RegisterFactoryFunction(PrinterAggregatorName,
-    sup::di::GenericInstanceFactoryFunctionShared<IPrinter, PrinterAggregator, IPrinter, IPrinter>);
+    sup::di::ForwardingInstanceFactoryFunction<IPrinter, PrinterAggregator, IPrinter*, IPrinter*>);
 
 // Global function registration
 static bool HelloTest_Globally_Registered_ =

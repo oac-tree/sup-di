@@ -67,25 +67,41 @@ struct ValueType<std::unique_ptr<T>&&>
 template <typename T>
 struct InjectionType
 {
-  using type = typename std::remove_cv<T>::type&;
+  using type = typename ValueType<T>::type&;
 };
 
 template <typename T>
 struct InjectionType<T&>
 {
-  using type = typename std::remove_cv<T>::type&;
+  using type = typename ValueType<T>::type&;
 };
 
 template <typename T>
 struct InjectionType<T*>
 {
-  using type = typename std::remove_cv<T>::type*;
+  using type = typename ValueType<T>::type*;
 };
 
 template <typename T>
 struct InjectionType<std::unique_ptr<T>&&>
 {
-  using type = std::unique_ptr<typename std::remove_cv<T>::type>;
+  using type = std::unique_ptr<typename ValueType<T>::type>;
+};
+
+/**
+ * @brief Type trait that gives the argument type for a factory function that forwards the
+ * argument to a constructor in its body.
+ */
+template <typename T>
+struct FactoryArgumentType
+{
+  using type = typename InjectionType<T>::type;
+};
+
+template <typename T>
+struct FactoryArgumentType<std::unique_ptr<T>&&>
+{
+  using type = std::unique_ptr<typename ValueType<T>::type>&&;
 };
 
 /**

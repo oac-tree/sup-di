@@ -26,6 +26,7 @@
 #include <sup/di/error_codes.h>
 #include <sup/di/index_sequence.h>
 #include <sup/di/instance_container.h>
+#include <sup/di/type_functions.h>
 #include <sup/di/type_map.h>
 #include <sup/di/type_string_list.h>
 
@@ -220,26 +221,15 @@ private:
 };
 
 /**
- * @brief Function template for a factory function with shared dependencies.
- *
- * @details The dependencies' lifetime will not be managed by the created object and needs to be
- * managed elsewhere (e.g. in an ObjectManager).
+ * @brief Function template for a factory function that forwards its arguments to a constructor
+ * with the same signature.
  */
 template <typename ServiceType, typename ConcreteType, typename... Deps>
-std::unique_ptr<ServiceType> GenericInstanceFactoryFunctionShared(Deps*... dependencies)
+std::unique_ptr<ServiceType>
+ForwardingInstanceFactoryFunction(typename internal::FactoryArgumentType<Deps>::type... dependencies)
 {
-  return std::unique_ptr<ServiceType>(new ConcreteType(dependencies...));
-}
-
-/**
- * @brief Function template for a factory function with ownership transfer of dependencies.
- *
- * @details The dependencies' lifetime needs to be managed by the created object.
- */
-template <typename ServiceType, typename ConcreteType, typename... Deps>
-std::unique_ptr<ServiceType> GenericInstanceFactoryFunction(std::unique_ptr<Deps>&&... dependencies)
-{
-  return std::unique_ptr<ServiceType>(new ConcreteType(std::move(dependencies)...));
+  return std::unique_ptr<ServiceType>(
+    new ConcreteType(internal::ForwardDependencyType<Deps>::Forward(dependencies)...));
 }
 
 /**

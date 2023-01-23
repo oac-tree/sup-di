@@ -29,7 +29,7 @@
 
 static const bool Service_Registered =
   sup::di::GlobalObjectManager().RegisterFactoryFunction(
-    "Service", sup::di::GenericInstanceFactoryFunction<IService, Service>);
+    "Service", sup::di::ForwardingInstanceFactoryFunction<IService, Service>);
 
 // Register Client
 
