@@ -4,6 +4,7 @@ target_compile_features(unit-tests PRIVATE cxx_std_11)
 
 target_sources(unit-tests
     PRIVATE
+        ${CMAKE_CURRENT_LIST_DIR}/composition_root_tests.cpp
         ${CMAKE_CURRENT_LIST_DIR}/error_codes_tests.cpp
         ${CMAKE_CURRENT_LIST_DIR}/exceptions_tests.cpp
         ${CMAKE_CURRENT_LIST_DIR}/function_element_tests.cpp

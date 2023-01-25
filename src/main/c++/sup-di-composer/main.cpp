@@ -53,7 +53,7 @@ int main(int argc, char* argv[])
     print_usage(arguments.at(0));
     return 0;
   }
-  sup::di::ComposeObjectTreeFromFile(filename);
+  sup::di::ExecuteObjectTreeFromFile(filename);
   return 0;
 }
 

@@ -32,7 +32,7 @@ namespace
 template <typename Elem>
 struct TElementConstructor
 {
-  std::unique_ptr<sup::di::IComposerElement> operator()(const sup::xml::TreeData& tree)
+  static std::unique_ptr<sup::di::IComposerElement> Create(const sup::xml::TreeData& tree)
   {
     return std::unique_ptr<sup::di::IComposerElement>(new Elem(tree));
   }
@@ -47,10 +47,10 @@ namespace di
 const std::map<std::string, ElementConstructor>& ElementConstructorMap()
 {
   static const std::map<std::string, ElementConstructor> constr_map {
-    { constants::CALL_FUNCTION_TAG, TElementConstructor<FunctionElement>{} },
-    { constants::CREATE_INSTANCE_TAG, TElementConstructor<InstanceElement>{} },
-    { constants::LOAD_LIBRARY_TAG, TElementConstructor<LibraryElement>{} },
-    { constants::STRING_INSTANCE_TAG, TElementConstructor<StringInstanceElement>{} },
+    { constants::CALL_FUNCTION_TAG, TElementConstructor<FunctionElement>::Create },
+    { constants::CREATE_INSTANCE_TAG, TElementConstructor<InstanceElement>::Create },
+    { constants::LOAD_LIBRARY_TAG, TElementConstructor<LibraryElement>::Create },
+    { constants::STRING_INSTANCE_TAG, TElementConstructor<StringInstanceElement>::Create },
   };
   return constr_map;
 }

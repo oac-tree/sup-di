@@ -35,13 +35,13 @@ namespace sup
 namespace di
 {
 
-void ComposeObjectTreeFromFile(const std::string& filename)
+void ExecuteObjectTreeFromFile(const std::string& filename)
 {
   auto composer_tree = sup::xml::TreeDataFromFile(filename);
   ExecuteComposerTree(*composer_tree);
 }
 
-void ComposeObjectTreeFromString(const std::string& representation)
+void ExecuteObjectTreeFromString(const std::string& representation)
 {
   auto composer_tree = sup::xml::TreeDataFromString(representation);
   ExecuteComposerTree(*composer_tree);

@@ -29,9 +29,9 @@ namespace sup
 namespace di
 {
 
-void ComposeObjectTreeFromFile(const std::string& filename);
+void ExecuteObjectTreeFromFile(const std::string& filename);
 
-void ComposeObjectTreeFromString(const std::string& representation);
+void ExecuteObjectTreeFromString(const std::string& representation);
 
 }  // namespace di
 
