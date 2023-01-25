@@ -1,6 +1,7 @@
 add_library(service-wrapper SHARED)
 
 configure_file(${CMAKE_CURRENT_LIST_DIR}/example.xml.in ${SUP_DI_AUTOGEN_DIR}/example.xml @ONLY)
+configure_file(${CMAKE_CURRENT_LIST_DIR}/service_wrapper_config.h.in ${SUP_DI_AUTOGEN_DIR}/service_wrapper_config.h @ONLY)
 
 target_compile_features(service-wrapper PRIVATE cxx_std_11)
 
