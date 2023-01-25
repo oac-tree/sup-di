@@ -19,29 +19,36 @@
  * of the distribution package.
  ******************************************************************************/
 
-#include "exceptions.h"
+#include <sup/di-composer-core/exceptions.h>
 
-namespace sup
-{
-namespace di
-{
+#include <gtest/gtest.h>
 
-MessageException::MessageException(std::string message)
-  : m_message{std::move(message)} {}
+using namespace sup::di;
 
-const char* MessageException::what() const noexcept
+const std::string PARSE_ERROR_MESSAGE = "Parsing error!";
+const std::string RUNTIME_ERROR_MESSAGE = "Runtime error!";
+
+class ExceptionsTest : public ::testing::Test
 {
-  return m_message.c_str();
+protected:
+  ExceptionsTest();
+  virtual ~ExceptionsTest();
+};
+
+TEST_F(ExceptionsTest, ParseException)
+{
+  ParseException err{PARSE_ERROR_MESSAGE};
+  std::string err_message = err.what();
+  EXPECT_EQ(err_message, PARSE_ERROR_MESSAGE);
 }
 
-ParseException::ParseException(const std::string& message)
-  : MessageException{message}
-{}
+TEST_F(ExceptionsTest, RuntimeException)
+{
+  RuntimeException err{RUNTIME_ERROR_MESSAGE};
+  std::string err_message = err.what();
+  EXPECT_EQ(err_message, RUNTIME_ERROR_MESSAGE);
+}
 
-RuntimeException::RuntimeException(const std::string& message)
-  : MessageException{message}
-{}
+ExceptionsTest::ExceptionsTest() = default;
 
-}  // namespace di
-
-}  // namespace sup
+ExceptionsTest::~ExceptionsTest() = default;

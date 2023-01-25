@@ -54,15 +54,6 @@ public:
 };
 
 /**
- * @brief Exception thrown when trying to call an operation that is not supported by the object.
- */
-class InvalidOperationException : public MessageException
-{
-public:
-  InvalidOperationException(const std::string& message);
-};
-
-/**
  * @brief Generic exception thrown when an operation fails without clear reason, e.g. during a call
  * to a library method that is not under control.
  */
