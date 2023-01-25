@@ -31,6 +31,7 @@ namespace di
 namespace test
 {
 
+const std::string Test_StringWrapper_Name = "test_string_wrapper";
 const std::string Test_CheckStringNotNull_Name = "test_check_string_not_null";
 const std::string Test_CompareWrapperWithString_Name = "test_compare_wrapper_with_string";
 const std::string Test_String_Name = "test_string";

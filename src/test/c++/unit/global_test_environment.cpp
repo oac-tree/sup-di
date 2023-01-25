@@ -51,6 +51,10 @@ void ObjectManagerEnvironment::SetUp()
                                                test::Test_CheckStringNotNull);
   std::unique_ptr<std::string> str_instance{new std::string(TEST_STRING_VALUE)};
   GlobalObjectManager().RegisterInstance(std::move(str_instance), test::Test_String_Name);
+  GlobalObjectManager().RegisterFactoryFunction(
+    test::Test_StringWrapper_Name,
+    ForwardingInstanceFactoryFunction<test::Test_StringWrapper, test::Test_StringWrapper,
+      const std::string&>);
 }
 
 void ObjectManagerEnvironment::TearDown()
