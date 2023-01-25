@@ -37,3 +37,13 @@ target_link_libraries(unit-tests
         sup-di
         dl
 )
+
+if (SUP_DI_CODAC)
+  target_include_directories(unit-tests PUBLIC $ENV{CODAC_ROOT}/include)
+  target_link_directories(unit-tests PUBLIC $ENV{CODAC_ROOT}/lib)
+  target_link_libraries(unit-tests PRIVATE sup-xml)
+else()
+  find_package(sup-utils REQUIRED)
+  target_link_libraries(unit-tests PRIVATE sup-utils::sup-xml)
+endif()
+
