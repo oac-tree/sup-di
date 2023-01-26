@@ -24,7 +24,7 @@
     <groupId>org.iter.codac.units</groupId>
     <artifactId>sup-di</artifactId>
     <packaging>codac</packaging>
-    <version>0.1.0</version>
+    <version>1.0.0</version>
     <name>SUP dependency injection module</name>
     <description>Library for configuration-based dependency injection in SUP</description>
     <url>http://www.iter.org/</url>
@@ -34,7 +34,7 @@
         <unit.type>module</unit.type>
         <integrity.level>1</integrity.level>
         <cppcheck.args>--enable=all --suppress=missingInclude --inline-suppr</cppcheck.args>
-        <sonar.exclusions>src/test/**, src/main/c++/sup-di-object-manager/**</sonar.exclusions>
+        <sonar.exclusions>src/test/**, src/main/c++/sup-di-composer/**</sonar.exclusions>
     </properties>
 
     <!-- parent pom.xml -->
@@ -69,23 +69,25 @@
                 <artifactId>maven-iter-plugin</artifactId>
                 <extensions>true</extensions>
                 <configuration>
-                    <init>
-                        <expand source="-" file="main/VERSION">
-                            <![CDATA[${project.version}]]>
-                        </expand>
-                    </init>
                     <packaging>
                         <package>
                             <!-- Libraries -->
-                            <include type="file" source="lib" target="lib">
+                            <include type="file" source="lib64" target="lib">
                                 <include>libsup-di.so.*</include>
                             </include>
+                            <include type="file" source="bin" target="bin">
+                                <include>sup-di-composer</include>
+                            </include>
                             <!-- Package dependencies -->
-                            <requires version="current" buildOnly="true">cmake</requires>
+                            <requires codac="true">sup-utils</requires>
+                            <requires buildOnly="true">cmake</requires>
+                            <requires codac="true" buildOnly="true">sup-utils-devel</requires>
+                            <requires buildOnly="true">libxml2-devel</requires>
+                            <requires version="current" buildOnly="true">gtest-devel</requires>
                         </package>
                         <package name="devel">
                             <!-- Libraries -->
-                            <include type="file" source="lib" target="lib">
+                            <include type="file" source="lib64" target="lib">
                                 <include>libsup-di.so</include>
                             </include>
                             <!-- Public API headers -->
@@ -94,17 +96,6 @@
                             </include>
                             <!-- Package dependencies -->
                             <requires version="current">%{codac_rpm_prefix}-${project.artifactId}</requires>
-                        </package>
-                        <package name="tests">
-                            <!-- Libraries -->
-                            <include type="file" source="lib" target="lib">
-                                <include>libsup-di-testservices.so*</include>
-                            </include>
-                            <!-- Unit Test -->
-                            <include type="file" source="bin/unit-tests" target="tests/${project.artifactId}/unit-tests"/>
-                            <!-- Package dependencies -->
-                            <requires version="current">%{codac_rpm_prefix}-${project.artifactId}-devel</requires>
-                            <requires version="current" buildOnly="true">gtest-devel</requires>
                         </package>
                     </packaging>
                 </configuration>
