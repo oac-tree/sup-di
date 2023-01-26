@@ -19,11 +19,15 @@
  * of the distribution package.
  ******************************************************************************/
 
+#include "temporary_file.h"
+
 #include <sup/di-composer-core/composition_root.h>
 
 #include <gtest/gtest.h>
 
 using namespace sup::di;
+
+const std::string TEST_FILE_NAME = "test_composition_root.xml";
 
 const std::string COMPOSITION_ROOT_XML =
 R"RAW(<?xml version="1.0" encoding="UTF-8"?>
@@ -42,6 +46,23 @@ R"RAW(<?xml version="1.0" encoding="UTF-8"?>
 </ObjectComposer>
 )RAW";
 
+const std::string COMPOSITION_ROOT_XML_FILE =
+R"RAW(<?xml version="1.0" encoding="UTF-8"?>
+<ObjectComposer xmlns="http://codac.iter.org/sup/di" version="1.0"
+           name="Test configuration file for the SUP dependency injection framework"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema-instance"
+           xs:schemaLocation="http://codac.iter.org/sup/di sup-di.xsd">
+    <StringInstance>
+        <InstanceName>Test_Name2</InstanceName>
+        <Value>Non-empty value</Value>
+    </StringInstance>
+    <CallFunction>
+        <FunctionName>test_check_string_not_null</FunctionName>
+        <Dependency>Test_Name2</Dependency>
+    </CallFunction>
+</ObjectComposer>
+)RAW";
+
 class CompositionRootTest : public ::testing::Test
 {
 protected:
@@ -52,6 +73,12 @@ protected:
 TEST_F(CompositionRootTest, FromString)
 {
   EXPECT_NO_THROW(ExecuteObjectTreeFromString(COMPOSITION_ROOT_XML));
+}
+
+TEST_F(CompositionRootTest, FromFile)
+{
+  test::TemporaryTestFile file(TEST_FILE_NAME, COMPOSITION_ROOT_XML_FILE);
+  EXPECT_NO_THROW(ExecuteObjectTreeFromFile(TEST_FILE_NAME));
 }
 
 CompositionRootTest::CompositionRootTest() = default;

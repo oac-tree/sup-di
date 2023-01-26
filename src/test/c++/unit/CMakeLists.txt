@@ -16,6 +16,7 @@ target_sources(unit-tests
         ${CMAKE_CURRENT_LIST_DIR}/object_manager_tests.cpp
         ${CMAKE_CURRENT_LIST_DIR}/object_manager_external_tests.cpp
         ${CMAKE_CURRENT_LIST_DIR}/string_instance_element_tests.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/temporary_file.cpp
         ${CMAKE_CURRENT_LIST_DIR}/tree_extract_tests.cpp
         ${CMAKE_CURRENT_LIST_DIR}/type_map_tests.cpp
         ${CMAKE_CURRENT_LIST_DIR}/type_string_list_tests.cpp
