@@ -30,23 +30,16 @@ target_include_directories(unit-tests
 
 find_package(GTest REQUIRED)
 
+find_package(sup-utils REQUIRED)
+
 target_link_libraries(unit-tests
     PRIVATE
         GTest::GTest
         GTest::Main
+        sup-utils::sup-xml
         sup-di-composer-core
         sup-di
         dl
 )
 
-if (SUP_DI_CODAC)
-  target_include_directories(unit-tests PUBLIC $ENV{CODAC_ROOT}/include)
-  target_link_directories(unit-tests PUBLIC $ENV{CODAC_ROOT}/lib)
-  target_link_libraries(unit-tests PRIVATE sup-xml)
-else()
-  find_package(sup-utils REQUIRED)
-  target_link_libraries(unit-tests PRIVATE sup-utils::sup-xml)
-endif()
-
 set_target_properties(unit-tests PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${TEST_OUTPUT_DIRECTORY})
-

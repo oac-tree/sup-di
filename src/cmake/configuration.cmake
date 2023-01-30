@@ -3,6 +3,14 @@
 include(GNUInstallDirs)
 include(CTest)
 
+# Detecting CODAC environment
+if (NOT NO_CODAC AND DEFINED ENV{CODAC_ROOT})
+    message(STATUS "CODAC environment detected at $ENV{CODAC_ROOT}")
+    list(APPEND CMAKE_PREFIX_PATH $ENV{CODAC_ROOT} $ENV{CODAC_ROOT}/common)
+else()
+  message(STATUS "Compiling without CODAC")
+endif()
+
 get_filename_component(SUP_DI_PROJECT_DIR "${CMAKE_CURRENT_LIST_DIR}/../.." ABSOLUTE)
 
 # Build settings
