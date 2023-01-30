@@ -1,15 +1,11 @@
-cmake_minimum_required(VERSION 3.5)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Weffc++ -pedantic")
+if (COVERAGE)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -g -fprofile-arcs -ftest-coverage --coverage")
+endif()
 
-project(SUP-DI-PROJECT VERSION 1.0.0)
+if(CMAKE_VERSION VERSION_LESS "3.7.0")
+    set(CMAKE_INCLUDE_CURRENT_DIR ON)
+endif()
 
-option(SUP_DI_EXPORT_BUILDTREE "Export build tree in /home/user/.cmake registry" OFF)
-option(SUP_DI_CODAC "Compilation for CODAC environment" ON)
-option(COVERAGE "Generate unit test coverage information" FALSE)
-
-set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/../src/cmake)
-include(configuration)
-
-add_subdirectory(main/c++)
-add_subdirectory(test/c++)
-
-include(installation)
+add_subdirectory(sup)
+add_subdirectory(sup-di-composer)
