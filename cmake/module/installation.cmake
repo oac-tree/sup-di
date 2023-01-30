@@ -29,7 +29,7 @@ endif()
 include(CMakePackageConfigHelpers)
 
 # to use in the build tree
-configure_package_config_file(${CMAKE_CURRENT_LIST_DIR}/sup-di-config.cmake.in
+configure_package_config_file(${CMAKE_SOURCE_DIR}/cmake/config/sup-di-config.cmake.in
     ${CMAKE_CURRENT_BINARY_DIR}/sup-di-config.cmake
     INSTALL_DESTINATION ${INSTALL_CONFIGDIR}
 )
