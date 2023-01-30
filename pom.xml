@@ -6,7 +6,7 @@
 
  Description   : The definition and implementation for dependency injection templates in SUP.
 
- Authors       : Walter Van Herck (IO)
+ Authors       : CODAC Operation Applications Team
 
  Copyright (c) : 2010-2023 ITER Organization,
                  CS 90 046
@@ -18,33 +18,39 @@
  refer to the file ITER-LICENSE.TXT located in the top level directory
  of the distribution package.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.iter.codac.units</groupId>
     <artifactId>sup-di</artifactId>
     <packaging>codac</packaging>
+    <!-- See ChangeLog file for details -->
     <version>1.0.0</version>
     <name>SUP dependency injection module</name>
     <description>Library for configuration-based dependency injection in SUP</description>
     <url>http://www.iter.org/</url>
 
-    <!-- project properties -->
+    <!-- Project properties -->
     <properties>
         <unit.type>module</unit.type>
         <integrity.level>1</integrity.level>
+        <!-- -->
         <cppcheck.args>--enable=all --suppress=missingInclude --inline-suppr</cppcheck.args>
-        <sonar.exclusions>src/test/**, src/main/c++/sup-di-composer/**</sonar.exclusions>
+        <sonar.sources.cpp>src</sonar.sources.cpp>
+        <sonar.tests.cpp>test</sonar.tests.cpp>
+        <sonar.exclusions>test/**, src/sup-di-composer/**</sonar.exclusions>
+        <coverage>false</coverage>
     </properties>
 
-    <!-- parent pom.xml -->
+    <!-- Parent pom.xml -->
     <parent>
         <groupId>org.iter.codac.units</groupId>
         <artifactId>maven-iter-settings</artifactId>
         <version>7.1.0</version>
     </parent>
 
-    <!-- unit owner and developers -->
+    <!-- Unit owner and developers -->
     <developers>
         <developer>
             <id>vanherw</id>
@@ -56,49 +62,112 @@
                 <role>developer</role>
             </roles>
         </developer>
+        <developer>
+            <id>gracasr</id>
+            <name>Rafael Silva</name>
+            <organization>CSW</organization>
+            <email>rg-silva@criticalsoftware.com</email>
+            <roles>
+                <role>developer</role>
+            </roles>
+        </developer>
     </developers>
 
-    <!-- configuration of how the project is built -->
+    <!-- Configure how the project is built -->
     <build>
-        <!-- default phase is compile -->
+        <!-- Default phase is compile -->
+        <!-- This command is executed if you just write 'mvn' -->
         <defaultGoal>compile</defaultGoal>
-        <!-- this command is executed if you just write 'mvn' -->
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-iter-plugin</artifactId>
-                <extensions>true</extensions>
                 <configuration>
+                    <!-- Copy the sources over to target -->
+                    <init>
+                        <copy source="src" target="main/src" />
+                        <copy source="test" target="main/test" />
+                        <copy source="doc" target="main/doc" />
+                        <copy source="cmake" target="main/cmake" />
+                        <copy source="CMakeLists.txt" target="main/CMakeLists.txt" />
+                    </init>
+                    <!-- Configure packaging and dependencies -->
                     <packaging>
                         <package>
-                            <!-- Libraries -->
-                            <include type="file" source="lib64" target="lib">
-                                <include>libsup-di.so.*</include>
-                            </include>
-                            <include type="file" source="bin" target="bin">
-                                <include>sup-di-composer</include>
-                            </include>
-                            <!-- Package dependencies -->
-                            <requires codac="true">sup-utils</requires>
-                            <requires buildOnly="true">cmake</requires>
-                            <requires codac="true" buildOnly="true">sup-utils-devel</requires>
-                            <requires buildOnly="true">libxml2-devel</requires>
-                            <requires version="current" buildOnly="true">gtest-devel</requires>
-                        </package>
-                        <package name="devel">
-                            <!-- Libraries -->
-                            <include type="file" source="lib64" target="lib">
-                                <include>libsup-di.so</include>
-                            </include>
+                        <!-- Libraries  -->
+                        <include type="file" source="lib" target="lib">
+                            <include>*.so.*</include>
+                        </include>
+                        <!-- Package dependencies -->
+                        <requires codac="true">sup-utils</requires>
+                        <requires codac="true" buildOnly="true">sup-utils-devel</requires>
+                        <requires codac="true" buildOnly="true">gtest-1.12.1-devel</requires>
+                        <requires version="current" buildOnly="true">cmake</requires>
+                    </package>
+                    <package name="devel">
+                        <!-- CMAKE -->
+                        <include type="file" source="lib/cmake/sup-di" target="lib/cmake/sup-di">
+                            <include>*.cmake</include>
+                        </include>
+                        <!--  Libraries  -->
+                        <include type="file" source="lib" target="lib">
+                            <include>*.so</include>
+                        </include>
                             <!-- Public API headers -->
                             <include type="file" source="include/sup/di" target="include/sup/di">
                                 <include>*.h</include>
                             </include>
-                            <!-- Package dependencies -->
-                            <requires version="current">%{codac_rpm_prefix}-${project.artifactId}</requires>
-                        </package>
+                        <!-- Package dependencies -->
+                        <requires version="current">%{codac_rpm_prefix}-${project.artifactId}</requires>
+                    </package>
                     </packaging>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <!-- Configure cmake build -->
+                    <execution>
+                        <id>configure-build</id>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>cmake</executable>
+                            <workingDirectory>${project.build.directory}</workingDirectory>
+                            <arguments>
+                                <!-- CMAKE configuration options -->
+                                <argument>-B${project.build.directory}/main/build</argument>
+                                <argument>-DCMAKE_INSTALL_PREFIX=${project.build.directory}</argument>
+                                <argument>-DCMAKE_INSTALL_LIBDIR=lib</argument>
+                                <argument>-DTEST_OUTPUT_DIRECTORY=${project.build.directory}/test</argument>
+                                <argument>-DCOVERAGE=${coverage}</argument>
+                                <argument>${project.build.directory}/main</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <!-- Compile project -->
+                    <execution>
+                        <id>compile</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>cmake</executable>
+                            <workingDirectory>${project.build.directory}</workingDirectory>
+                            <arguments>
+                                <argument>--build</argument>
+                                <argument>${project.build.directory}/main/build</argument>
+                                <argument>--target</argument>
+                                <argument>install</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
