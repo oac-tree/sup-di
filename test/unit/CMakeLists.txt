@@ -48,3 +48,5 @@ else()
   target_link_libraries(unit-tests PRIVATE sup-utils::sup-xml)
 endif()
 
+set_target_properties(unit-tests PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${TEST_OUTPUT_DIRECTORY})
+
