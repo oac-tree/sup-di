@@ -85,11 +85,11 @@
                 <configuration>
                     <!-- Copy the sources over to target -->
                     <init>
-                        <copy source="src" target="main/src" />
-                        <copy source="test" target="main/test" />
-                        <copy source="doc" target="main/doc" />
-                        <copy source="cmake" target="main/cmake" />
-                        <copy source="CMakeLists.txt" target="main/CMakeLists.txt" />
+                        <copy source="src" target="SOURCE/src" />
+                        <copy source="test" target="SOURCE/test" />
+                        <copy source="doc" target="SOURCE/doc" />
+                        <copy source="cmake" target="SOURCE/cmake" />
+                        <copy source="CMakeLists.txt" target="SOURCE/CMakeLists.txt" />
                     </init>
                     <!-- Configure packaging and dependencies -->
                     <packaging>
@@ -140,12 +140,12 @@
                             <workingDirectory>${project.build.directory}</workingDirectory>
                             <arguments>
                                 <!-- CMAKE configuration options -->
-                                <argument>-B${project.build.directory}/main/build</argument>
+                                <argument>-B${project.build.directory}/BUILD</argument>
                                 <argument>-DCMAKE_INSTALL_PREFIX=${project.build.directory}</argument>
                                 <argument>-DCMAKE_INSTALL_LIBDIR=lib</argument>
                                 <argument>-DTEST_OUTPUT_DIRECTORY=${project.build.directory}/test</argument>
                                 <argument>-DCOVERAGE=${coverage}</argument>
-                                <argument>${project.build.directory}/main</argument>
+                                <argument>${project.build.directory}/SOURCE</argument>
                             </arguments>
                         </configuration>
                     </execution>
@@ -161,7 +161,8 @@
                             <workingDirectory>${project.build.directory}</workingDirectory>
                             <arguments>
                                 <argument>--build</argument>
-                                <argument>${project.build.directory}/main/build</argument>
+                                <argument>${project.build.directory}/BUILD</argument>
+                                <argument>-j4</argument>
                                 <argument>--target</argument>
                                 <argument>install</argument>
                             </arguments>
