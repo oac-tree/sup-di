@@ -39,7 +39,7 @@
         <cppcheck.args>--enable=all --suppress=missingInclude --inline-suppr</cppcheck.args>
         <sonar.sources.cpp>src</sonar.sources.cpp>
         <sonar.tests.cpp>test</sonar.tests.cpp>
-        <sonar.exclusions>test/**, src/sup-di-composer/**</sonar.exclusions>
+        <sonar.exclusions>test/**, src/app/sup-di-composer/**</sonar.exclusions>
         <coverage>false</coverage>
     </properties>
 
