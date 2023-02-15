@@ -18,6 +18,11 @@ if (CODAC_FOUND)
   if(CODAC_Python_FOUND AND NOT Python3_EXECUTABLE)
     set(Python3_EXECUTABLE ${CODAC_PYTHON_EXECUTABLE})
   endif()
+
+  # When operating inside a CODAC CICD system build the documentation
+  if (CODAC_CICD)
+    set(COA_BUILD_DOCUMENTATION ON)
+  endif()
 else()
   message(STATUS "Compiling without CODAC")
 endif()
@@ -25,6 +30,12 @@ endif()
 get_filename_component(SUP_DI_PROJECT_DIR "${CMAKE_CURRENT_LIST_DIR}/../.." ABSOLUTE)
 
 # Build settings
+if(COVERAGE)
+  # On coverage builds  alsways skip building docs and build tests
+  set(COA_BUILD_DOCUMENTATION OFF)
+  set(COA_BUILD_TESTS ON)
+endif()
+
 if (NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "RelWithDebInfo")
 endif()
