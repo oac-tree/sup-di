@@ -19,8 +19,8 @@
  * of the distribution package.
  ******************************************************************************/
 
-#ifndef SUP_DI_COMPOSER_DI_UTILS_H_
-#define SUP_DI_COMPOSER_DI_UTILS_H_
+#ifndef SUP_DI_DI_UTILS_H_
+#define SUP_DI_DI_UTILS_H_
 
 #include "error_codes.h"
 
@@ -41,4 +41,4 @@ ErrorCode LoadLibrary(const std::string& library_name);
 
 }  // namespace sup
 
-#endif  // SUP_DI_COMPOSER_DI_UTILS_H_
+#endif  // SUP_DI_DI_UTILS_H_
