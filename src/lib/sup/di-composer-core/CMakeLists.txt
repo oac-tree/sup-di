@@ -26,6 +26,5 @@ find_package(sup-utils REQUIRED)
 target_link_libraries(sup-di-composer-core
   PRIVATE
     sup-utils::sup-xml
-    sup-di
-    dl
+    sup-di::sup-di
 )

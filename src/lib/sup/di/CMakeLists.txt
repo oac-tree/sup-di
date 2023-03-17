@@ -21,6 +21,11 @@ target_sources(sup-di
     ${CMAKE_CURRENT_LIST_DIR}/object_manager.cpp
 )
 
+target_link_libraries(sup-di
+  PUBLIC
+    dl
+)
+
 # -- Installation --
 
 install(TARGETS sup-di EXPORT sup-di-targets LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
