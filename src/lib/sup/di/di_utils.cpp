@@ -19,34 +19,29 @@
  * of the distribution package.
  ******************************************************************************/
 
-#include "error_codes.h"
+#include "di_utils.h"
 
-#include <map>
+#include <dlfcn.h>
 
 namespace sup
 {
 namespace di
 {
-
-std::string ErrorString(const ErrorCode& code)
+namespace utils
 {
-  static const std::map<ErrorCode, std::string> code_map{
-    { ErrorCode::kSuccess, "Success" },
-    { ErrorCode::kFactoryFunctionNotFound, "Factory function not found" },
-    { ErrorCode::kGlobalFunctionNotFound, "Global function not found" },
-    { ErrorCode::kDependencyNotFound, "Dependency not found" },
-    { ErrorCode::kWrongNumberOfDependencies, "Wrong number of dependencies" },
-    { ErrorCode::kInvalidInstanceName, "Invalid instance name" },
-    { ErrorCode::kGlobalFunctionFailed, "Global function failed" },
-    { ErrorCode::kLibraryNotLoaded, "Could not load library"}
-  };
-  auto it = code_map.find(code);
-  if (it == code_map.end())
+
+ErrorCode LoadLibrary(const std::string& library_name)
+{
+  auto handle = dlopen(library_name.c_str(), RTLD_NOW);
+  if (handle == nullptr)
   {
-    return "Unknown error code";
+    return ErrorCode::kLibraryNotLoaded;
   }
-  return it->second;
+  return ErrorCode::kSuccess;
 }
+
+}  // namespace utils
+
 }  // namespace di
 
 }  // namespace sup

@@ -37,7 +37,8 @@ enum class ErrorCode
   kDependencyNotFound,
   kWrongNumberOfDependencies,
   kInvalidInstanceName,
-  kGlobalFunctionFailed
+  kGlobalFunctionFailed,
+  kLibraryNotLoaded
 };
 
 std::string ErrorString(const ErrorCode& code);

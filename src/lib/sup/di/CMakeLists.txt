@@ -15,6 +15,7 @@ target_include_directories(sup-di PUBLIC
 
 target_sources(sup-di
   PRIVATE
+    ${CMAKE_CURRENT_LIST_DIR}/di_utils.cpp
     ${CMAKE_CURRENT_LIST_DIR}/error_codes.cpp
     ${CMAKE_CURRENT_LIST_DIR}/instance_container.cpp
     ${CMAKE_CURRENT_LIST_DIR}/object_manager.cpp
@@ -27,6 +28,7 @@ set_target_properties(sup-di PROPERTIES EXPORT_NAME sup-di)
 
 install(FILES
     dependency_traits.h
+    di_utils.h
     error_codes.h
     index_sequence.h
     instance_container.h

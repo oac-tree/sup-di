@@ -21,13 +21,13 @@
 
 #include "library_element.h"
 
+#include <sup/di/di_utils.h>
+
 #include "constants.h"
 #include "exceptions.h"
 #include "tree_extract.h"
 
 #include <sup/xml/tree_data_validate.h>
-
-#include <dlfcn.h>
 
 namespace sup
 {
@@ -45,8 +45,8 @@ LibraryElement::~LibraryElement() = default;
 
 void LibraryElement::Execute()
 {
-  auto handle = dlopen(m_library_name.c_str(), RTLD_NOW);
-  if (handle == nullptr)
+  auto error_code = utils::LoadLibrary(m_library_name);
+  if (error_code != ErrorCode::kSuccess)
   {
     std::string error_message =
     "LibraryElement::Execute(): could not load library with name [" + m_library_name + "]";
