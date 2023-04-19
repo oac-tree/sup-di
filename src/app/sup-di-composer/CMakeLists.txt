@@ -16,3 +16,7 @@ target_link_libraries(sup-di-composer
   PRIVATE
     sup-di-composer-core
 )
+
+# -- Installation --
+
+install(TARGETS sup-di-composer RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})

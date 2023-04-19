@@ -98,6 +98,10 @@
                         <include type="file" source="lib" target="lib">
                             <include>*.so.*</include>
                         </include>
+                        <!-- Programs -->
+                        <include type="file" source="bin" target="bin">
+                            <include>*</include>
+                        </include>
                         <!-- Package dependencies -->
                         <requires codac="true">sup-utils</requires>
                         <requires codac="true" buildOnly="true">sup-utils-devel</requires>
