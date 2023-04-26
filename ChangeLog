@@ -3,3 +3,4 @@ Changes for 1.0.0:
 - Registration of object constructors and global functions
 - Typesafe management of registered instances (using a type map)
 - Support for XML-based dependency injection
+- Support injection by unique_ptr (with ownership transfer) and by value, reference or pointer (no ownership transfer)
