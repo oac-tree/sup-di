@@ -5,9 +5,6 @@ include(CTest)
 
 # Detecting CODAC environment
 if(NOT COA_NO_CODAC)
-  # cmake warns for the existance of ``<PackageName>_ROOT`` (CODAC_ROOT in this case) variables and ignores them
-  # for compatibility reasons, we set the related policy to NEW behaviour to suppress warnings and enable desired behaviour
-  cmake_policy(SET CMP0074 NEW)
   find_package(CODAC OPTIONAL_COMPONENTS site-packages Python MODULE)
 endif()
 if (CODAC_FOUND)

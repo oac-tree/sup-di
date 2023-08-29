@@ -13,16 +13,16 @@ set_target_properties(service-wrapper PROPERTIES
 
 target_sources(service-wrapper
     PRIVATE
-        ${CMAKE_CURRENT_LIST_DIR}/registration.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/services.cpp
+    registration.cpp
+    services.cpp
 )
 
 target_include_directories(service-wrapper
     PRIVATE
-        ${CMAKE_CURRENT_LIST_DIR}
+    ${CMAKE_CURRENT_LIST_DIR}
 )
 
 target_link_libraries(service-wrapper
     PRIVATE
-        sup-di
+    sup-di
 )

@@ -12,15 +12,15 @@ set_target_properties(sup-di-testservices PROPERTIES
 
 target_sources(sup-di-testservices
     PRIVATE
-        ${CMAKE_CURRENT_LIST_DIR}/external_test_services.cpp
+    external_test_services.cpp
 )
 
 target_include_directories(sup-di-testservices
     PRIVATE
-        ${CMAKE_CURRENT_LIST_DIR}
+    ${CMAKE_CURRENT_LIST_DIR}
 )
 
 target_link_libraries(sup-di-testservices
     PRIVATE
-        sup-di
+    sup-di
 )

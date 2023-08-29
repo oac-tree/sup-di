@@ -9,22 +9,22 @@ target_include_directories(sup-di-composer-core PUBLIC
 
 target_sources(sup-di-composer-core
   PRIVATE
-    ${CMAKE_CURRENT_LIST_DIR}/composition_root.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/element_constructor_map.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/exceptions.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/function_element.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/i_composer_element.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/instance_element.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/library_element.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/object_composer_element.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/string_instance_element.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/tree_extract.cpp
+  composition_root.cpp
+  element_constructor_map.cpp
+  exceptions.cpp
+  function_element.cpp
+  i_composer_element.cpp
+  instance_element.cpp
+  library_element.cpp
+  object_composer_element.cpp
+  string_instance_element.cpp
+  tree_extract.cpp
 )
 
 find_package(sup-utils REQUIRED)
 
 target_link_libraries(sup-di-composer-core
   PRIVATE
-    sup-utils::sup-xml
-    sup-di::sup-di
+  sup-utils::sup-xml
+  sup-di::sup-di
 )
