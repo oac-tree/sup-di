@@ -1,3 +1,7 @@
+Changes for 1.1.0:
+
+- CMake file update
+
 Changes for 1.0.0:
 
 - Registration of object constructors and global functions
