@@ -121,8 +121,7 @@ public:
    *   std::unique_ptr<T>&& : for transferring ownership out of ObjectManager
    */
   template <typename T>
-  typename internal::InjectionType<T>::type
-    GetInstance(const std::string& instance_name);
+  internal::InjectionType<T> GetInstance(const std::string& instance_name);
 
   /**
    * @brief Register a factory function that requires dependencies.
@@ -184,23 +183,22 @@ private:
    * @brief Helper method to retrieve an instance of the correct type, based on an index.
    */
   template <std::size_t I, typename... Deps>
-  typename internal::InjectionType<internal::NthType<internal::TypeStringList<Deps...>, I>>::type
+  internal::InjectionType<internal::NthType<internal::TypeStringList<Deps...>, I>>
     IndexedArgument(const internal::TypeStringList<Deps...>& type_string_list);
 
   /**
    * @brief Helper method to retrieve an instance when ownership needs to be passed.
    */
   template <typename T>
-  typename internal::InjectionType<T>::type
-    GetInstanceImpl(const std::string& instance_name, std::true_type transfer_ownership);
+  internal::InjectionType<T> GetInstanceImpl(const std::string& instance_name,
+                                             std::true_type transfer_ownership);
 
   /**
    * @brief Helper method to retrieve an instance when ownership is managed by the ObjectManager.
    */
   template <typename T>
-  typename internal::InjectionType<T>::type
-    GetInstanceImpl(const std::string& instance_name,
-                    std::false_type do_not_transfer_ownership);
+  internal::InjectionType<T> GetInstanceImpl(const std::string& instance_name,
+                                             std::false_type do_not_transfer_ownership);
 
   /**
    * @brief Helper method to retrieve an iterator to a named and typed instance.
@@ -239,8 +237,7 @@ ForwardingInstanceFactoryFunction(typename internal::FactoryArgumentType<Deps>::
 ObjectManager& GlobalObjectManager();
 
 template <typename T>
-typename internal::InjectionType<T>::type
-ObjectManager::GetInstance(const std::string& instance_name)
+internal::InjectionType<T> ObjectManager::GetInstance(const std::string& instance_name)
 {
   return GetInstanceImpl<T>(instance_name, internal::TransferOwnership<T>{});
 }
@@ -352,7 +349,7 @@ ErrorCode ObjectManager::CallFromTypeStringList(
 }
 
 template <std::size_t I, typename... Deps>
-typename internal::InjectionType<internal::NthType<internal::TypeStringList<Deps...>, I>>::type
+internal::InjectionType<internal::NthType<internal::TypeStringList<Deps...>, I>>
   ObjectManager::IndexedArgument(const internal::TypeStringList<Deps...>& type_string_list)
 {
   return GetInstance<internal::NthType<internal::TypeStringList<Deps...>, I>>(
@@ -360,8 +357,8 @@ typename internal::InjectionType<internal::NthType<internal::TypeStringList<Deps
 }
 
 template <typename T>
-typename internal::InjectionType<T>::type
-  ObjectManager::GetInstanceImpl(const std::string& instance_name, std::true_type)
+internal::InjectionType<T> ObjectManager::GetInstanceImpl(const std::string& instance_name,
+                                                          std::true_type)
 {
   auto instance_it = FindInstance<internal::ValueType<T>>(instance_name);
   auto result = internal::PointerToInjectionType<T>::Forward(instance_it->second->Release());
@@ -370,8 +367,8 @@ typename internal::InjectionType<T>::type
 }
 
 template <typename T>
-typename internal::InjectionType<T>::type
-  ObjectManager::GetInstanceImpl(const std::string& instance_name, std::false_type)
+internal::InjectionType<T> ObjectManager::GetInstanceImpl(const std::string& instance_name,
+                                                          std::false_type)
 {
   auto instance_it = FindInstance<internal::ValueType<T>>(instance_name);
   return internal::PointerToInjectionType<T>::Forward(instance_it->second->Get());

@@ -68,28 +68,31 @@ using ValueType = typename ValueTypeT<T>::Type;
  * result is a unique_ptr to the underlying type without const/volatile qualifiers.
  */
 template <typename T>
-struct InjectionType
+struct InjectionTypeT
 {
-  using type = ValueType<T>&;
+  using Type = ValueType<T>&;
 };
 
 template <typename T>
-struct InjectionType<T&>
+struct InjectionTypeT<T&>
 {
-  using type = ValueType<T>&;
+  using Type = ValueType<T>&;
 };
 
 template <typename T>
-struct InjectionType<T*>
+struct InjectionTypeT<T*>
 {
-  using type = ValueType<T>*;
+  using Type = ValueType<T>*;
 };
 
 template <typename T>
-struct InjectionType<std::unique_ptr<T>&&>
+struct InjectionTypeT<std::unique_ptr<T>&&>
 {
-  using type = std::unique_ptr<ValueType<T>>;
+  using Type = std::unique_ptr<ValueType<T>>;
 };
+
+template <typename T>
+using InjectionType = typename InjectionTypeT<T>::Type;
 
 /**
  * @brief Type trait that gives the argument type for a factory function that forwards the
@@ -98,7 +101,7 @@ struct InjectionType<std::unique_ptr<T>&&>
 template <typename T>
 struct FactoryArgumentType
 {
-  using type = typename InjectionType<T>::type;
+  using type = InjectionType<T>;
 };
 
 template <typename T>
