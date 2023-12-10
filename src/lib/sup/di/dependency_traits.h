@@ -42,18 +42,21 @@ namespace internal
  * const/volatile qualifiers.
  */
 template <typename T>
-struct ValueType
+struct ValueTypeT
 {
-  using type = typename std::remove_cv<
+  using Type = typename std::remove_cv<
                  typename std::remove_reference<
                    typename std::remove_pointer<T>::type>::type>::type;
 };
 
 template <typename T>
-struct ValueType<std::unique_ptr<T>&&>
+struct ValueTypeT<std::unique_ptr<T>&&>
 {
-  using type = typename std::remove_cv<T>::type;
+  using Type = typename std::remove_cv<T>::type;
 };
+
+template <typename T>
+using ValueType = typename ValueTypeT<T>::Type;
 
 /**
  * @brief Type trait that transforms a function parameter type into the type that needs to be
@@ -67,25 +70,25 @@ struct ValueType<std::unique_ptr<T>&&>
 template <typename T>
 struct InjectionType
 {
-  using type = typename ValueType<T>::type&;
+  using type = ValueType<T>&;
 };
 
 template <typename T>
 struct InjectionType<T&>
 {
-  using type = typename ValueType<T>::type&;
+  using type = ValueType<T>&;
 };
 
 template <typename T>
 struct InjectionType<T*>
 {
-  using type = typename ValueType<T>::type*;
+  using type = ValueType<T>*;
 };
 
 template <typename T>
 struct InjectionType<std::unique_ptr<T>&&>
 {
-  using type = std::unique_ptr<typename ValueType<T>::type>;
+  using type = std::unique_ptr<ValueType<T>>;
 };
 
 /**
@@ -101,7 +104,7 @@ struct FactoryArgumentType
 template <typename T>
 struct FactoryArgumentType<std::unique_ptr<T>&&>
 {
-  using type = std::unique_ptr<typename ValueType<T>::type>&&;
+  using type = std::unique_ptr<ValueType<T>>&&;
 };
 
 /**

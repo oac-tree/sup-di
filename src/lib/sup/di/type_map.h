@@ -36,15 +36,15 @@ namespace internal
 /**
  * @brief Class template for a map whose keys are types instead of values.
  */
-template <typename ValueType>
+template <typename Val>
 class TypeMap
 {
-  using Container = std::map<std::type_index, ValueType>;
+  using Container = std::map<std::type_index, Val>;
 public:
   using iterator = typename Container::iterator;
   using const_iterator = typename Container::const_iterator;
 
-  TypeMap();
+  TypeMap() : container{} {}
 
   iterator begin() { return container.begin(); }
   iterator end() { return container.end(); }
@@ -58,9 +58,9 @@ public:
   template <class Key>
   const_iterator find() const { return container.find(TypeId<Key>()); }
   template <class Key>
-  void put(ValueType &&value)
+  void put(Val &&value)
   {
-    container[TypeId<Key>()] = std::forward<ValueType>(value);
+    container[TypeId<Key>()] = std::forward<Val>(value);
   }
 
   template <class Key>
@@ -72,11 +72,6 @@ public:
 private:
   Container container;
 };
-
-template <class T>
-TypeMap<T>::TypeMap()
-  : container{}
-{}
 
 }  // namespace internal
 

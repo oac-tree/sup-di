@@ -41,7 +41,7 @@ struct PointerToInjectionType
 {
   static typename InjectionType<T>::type Forward(void* arg)
   {
-    return *static_cast<typename ValueType<T>::type*>(arg);
+    return *static_cast<ValueType<T>*>(arg);
   }
 };
 
@@ -59,7 +59,7 @@ struct PointerToInjectionType<std::unique_ptr<T>&&>
 {
   static typename InjectionType<std::unique_ptr<T>&&>::type Forward(void* arg)
   {
-    auto typed_arg = static_cast<typename internal::ValueType<std::unique_ptr<T>&&>::type*>(arg);
+    auto typed_arg = static_cast<internal::ValueType<std::unique_ptr<T>&&>*>(arg);
     return typename InjectionType<std::unique_ptr<T>&&>::type{typed_arg};
   }
 };

@@ -33,7 +33,7 @@ namespace internal
 {
 
 /**
- * @brief Retrieve head of a list or throw if empty.
+ * @brief Retrieve head of a list of keys or throw if empty.
 */
 template <typename Key>
 Key HeadOf(const std::list<Key>& list)
@@ -46,7 +46,7 @@ Key HeadOf(const std::list<Key>& list)
 }
 
 /**
- * @brief Retrieve tail of a list or throw if empty.
+ * @brief Retrieve tail of a list of keys or throw if empty.
 */
 template <typename Key>
 std::list<Key> TailOf(const std::list<Key>& list)
@@ -67,6 +67,7 @@ std::list<Key> TailOf(const std::list<Key>& list)
 template <typename Key, typename... Types>
 class TypeKeyList;
 
+// Recursive definition
 template <typename Key, typename Head, typename... Tail>
 class TypeKeyList<Key, Head, Tail...>
 {
@@ -89,6 +90,7 @@ public:
   const TypeKeyList<Key, Tail...>& GetTail() const { return m_tail; }
 };
 
+// Base case
 template <typename Key>
 class TypeKeyList<Key>
 {

@@ -363,9 +363,9 @@ template <typename T>
 typename internal::InjectionType<T>::type
   ObjectManager::GetInstanceImpl(const std::string& instance_name, std::true_type)
 {
-  auto instance_it = FindInstance<typename internal::ValueType<T>::type>(instance_name);
+  auto instance_it = FindInstance<internal::ValueType<T>>(instance_name);
   auto result = internal::PointerToInjectionType<T>::Forward(instance_it->second->Release());
-  RemoveInstance<typename internal::ValueType<T>::type>(instance_it);
+  RemoveInstance<internal::ValueType<T>>(instance_it);
   return std::move(result);
 }
 
@@ -373,7 +373,7 @@ template <typename T>
 typename internal::InjectionType<T>::type
   ObjectManager::GetInstanceImpl(const std::string& instance_name, std::false_type)
 {
-  auto instance_it = FindInstance<typename internal::ValueType<T>::type>(instance_name);
+  auto instance_it = FindInstance<internal::ValueType<T>>(instance_name);
   return internal::PointerToInjectionType<T>::Forward(instance_it->second->Get());
 }
 
