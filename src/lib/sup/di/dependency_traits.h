@@ -99,16 +99,19 @@ using InjectionType = typename InjectionTypeT<T>::Type;
  * argument to a constructor in its body.
  */
 template <typename T>
-struct FactoryArgumentType
+struct FactoryArgumentTypeT
 {
-  using type = InjectionType<T>;
+  using Type = InjectionType<T>;
 };
 
 template <typename T>
-struct FactoryArgumentType<std::unique_ptr<T>&&>
+struct FactoryArgumentTypeT<std::unique_ptr<T>&&>
 {
-  using type = std::unique_ptr<ValueType<T>>&&;
+  using Type = std::unique_ptr<ValueType<T>>&&;
 };
+
+template <typename T>
+using FactoryArgumentType = typename FactoryArgumentTypeT<T>::Type;
 
 /**
  * @brief Type trait that indicates if passing a variable as the given type requires transfer of

@@ -225,7 +225,7 @@ private:
  */
 template <typename ServiceType, typename ConcreteType, typename... Deps>
 std::unique_ptr<ServiceType>
-ForwardingInstanceFactoryFunction(typename internal::FactoryArgumentType<Deps>::type... dependencies)
+ForwardingInstanceFactoryFunction(internal::FactoryArgumentType<Deps>... dependencies)
 {
   return std::unique_ptr<ServiceType>(
     new ConcreteType(internal::ForwardDependencyType<Deps>::Forward(dependencies)...));
@@ -259,7 +259,7 @@ bool ObjectManager::RegisterFactoryFunction(
         return ErrorCode::kWrongNumberOfDependencies;
       }
       internal::TypeStringList<Deps...> type_string_list(dependency_names);
-      typename internal::MakeIndexSequence<sizeof...(Deps)>::type index_sequence;
+      internal::MakeIndexSequence<sizeof...(Deps)> index_sequence;
       bool register_succes;
       try
       {
@@ -311,7 +311,7 @@ bool ObjectManager::RegisterGlobalFunction(
         return ErrorCode::kWrongNumberOfDependencies;
       }
       internal::TypeStringList<Deps...> type_string_list(dependency_names);
-      typename internal::MakeIndexSequence<sizeof...(Deps)>::type index_sequence;
+      internal::MakeIndexSequence<sizeof...(Deps)> index_sequence;
       return CallFromTypeStringList(global_function, type_string_list, index_sequence);
     };
   return true;

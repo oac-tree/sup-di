@@ -34,25 +34,26 @@ namespace internal
 /**
  * @brief Class template representing a sequence of unsigned integers.
  */
-template<std::size_t... >
+template <std::size_t...>
 struct IndexSequence {};
 
 /**
  * @brief Class template generating a sequence of unsigned integers.
  *
- * @details MakeIndexSequence<N>::type represents IndexSequence<0, 1, ..., N-1>.
+ * @details MakeIndexSequence<N> represents IndexSequence<0, 1, ..., N-1>.
  */
-template<std::size_t N, std::size_t ...S>
-struct MakeIndexSequence
+template <std::size_t N, std::size_t... Idx>
+struct MakeIndexSequenceT : public MakeIndexSequenceT<N-1, N-1, Idx...>
+{};
+
+template <std::size_t... Idx>
+struct MakeIndexSequenceT<0, Idx...>
 {
-  using type = typename MakeIndexSequence<N-1, N-1, S...>::type;
+  using Type = IndexSequence<Idx...>;
 };
 
-template<std::size_t ...S>
-struct MakeIndexSequence<0, S...>
-{
-  using type = IndexSequence<S...>;
-};
+template <std::size_t N>
+using MakeIndexSequence = typename MakeIndexSequenceT<N>::Type;
 
 }  // namespace internal
 
