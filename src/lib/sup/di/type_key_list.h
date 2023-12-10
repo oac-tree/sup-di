@@ -54,12 +54,12 @@ public:
     : m_key{HeadOf(key_list)}
     , m_tail{TailOf(key_list)} {}
   TypeKeyList(const TypeKeyList<Key, Head, Tail...>& type_key_list)
-    : TypeKeyList{type_key_list.Head(), type_key_list.Tail()} {}
+    : TypeKeyList{type_key_list.GetHead(), type_key_list.GetTail()} {}
 
-  Key& Head() { return m_key; }
-  const Key& Head() const { return m_key; }
-  TypeKeyList<Key, Tail...>& Tail() { return m_tail; }
-  const TypeKeyList<Key, Tail...>& Tail() const { return m_tail; }
+  Key& GetHead() { return m_key; }
+  const Key& GetHead() const { return m_key; }
+  TypeKeyList<Key, Tail...>& GetTail() { return m_tail; }
+  const TypeKeyList<Key, Tail...>& GetTail() const { return m_tail; }
 };
 
 template <typename Key>
@@ -111,7 +111,7 @@ struct TypeKeyListGet
   template <typename Key, typename Head, typename... Tail>
   static Key apply(const TypeKeyList<Key, Head, Tail...>& list)
   {
-    return TypeKeyListGet<N-1>::apply(list.Tail());
+    return TypeKeyListGet<N-1>::apply(list.GetTail());
   }
 };
 
@@ -121,7 +121,7 @@ struct TypeKeyListGet<0>
   template <typename Key, typename Head, typename... Tail>
   static Key apply(const TypeKeyList<Key, Head, Tail...>& list)
   {
-    return list.Head();
+    return list.GetHead();
   }
 };
 

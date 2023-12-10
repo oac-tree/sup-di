@@ -19,6 +19,7 @@ target_sources(sup-di
   error_codes.cpp
   instance_container.cpp
   object_manager.cpp
+  type_key_list.cpp
 )
 
 target_link_libraries(sup-di
@@ -38,6 +39,7 @@ install(FILES
   instance_container.h
   object_manager.h
   type_functions.h
+  type_key_list.h
   type_map.h
   type_string_list.h
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/sup/di
