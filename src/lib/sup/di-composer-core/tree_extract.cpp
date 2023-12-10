@@ -42,7 +42,7 @@ void SetFromTreeNodeContent(std::string& dest, const sup::xml::TreeData& tree)
   dest = content;
 }
 
-void AppendFromTreeNodeContent(std::vector<std::string>& dest, const sup::xml::TreeData& tree)
+void AppendFromTreeNodeContent(std::list<std::string>& dest, const sup::xml::TreeData& tree)
 {
   auto content = tree.GetContent();
   if (content.empty())

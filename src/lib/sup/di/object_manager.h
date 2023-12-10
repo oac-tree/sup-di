@@ -28,14 +28,13 @@
 #include <sup/di/instance_container.h>
 #include <sup/di/type_functions.h>
 #include <sup/di/type_map.h>
-#include <sup/di/type_string_list.h>
+#include <sup/di/type_key_list.h>
 
 #include <functional>
 #include <map>
 #include <memory>
 #include <stdexcept>
 #include <string>
-#include <vector>
 
 namespace sup
 {
@@ -43,6 +42,9 @@ namespace di
 {
 namespace internal
 {
+template <typename... Types>
+using TypeStringList = TypeKeyList<std::string, Types...>;
+
 /**
  * @brief Alias template for a factory function to create an object with constructor dependencies.
  *
@@ -73,8 +75,8 @@ class ObjectManager
   using ServiceMap = std::map<std::string, std::unique_ptr<internal::AbstractInstanceContainer>>;
   using ServiceMapIterator = typename ServiceMap::iterator;
   using RegisteredFactoryFunction =
-    std::function<ErrorCode(const std::string&, const std::vector<std::string>&)>;
-  using RegisteredGlobalFunction = std::function<ErrorCode(const std::vector<std::string>&)>;
+    std::function<ErrorCode(const std::string&, const std::list<std::string>&)>;
+  using RegisteredGlobalFunction = std::function<ErrorCode(const std::list<std::string>&)>;
 public:
   /**
    * @brief Constructor.
@@ -93,7 +95,7 @@ public:
    */
   ErrorCode CreateInstance(const std::string& registered_typename,
                            const std::string& instance_name,
-                           const std::vector<std::string>& dependency_names);
+                           const std::list<std::string>& dependency_names);
 
   /**
    * @brief Call a global function on the named instances.
@@ -104,7 +106,7 @@ public:
    * @return ErrorCode representing success or a specific failure.
    */
   ErrorCode CallGlobalFunction(const std::string& registered_function_name,
-                               const std::vector<std::string>& dependency_names);
+                               const std::list<std::string>& dependency_names);
 
   /**
    * @brief Retrieve instance of specific type and name from the underlying registry.
@@ -182,8 +184,7 @@ private:
    * @brief Helper method to retrieve an instance of the correct type, based on an index.
    */
   template <std::size_t I, typename... Deps>
-  typename internal::InjectionType<typename internal::TypeStringList<Deps...>::template
-                                        IndexedType<I>>::type
+  typename internal::InjectionType<internal::NthType<internal::TypeStringList<Deps...>, I>>::type
     IndexedArgument(const internal::TypeStringList<Deps...>& type_string_list);
 
   /**
@@ -254,7 +255,7 @@ bool ObjectManager::RegisterFactoryFunction(
     throw std::runtime_error("ObjectManager::RegisterFactoryFunction: typename already registered");
   }
   factory_functions[registered_typename] =
-    [this, factory_function](const std::string& instance_name, const std::vector<std::string>& dependency_names)
+    [this, factory_function](const std::string& instance_name, const std::list<std::string>& dependency_names)
     {
       if (dependency_names.size() != sizeof...(Deps))
       {
@@ -306,7 +307,7 @@ bool ObjectManager::RegisterGlobalFunction(
       "ObjectManager::RegisterGlobalFunction: function name already registered");
   }
   global_functions[registered_function_name] =
-    [this, global_function](const std::vector<std::string>& dependency_names)
+    [this, global_function](const std::list<std::string>& dependency_names)
     {
       if (dependency_names.size() != sizeof...(Deps))
       {
@@ -351,12 +352,11 @@ ErrorCode ObjectManager::CallFromTypeStringList(
 }
 
 template <std::size_t I, typename... Deps>
-typename internal::InjectionType<typename internal::TypeStringList<Deps...>::template
-                                      IndexedType<I>>::type
+typename internal::InjectionType<internal::NthType<internal::TypeStringList<Deps...>, I>>::type
   ObjectManager::IndexedArgument(const internal::TypeStringList<Deps...>& type_string_list)
 {
-  return GetInstance<typename internal::TypeStringList<Deps...>::template IndexedType<I>>(
-    type_string_list.IndexedString(I) );
+  return GetInstance<internal::NthType<internal::TypeStringList<Deps...>, I>>(
+    internal::NthKey<I>(type_string_list) );
 }
 
 template <typename T>

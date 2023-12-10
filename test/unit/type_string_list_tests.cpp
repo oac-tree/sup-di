@@ -19,7 +19,7 @@
  * of the distribution package.
  ******************************************************************************/
 
-#include "sup/di/type_string_list.h"
+#include "sup/di/type_key_list.h"
 
 #include <gtest/gtest.h>
 
@@ -33,15 +33,15 @@ protected:
   TypeStringListTest();
   virtual ~TypeStringListTest();
 
-  TypeStringList<int, std::string> type_string_list;
+  TypeKeyList<std::string, int, std::string> type_string_list;
 };
 
 TEST_F(TypeStringListTest, MemberFunctions)
 {
-  EXPECT_EQ(type_string_list.IndexedString(0), "int");
-  EXPECT_EQ(type_string_list.IndexedString(1), "std::string");
-  EXPECT_TRUE((std::is_same<int, decltype(type_string_list)::IndexedType<0>>::value));
-  EXPECT_TRUE((std::is_same<std::string, decltype(type_string_list)::IndexedType<1>>::value));
+  EXPECT_EQ(NthKey<0>(type_string_list), "int");
+  EXPECT_EQ(NthKey<1>(type_string_list), "std::string");
+  EXPECT_TRUE((std::is_same<int, NthType<decltype(type_string_list), 0>>::value));
+  EXPECT_TRUE((std::is_same<std::string, NthType<decltype(type_string_list), 1>>::value));
 }
 
 TypeStringListTest::TypeStringListTest()

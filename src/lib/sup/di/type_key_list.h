@@ -23,6 +23,7 @@
 #define SUP_DI_TYPE_KEY_LIST_H_
 
 #include <list>
+#include <stdexcept>
 
 namespace sup
 {
@@ -31,12 +32,38 @@ namespace di
 namespace internal
 {
 
+/**
+ * @brief Retrieve head of a list or throw if empty.
+*/
 template <typename Key>
-Key HeadOf(const std::list<Key>& list);
+Key HeadOf(const std::list<Key>& list)
+{
+  if (list.empty())
+  {
+    throw std::runtime_error("Trying to fetch head of empty list");
+  }
+  return list.front();
+}
 
+/**
+ * @brief Retrieve tail of a list or throw if empty.
+*/
 template <typename Key>
-std::list<Key> TailOf(const std::list<Key>& list);
+std::list<Key> TailOf(const std::list<Key>& list)
+{
+  if (list.empty())
+  {
+    throw std::runtime_error("Trying to create tail of empty list");
+  }
+  std::list<Key> result{list};
+  result.pop_front();
+  return result;
+}
 
+/**
+ * @brief TypeKeyList encodes a type list and stores a single Key value
+ * per type.
+*/
 template <typename Key, typename... Types>
 class TypeKeyList;
 
@@ -64,7 +91,12 @@ public:
 
 template <typename Key>
 class TypeKeyList<Key>
-{};
+{
+public:
+  TypeKeyList() {}
+  TypeKeyList(const std::list<Key>& key_list) {}
+  TypeKeyList(const TypeKeyList<Key>& type_key_list) {}
+};
 
 // Type algorithms
 template <typename List>

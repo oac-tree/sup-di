@@ -26,7 +26,7 @@
 
 #include <sup/xml/tree_data.h>
 
-#include <vector>
+#include <list>
 
 namespace sup
 {
@@ -44,7 +44,7 @@ public:
 private:
   std::string m_type_name;
   std::string m_instance_name;
-  std::vector<std::string> m_dependencies;
+  std::list<std::string> m_dependencies;
 };
 
 void ValidateInstanceTree(const sup::xml::TreeData& instance_tree);

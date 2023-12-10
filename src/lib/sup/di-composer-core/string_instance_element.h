@@ -26,8 +26,6 @@
 
 #include <sup/xml/tree_data.h>
 
-#include <vector>
-
 namespace sup
 {
 namespace di
