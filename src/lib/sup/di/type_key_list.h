@@ -163,7 +163,7 @@ template <std::size_t N, typename Key, typename... Types>
 Key NthKey(const TypeKeyList<Key, Types...>& list)
 {
   return TypeKeyListGet<N>::apply(list);
-};
+}
 
 }  // namespace internal
 

@@ -70,14 +70,22 @@ private:
 };
 
 /**
+ * @brief Function template that creates a new InstanceContainer using template argument deduction.
+ */
+template <class T, class Deleter>
+InstanceContainer<T, Deleter>* MakeInstanceContainer(std::unique_ptr<T, Deleter>&& p)
+{
+  return new InstanceContainer<T, Deleter>(std::move(p));
+}
+
+/**
  * @brief Function template that wraps a unique_ptr to a type into a unique_ptr to an
  * AbstractInstanceContainer.
  */
 template <class T, class Deleter>
 std::unique_ptr<AbstractInstanceContainer> WrapIntoContainer(std::unique_ptr<T, Deleter>&& p)
 {
-  return std::unique_ptr<AbstractInstanceContainer>(
-    new InstanceContainer<T, Deleter>(std::move(p)));
+  return std::unique_ptr<AbstractInstanceContainer>{MakeInstanceContainer(std::move(p))};
 }
 
 }  // namespace internal
