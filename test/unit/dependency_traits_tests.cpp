@@ -75,4 +75,10 @@ TEST_F(DependencyTraitsTest, ValueTypes)
   // Dependency types of type unique_ptr
   EXPECT_TRUE((IsDependencyValueTypePair<std::unique_ptr<TestClass>, TestClass>::value));
   EXPECT_TRUE((IsDependencyValueTypePair<std::unique_ptr<TestClass>&&, TestClass>::value));
+
+  // The weird cases
+  EXPECT_TRUE((IsDependencyValueTypePair<std::unique_ptr<TestClass>&,
+                                         std::unique_ptr<TestClass>>::value));
+  EXPECT_TRUE((IsDependencyValueTypePair<std::unique_ptr<const TestClass*>&,
+                                         std::unique_ptr<const TestClass*>>::value));
 }
