@@ -22,6 +22,8 @@
 #ifndef SUP_DI_DEPENDENCY_TRAITS_H_
 #define SUP_DI_DEPENDENCY_TRAITS_H_
 
+#include "template_utils.h"
+
 #include <memory>
 #include <type_traits>
 
@@ -78,6 +80,15 @@ struct ValueTypeT<std::unique_ptr<T>>
 template <typename T>
 struct ValueTypeT<std::unique_ptr<T>&&>
   : public ConditionalIdentity<T, std::is_same<T, ValueType<T>>::value>
+{};
+
+// Type functions to determine if a type can be used as a dependency type, i.e. it has a ValueType
+template <typename T, typename = void>
+struct IsLegalDependencyType : std::false_type
+{};
+
+template <typename T>
+struct IsLegalDependencyType<T, VoidT<ValueType<T>>> : std::true_type
 {};
 
 /**
