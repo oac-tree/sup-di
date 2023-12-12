@@ -31,6 +31,15 @@ namespace di
 {
 namespace internal
 {
+template <typename T, bool>
+struct ConditionalIdentity
+{
+  using Type = T;
+};
+
+template <typename T>
+struct ConditionalIdentity<T, false>
+{};
 
 /**
  * @brief Type trait that provides the underlying value type (as it is registered) from the
@@ -42,6 +51,12 @@ namespace internal
  * const/volatile qualifiers.
  */
 template <typename T>
+struct ValueTypeT;
+
+template <typename T>
+using ValueType = typename ValueTypeT<T>::Type;
+
+template <typename T>
 struct ValueTypeT
 {
   using Type = typename std::remove_cv<
@@ -49,14 +64,21 @@ struct ValueTypeT
                    typename std::remove_pointer<T>::type>::type>::type;
 };
 
+// Disallow rvalue references as dependency types (unless for unique_ptr)
 template <typename T>
-struct ValueTypeT<std::unique_ptr<T>&&>
-{
-  using Type = typename std::remove_cv<T>::type;
-};
+struct ValueTypeT<T&&>
+{};
+
+// Disallow unique_ptr to pointer, references or cv-qualified types:
+template <typename T>
+struct ValueTypeT<std::unique_ptr<T>>
+  : public ConditionalIdentity<T, std::is_same<T, ValueType<T>>::value>
+{};
 
 template <typename T>
-using ValueType = typename ValueTypeT<T>::Type;
+struct ValueTypeT<std::unique_ptr<T>&&>
+  : public ConditionalIdentity<T, std::is_same<T, ValueType<T>>::value>
+{};
 
 /**
  * @brief Type trait that transforms a function parameter type into the type that needs to be
@@ -66,6 +88,8 @@ using ValueType = typename ValueTypeT<T>::Type;
  * lvalue references) by removing the const/volatile qualifiers. For value types, the transformation
  * returns an lvalue reference to that type. Finally, for rvalue references to a unique_ptr, the
  * result is a unique_ptr to the underlying type without const/volatile qualifiers.
+ *
+ * @note The same restrictions apply as for ValueType.
  */
 template <typename T>
 struct InjectionTypeT
@@ -86,10 +110,14 @@ struct InjectionTypeT<T*>
 };
 
 template <typename T>
+struct InjectionTypeT<std::unique_ptr<T>>
+  : public ConditionalIdentity<std::unique_ptr<T>, std::is_same<T, ValueType<T>>::value>
+{};
+
+template <typename T>
 struct InjectionTypeT<std::unique_ptr<T>&&>
-{
-  using Type = std::unique_ptr<ValueType<T>>;
-};
+  : public ConditionalIdentity<std::unique_ptr<T>, std::is_same<T, ValueType<T>>::value>
+{};
 
 template <typename T>
 using InjectionType = typename InjectionTypeT<T>::Type;
@@ -97,6 +125,8 @@ using InjectionType = typename InjectionTypeT<T>::Type;
 /**
  * @brief Type trait that gives the argument type for a factory function that forwards the
  * argument to a constructor in its body.
+ *
+ * @note The same restrictions apply as for ValueType.
  */
 template <typename T>
 struct FactoryArgumentTypeT
@@ -105,9 +135,15 @@ struct FactoryArgumentTypeT
 };
 
 template <typename T>
+struct FactoryArgumentTypeT<std::unique_ptr<T>>
+{
+  using Type = InjectionType<std::unique_ptr<T>>&&;
+};
+
+template <typename T>
 struct FactoryArgumentTypeT<std::unique_ptr<T>&&>
 {
-  using Type = std::unique_ptr<ValueType<T>>&&;
+  using Type = InjectionType<std::unique_ptr<T>&&>&&;
 };
 
 template <typename T>
@@ -117,11 +153,15 @@ using FactoryArgumentType = typename FactoryArgumentTypeT<T>::Type;
  * @brief Type trait that indicates if passing a variable as the given type requires transfer of
  * ownership.
  *
- * @details A boolean member constant value is defined, which is only true for rvalue references
- * to a unique_ptr.
+ * @details A boolean member constant value is defined, which is only true for (rvalue references
+ * to) a unique_ptr.
  */
 template <typename T>
 struct TransferOwnership : public std::false_type
+{};
+
+template <typename T>
+struct TransferOwnership<std::unique_ptr<T>> : public std::true_type
 {};
 
 template <typename T>

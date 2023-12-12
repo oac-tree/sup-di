@@ -30,6 +30,6 @@ The following table shows the possible type mappings, where `UP` denotes `std::u
 | ------------ | --------- | ------------- | ------------------- |
 | (CV) T       | T         | T&            | T&                  |
 | (CV) T*      | T         | T*            | T*                  |
-| (CV) T&      | T         | T&            | T*                  |
+| (CV) T&      | T         | T&            | T&                  |
 | UP<(CV) T>   | T         | UP\<T>        | UP\<T>&&            |
 | UP<(CV) T>&& | T         | UP\<T>        | UP\<T>&&            |
