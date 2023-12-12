@@ -11,6 +11,7 @@ target_sources(unit-tests
     function_element_tests.cpp
     global_test_environment.cpp
     global_test_objects.cpp
+    index_sequence_tests.cpp
     instance_element_tests.cpp
     library_element_tests.cpp
     object_composer_element_tests.cpp
