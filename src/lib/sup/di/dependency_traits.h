@@ -121,12 +121,12 @@ struct InjectionTypeT<T*>
 
 template <typename T>
 struct InjectionTypeT<std::unique_ptr<T>>
-  : public ConditionalIdentity<std::unique_ptr<T>, std::is_same<T, ValueType<T>>::value>
+  : public ConditionalIdentity<std::unique_ptr<T>, IsSameAsValueType<T>::value>
 {};
 
 template <typename T>
 struct InjectionTypeT<std::unique_ptr<T>&&>
-  : public ConditionalIdentity<std::unique_ptr<T>, std::is_same<T, ValueType<T>>::value>
+  : public ConditionalIdentity<std::unique_ptr<T>, IsSameAsValueType<T>::value>
 {};
 
 template <typename T>
