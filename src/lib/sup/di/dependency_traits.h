@@ -48,6 +48,14 @@ struct ValueTypeT;
 template <typename T>
 using ValueType = typename ValueTypeT<T>::Type;
 
+// Check if type is same as its ValueType, if that exists
+template <typename T, typename = void>
+struct IsSameAsValueType : std::false_type {};
+
+template <typename T>
+struct IsSameAsValueType<T, VoidT<ValueType<T>>>
+  : public std::is_same<T, ValueType<T>> {};
+
 template <typename T>
 struct ValueTypeT
 {
@@ -64,12 +72,12 @@ struct ValueTypeT<T&&>
 // Disallow unique_ptr to pointer, references or cv-qualified types:
 template <typename T>
 struct ValueTypeT<std::unique_ptr<T>>
-  : public ConditionalIdentity<T, std::is_same<T, ValueType<T>>::value>
+  : public ConditionalIdentity<T, IsSameAsValueType<T>::value>
 {};
 
 template <typename T>
 struct ValueTypeT<std::unique_ptr<T>&&>
-  : public ConditionalIdentity<T, std::is_same<T, ValueType<T>>::value>
+  : public ConditionalIdentity<T, IsSameAsValueType<T>::value>
 {};
 
 // Type functions to determine if a type can be used as a dependency type, i.e. it has a ValueType

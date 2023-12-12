@@ -57,8 +57,7 @@ TEST_F(DependencyTraitsTest, LegalDependencyTypes)
   EXPECT_FALSE((internal::IsLegalDependencyType<TestClass&&>::value));
   EXPECT_FALSE((internal::IsLegalDependencyType<std::unique_ptr<const TestClass>>::value));
   EXPECT_FALSE((internal::IsLegalDependencyType<std::unique_ptr<TestClass*>>::value));
-  // The following does not compile, since there's no ValueType<TestClass&&>...
-  // EXPECT_FALSE((internal::IsLegalDependencyType<std::unique_ptr<TestClass&&>>::value));
+  EXPECT_FALSE((internal::IsLegalDependencyType<std::unique_ptr<TestClass&&>>::value));
 }
 
 TEST_F(DependencyTraitsTest, ValueTypes)
