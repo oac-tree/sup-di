@@ -29,6 +29,17 @@ namespace di
 namespace internal
 {
 
+// Class template that defines a Type type member conditionally
+template <typename T, bool>
+struct ConditionalIdentity
+{
+  using Type = T;
+};
+
+template <typename T>
+struct ConditionalIdentity<T, false>
+{};
+
 // VoidT implementation
 template<typename... Ts>
 struct MakeVoid

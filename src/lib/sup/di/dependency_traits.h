@@ -33,16 +33,6 @@ namespace di
 {
 namespace internal
 {
-template <typename T, bool>
-struct ConditionalIdentity
-{
-  using Type = T;
-};
-
-template <typename T>
-struct ConditionalIdentity<T, false>
-{};
-
 /**
  * @brief Type trait that provides the underlying value type (as it is registered) from the
  * type of a function parameter.
