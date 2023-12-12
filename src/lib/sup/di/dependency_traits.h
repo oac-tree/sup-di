@@ -69,7 +69,8 @@ template <typename T>
 struct ValueTypeT<T&&>
 {};
 
-// Disallow unique_ptr to pointer, references or cv-qualified types:
+// Disallow unique_ptr to pointer, references or cv-qualified types. Otherwise, ValueType is
+// the type held by the unique_ptr.
 template <typename T>
 struct ValueTypeT<std::unique_ptr<T>>
   : public ConditionalIdentity<T, IsSameAsValueType<T>::value>
