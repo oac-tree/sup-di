@@ -38,6 +38,10 @@ template <typename D, typename V>
 struct IsDependencyValueTypePair : public std::is_same<internal::ValueType<D>, V>
 {};
 
+template <typename D, typename V>
+struct IsDependencyInjectionTypePair : public std::is_same<internal::InjectionType<D>, V>
+{};
+
 TEST_F(DependencyTraitsTest, LegalDependencyTypes)
 {
   // Check legal dependency types
@@ -49,6 +53,7 @@ TEST_F(DependencyTraitsTest, LegalDependencyTypes)
   EXPECT_TRUE((internal::IsLegalDependencyType<const TestClass*>::value));
   EXPECT_TRUE((internal::IsLegalDependencyType<std::unique_ptr<TestClass>>::value));
   EXPECT_TRUE((internal::IsLegalDependencyType<std::unique_ptr<TestClass>&&>::value));
+
   // Weird, but allowed. Note that its ValueType will be std::unique_ptr<TestClass> and
   // NOT TestClass
   EXPECT_TRUE((internal::IsLegalDependencyType<std::unique_ptr<TestClass>&>::value));
@@ -81,4 +86,29 @@ TEST_F(DependencyTraitsTest, ValueTypes)
                                          std::unique_ptr<TestClass>>::value));
   EXPECT_TRUE((IsDependencyValueTypePair<std::unique_ptr<const TestClass*>&,
                                          std::unique_ptr<const TestClass*>>::value));
+}
+
+TEST_F(DependencyTraitsTest, InjectionTypes)
+{
+  // Common dependency types (by value, lvalue reference or pointer)
+  EXPECT_TRUE((IsDependencyInjectionTypePair<int, int&>::value));
+  EXPECT_FALSE((IsDependencyInjectionTypePair<TestClass, int&>::value));
+  EXPECT_TRUE((IsDependencyInjectionTypePair<TestClass, TestClass&>::value));
+  EXPECT_TRUE((IsDependencyInjectionTypePair<const TestClass, TestClass&>::value));
+  EXPECT_TRUE((IsDependencyInjectionTypePair<volatile TestClass, TestClass&>::value));
+  EXPECT_TRUE((IsDependencyInjectionTypePair<const volatile TestClass, TestClass&>::value));
+  EXPECT_TRUE((IsDependencyInjectionTypePair<const TestClass&, TestClass&>::value));
+  EXPECT_TRUE((IsDependencyInjectionTypePair<const TestClass*, TestClass*>::value));
+
+  // Dependency types of type unique_ptr
+  EXPECT_TRUE((IsDependencyInjectionTypePair<std::unique_ptr<TestClass>,
+                                             std::unique_ptr<TestClass>>::value));
+  EXPECT_TRUE((IsDependencyInjectionTypePair<std::unique_ptr<TestClass>&&,
+                                             std::unique_ptr<TestClass>>::value));
+
+  // The weird cases
+  EXPECT_TRUE((IsDependencyInjectionTypePair<std::unique_ptr<TestClass>&,
+                                             std::unique_ptr<TestClass>&>::value));
+  EXPECT_TRUE((IsDependencyInjectionTypePair<std::unique_ptr<const TestClass*>&,
+                                             std::unique_ptr<const TestClass*>&>::value));
 }

@@ -110,13 +110,13 @@ struct InjectionTypeT
 template <typename T>
 struct InjectionTypeT<T&>
 {
-  using Type = ValueType<T>&;
+  using Type = ValueType<T&>&;
 };
 
 template <typename T>
 struct InjectionTypeT<T*>
 {
-  using Type = ValueType<T>*;
+  using Type = ValueType<T*>*;
 };
 
 template <typename T>
@@ -146,15 +146,13 @@ struct FactoryArgumentTypeT
 
 template <typename T>
 struct FactoryArgumentTypeT<std::unique_ptr<T>>
-{
-  using Type = InjectionType<std::unique_ptr<T>>&&;
-};
+  : public ConditionalIdentity<std::unique_ptr<T>&&, IsSameAsValueType<T>::value>
+{};
 
 template <typename T>
 struct FactoryArgumentTypeT<std::unique_ptr<T>&&>
-{
-  using Type = InjectionType<std::unique_ptr<T>&&>&&;
-};
+  : public ConditionalIdentity<std::unique_ptr<T>&&, IsSameAsValueType<T>::value>
+{};
 
 template <typename T>
 using FactoryArgumentType = typename FactoryArgumentTypeT<T>::Type;
