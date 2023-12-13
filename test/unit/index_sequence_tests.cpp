@@ -27,14 +27,14 @@
 
 using namespace sup::di;
 
-class IndexSequenceElementTest : public ::testing::Test
+class IndexSequenceTest : public ::testing::Test
 {
 protected:
-  IndexSequenceElementTest() {};
-  virtual ~IndexSequenceElementTest() {};
+  IndexSequenceTest() {};
+  virtual ~IndexSequenceTest() {};
 };
 
-TEST_F(IndexSequenceElementTest, MakeIndexSequence)
+TEST_F(IndexSequenceTest, MakeIndexSequence)
 {
   EXPECT_TRUE((std::is_same<internal::MakeIndexSequence<0>, internal::IndexSequence<>>::value));
   EXPECT_TRUE((std::is_same<internal::MakeIndexSequence<1>, internal::IndexSequence<0>>::value));
