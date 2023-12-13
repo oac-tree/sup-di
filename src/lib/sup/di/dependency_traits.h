@@ -169,11 +169,11 @@ struct TransferOwnership : public std::false_type
 {};
 
 template <typename T>
-struct TransferOwnership<std::unique_ptr<T>> : public std::true_type
+struct TransferOwnership<std::unique_ptr<T>> : public IsLegalDependencyType<std::unique_ptr<T>>
 {};
 
 template <typename T>
-struct TransferOwnership<std::unique_ptr<T>&&> : public std::true_type
+struct TransferOwnership<std::unique_ptr<T>&&> : public IsLegalDependencyType<std::unique_ptr<T>&&>
 {};
 
 }  // namespace internal

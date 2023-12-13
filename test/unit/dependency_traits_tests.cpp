@@ -42,6 +42,10 @@ template <typename D, typename V>
 struct IsDependencyInjectionTypePair : public std::is_same<internal::InjectionType<D>, V>
 {};
 
+template <typename D, typename V>
+struct IsFactoryArgumentTypePair : public std::is_same<internal::FactoryArgumentType<D>, V>
+{};
+
 TEST_F(DependencyTraitsTest, LegalDependencyTypes)
 {
   // Check legal dependency types
@@ -111,4 +115,52 @@ TEST_F(DependencyTraitsTest, InjectionTypes)
                                              std::unique_ptr<TestClass>&>::value));
   EXPECT_TRUE((IsDependencyInjectionTypePair<std::unique_ptr<const TestClass*>&,
                                              std::unique_ptr<const TestClass*>&>::value));
+}
+
+TEST_F(DependencyTraitsTest, FactoryArgumentTypes)
+{
+  // Common dependency types (by value, lvalue reference or pointer)
+  EXPECT_TRUE((IsFactoryArgumentTypePair<int, int&>::value));
+  EXPECT_FALSE((IsFactoryArgumentTypePair<TestClass, int&>::value));
+  EXPECT_TRUE((IsFactoryArgumentTypePair<TestClass, TestClass&>::value));
+  EXPECT_TRUE((IsFactoryArgumentTypePair<const TestClass, TestClass&>::value));
+  EXPECT_TRUE((IsFactoryArgumentTypePair<volatile TestClass, TestClass&>::value));
+  EXPECT_TRUE((IsFactoryArgumentTypePair<const volatile TestClass, TestClass&>::value));
+  EXPECT_TRUE((IsFactoryArgumentTypePair<const TestClass&, TestClass&>::value));
+  EXPECT_TRUE((IsFactoryArgumentTypePair<const TestClass*, TestClass*>::value));
+
+  // Dependency types of type unique_ptr
+  EXPECT_TRUE((IsFactoryArgumentTypePair<std::unique_ptr<TestClass>,
+                                         std::unique_ptr<TestClass>&&>::value));
+  EXPECT_TRUE((IsFactoryArgumentTypePair<std::unique_ptr<TestClass>&&,
+                                         std::unique_ptr<TestClass>&&>::value));
+
+  // The weird cases
+  EXPECT_TRUE((IsFactoryArgumentTypePair<std::unique_ptr<TestClass>&,
+                                         std::unique_ptr<TestClass>&>::value));
+  EXPECT_TRUE((IsFactoryArgumentTypePair<std::unique_ptr<const TestClass*>&,
+                                         std::unique_ptr<const TestClass*>&>::value));
+}
+
+TEST_F(DependencyTraitsTest, TransferOwnership)
+{
+  // Check legal dependency types
+  EXPECT_FALSE((internal::TransferOwnership<TestClass>::value));
+  EXPECT_FALSE((internal::TransferOwnership<TestClass&>::value));
+  EXPECT_FALSE((internal::TransferOwnership<TestClass*>::value));
+  EXPECT_FALSE((internal::TransferOwnership<const TestClass>::value));
+  EXPECT_FALSE((internal::TransferOwnership<const TestClass&>::value));
+  EXPECT_FALSE((internal::TransferOwnership<const TestClass*>::value));
+  EXPECT_TRUE((internal::TransferOwnership<std::unique_ptr<TestClass>>::value));
+  EXPECT_TRUE((internal::TransferOwnership<std::unique_ptr<TestClass>&&>::value));
+
+  // Weird, but allowed. Note that its ValueType will be std::unique_ptr<TestClass> and
+  // NOT TestClass
+  EXPECT_FALSE((internal::TransferOwnership<std::unique_ptr<TestClass>&>::value));
+
+  // Illegal dependency types are categorized as not transferring ownership
+  EXPECT_FALSE((internal::TransferOwnership<TestClass&&>::value));
+  EXPECT_FALSE((internal::TransferOwnership<std::unique_ptr<const TestClass>>::value));
+  EXPECT_FALSE((internal::TransferOwnership<std::unique_ptr<TestClass*>>::value));
+  EXPECT_FALSE((internal::TransferOwnership<std::unique_ptr<TestClass&&>>::value));
 }
