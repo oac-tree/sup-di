@@ -55,6 +55,16 @@ struct PointerToInjectionType<T*>
 };
 
 template <typename T>
+struct PointerToInjectionType<std::unique_ptr<T>>
+{
+  static InjectionType<std::unique_ptr<T>> Forward(void* arg)
+  {
+    auto typed_arg = static_cast<internal::ValueType<std::unique_ptr<T>>*>(arg);
+    return InjectionType<std::unique_ptr<T>>{typed_arg};
+  }
+};
+
+template <typename T>
 struct PointerToInjectionType<std::unique_ptr<T>&&>
 {
   static InjectionType<std::unique_ptr<T>&&> Forward(void* arg)
