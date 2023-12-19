@@ -46,7 +46,7 @@ template <typename D, typename V>
 struct IsFactoryArgumentTypePair : public std::is_same<internal::FactoryArgumentType<D>, V>
 {};
 
-TEST_F(DependencyTraitsTest, LegalDependencyTypes)
+TEST_F(DependencyTraitsTest, IsLegalDependencyType)
 {
   // Check legal dependency types
   EXPECT_TRUE((internal::IsLegalDependencyType<TestClass>::value));
@@ -67,6 +67,30 @@ TEST_F(DependencyTraitsTest, LegalDependencyTypes)
   EXPECT_FALSE((internal::IsLegalDependencyType<std::unique_ptr<const TestClass>>::value));
   EXPECT_FALSE((internal::IsLegalDependencyType<std::unique_ptr<TestClass*>>::value));
   EXPECT_FALSE((internal::IsLegalDependencyType<std::unique_ptr<TestClass&&>>::value));
+}
+
+TEST_F(DependencyTraitsTest, AreLegalDependencyTypes)
+{
+  // Check legal dependency types
+  EXPECT_TRUE((internal::AreLegalDependencyTypes<TestClass>::value));
+  EXPECT_TRUE((internal::AreLegalDependencyTypes<TestClass, TestClass&, TestClass*>::value));
+  EXPECT_TRUE((internal::AreLegalDependencyTypes<const TestClass, const TestClass&,
+                                                 const TestClass*>::value));
+  EXPECT_TRUE((internal::AreLegalDependencyTypes<std::unique_ptr<TestClass>, TestClass&,
+                                                 std::unique_ptr<TestClass>&&>::value));
+
+  // Weird, but allowed. Note that its ValueType will be std::unique_ptr<TestClass> and
+  // NOT TestClass
+  EXPECT_TRUE((internal::AreLegalDependencyTypes<std::unique_ptr<TestClass>&>::value));
+
+  // Mix with illegal dependency types
+  EXPECT_FALSE((internal::AreLegalDependencyTypes<TestClass, TestClass&&, TestClass*>::value));
+  EXPECT_FALSE((internal::AreLegalDependencyTypes<std::unique_ptr<const TestClass>,
+                                                  TestClass&, TestClass*>::value));
+  EXPECT_FALSE((internal::AreLegalDependencyTypes<std::unique_ptr<TestClass*>,
+                                                  TestClass&, TestClass*>::value));
+  EXPECT_FALSE((internal::AreLegalDependencyTypes<TestClass, TestClass&&,
+                                                  std::unique_ptr<TestClass&&>>::value));
 }
 
 TEST_F(DependencyTraitsTest, ValueTypes)

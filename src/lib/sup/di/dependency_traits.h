@@ -91,13 +91,25 @@ template <typename T>
 struct IsSameAsValueType<T, VoidT<ValueType<T>>>
   : public std::is_same<T, ValueType<T>> {};
 
-// Type functions to determine if a type can be used as a dependency type, i.e. it has a ValueType
+// Type functions to determine if a type(s) can be used as a dependency type, i.e. it has a ValueType
 template <typename T, typename = void>
 struct IsLegalDependencyType : std::false_type
 {};
 
 template <typename T>
 struct IsLegalDependencyType<T, VoidT<ValueType<T>>> : std::true_type
+{};
+
+template <typename... Deps>
+struct AreLegalDependencyTypes;
+
+template <typename Head, typename... Tail>
+struct AreLegalDependencyTypes<Head, Tail...>
+  : public std::conditional<IsLegalDependencyType<Head>::value, AreLegalDependencyTypes<Tail...>, std::false_type>::type
+{};
+
+template <>
+struct AreLegalDependencyTypes<> : public std::true_type
 {};
 
 // Type function that defines a Type type member with an added pointer if the given type has
