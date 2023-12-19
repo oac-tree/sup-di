@@ -6,13 +6,13 @@ The following code excerpt shows the different usages, starting from a global fu
 
 ```c++
 // Global function that is registered:
-void f(Dep dep);
+bool f(Dep dep);
 
 // The argument for that function will be stored in a map as:
 std::unique_ptr<ValueType<Dep>> instance;
 
 // A function that forwards such an instance:
-void forward_f(FactoryArgumentType<Dep> dep)
+bool forward_f(FactoryArgumentType<Dep> dep)
 {
   f(ForwardDependency<Dep>::Forward(dep));
 }
