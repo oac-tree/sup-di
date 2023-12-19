@@ -26,7 +26,7 @@
 
 #include <sup/xml/tree_data.h>
 
-#include <list>
+#include <vector>
 
 namespace sup
 {
@@ -43,7 +43,7 @@ public:
 
 private:
   std::string m_function_name;
-  std::list<std::string> m_dependencies;
+  std::vector<std::string> m_dependencies;
 };
 
 void ValidateFunctionTree(const sup::xml::TreeData& function_tree);

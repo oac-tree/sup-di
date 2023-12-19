@@ -24,7 +24,7 @@
 
 #include <sup/xml/tree_data.h>
 
-#include <list>
+#include <vector>
 
 namespace sup
 {
@@ -35,7 +35,7 @@ namespace utils
 
 void SetFromTreeNodeContent(std::string& dest, const sup::xml::TreeData& tree);
 
-void AppendFromTreeNodeContent(std::list<std::string>& dest, const sup::xml::TreeData& tree);
+void AppendFromTreeNodeContent(std::vector<std::string>& dest, const sup::xml::TreeData& tree);
 
 }  // namespace utils
 

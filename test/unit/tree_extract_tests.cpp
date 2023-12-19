@@ -54,7 +54,7 @@ TEST_F(TreeExtractTest, SetFromTreeNodeContent)
 
 TEST_F(TreeExtractTest, AppendFromTreeNodeContent)
 {
-  std::list<std::string> destination;
+  std::vector<std::string> destination;
   auto content_tree = CreateNodeWithContent(TREE_NODE_CONTENT);
   EXPECT_EQ(destination.size(), 0);
   EXPECT_NO_THROW(utils::AppendFromTreeNodeContent(destination, content_tree));

@@ -24,14 +24,10 @@
 
 #include <sup/di/dependency_traits.h>
 #include <sup/di/error_codes.h>
-#include <sup/di/index_sequence.h>
-#include <sup/di/instance_container.h>
+#include <sup/di/service_store.h>
 #include <sup/di/type_functions.h>
-#include <sup/di/type_map.h>
-#include <sup/di/type_key_list.h>
 
 #include <functional>
-#include <map>
 #include <memory>
 #include <stdexcept>
 #include <string>
@@ -42,9 +38,6 @@ namespace di
 {
 namespace internal
 {
-template <typename... Types>
-using TypeStringList = TypeKeyList<std::string, Types...>;
-
 /**
  * @brief Alias template for a factory function to create an object with constructor dependencies.
  *
@@ -72,11 +65,9 @@ using GlobalFunction = bool(*)(Deps...);
  */
 class ObjectManager
 {
-  using ServiceMap = std::map<std::string, std::unique_ptr<internal::AbstractInstanceContainer>>;
-  using ServiceMapIterator = typename ServiceMap::iterator;
   using RegisteredFactoryFunction =
-    std::function<ErrorCode(const std::string&, const std::list<std::string>&)>;
-  using RegisteredGlobalFunction = std::function<ErrorCode(const std::list<std::string>&)>;
+    std::function<ErrorCode(const std::string&, const std::vector<std::string>&)>;
+  using RegisteredGlobalFunction = std::function<ErrorCode(const std::vector<std::string>&)>;
 public:
   /**
    * @brief Constructor.
@@ -95,7 +86,7 @@ public:
    */
   ErrorCode CreateInstance(const std::string& registered_typename,
                            const std::string& instance_name,
-                           const std::list<std::string>& dependency_names);
+                           const std::vector<std::string>& dependency_names);
 
   /**
    * @brief Call a global function on the named instances.
@@ -106,7 +97,7 @@ public:
    * @return ErrorCode representing success or a specific failure.
    */
   ErrorCode CallGlobalFunction(const std::string& registered_function_name,
-                               const std::list<std::string>& dependency_names);
+                               const std::vector<std::string>& dependency_names);
 
   /**
    * @brief Retrieve instance of specific type and name from the underlying registry.
@@ -160,63 +151,7 @@ public:
 private:
   std::map<std::string, RegisteredFactoryFunction> factory_functions;
   std::map<std::string, RegisteredGlobalFunction> global_functions;
-  internal::TypeMap<ServiceMap> instance_map;
-
-  /**
-   * @brief Helper method to inject retrieved instances into the factory function.
-   */
-  template <typename ServiceType, typename Deleter, typename... Deps, std::size_t... I>
-  std::unique_ptr<ServiceType, Deleter> CreateFromTypeStringList(
-    internal::InstanceFactoryFunction<ServiceType, Deleter, Deps...> factory_function,
-    const internal::TypeStringList<Deps...>& type_string_list,
-    internal::IndexSequence<I...> index_sequence);
-
-  /**
-   * @brief Helper method to inject retrieved instances into the global function.
-   */
-  template <typename... Deps, std::size_t... I>
-  ErrorCode CallFromTypeStringList(internal::GlobalFunction<Deps...> global_function,
-                                   const internal::TypeStringList<Deps...>& type_string_list,
-                                   internal::IndexSequence<I...> index_sequence);
-
-  /**
-   * @brief Helper method to retrieve an instance of the correct type, based on an index.
-   */
-  template <std::size_t I, typename... Deps>
-  internal::InjectionType<internal::NthType<internal::TypeStringList<Deps...>, I>>
-    IndexedArgument(const internal::TypeStringList<Deps...>& type_string_list);
-
-  /**
-   * @brief Helper method to retrieve an instance when ownership needs to be passed.
-   */
-  template <typename T>
-  internal::InjectionType<T> GetInstanceImpl(const std::string& instance_name,
-                                             std::true_type transfer_ownership);
-
-  /**
-   * @brief Helper method to retrieve an instance when ownership is managed by the ObjectManager.
-   */
-  template <typename T>
-  internal::InjectionType<T> GetInstanceImpl(const std::string& instance_name,
-                                             std::false_type do_not_transfer_ownership);
-
-  /**
-   * @brief Helper method to retrieve an iterator to a named and typed instance.
-   */
-  template <typename T>
-  ServiceMapIterator FindInstance(const std::string& instance_name);
-
-  /**
-   * @brief Helper method to remove a named and typed instance.
-   */
-  template <typename T>
-  void RemoveInstance(ServiceMapIterator it);
-
-  /**
-   * @brief Helper method to retrieve the service map for a given type.
-   */
-  template <typename ServiceType>
-  ServiceMap& GetServiceMap();
+  internal::ServiceStore<std::string> m_service_store;
 };
 
 /**
@@ -239,7 +174,7 @@ ObjectManager& GlobalObjectManager();
 template <typename T>
 internal::InjectionType<T> ObjectManager::GetInstance(const std::string& instance_name)
 {
-  return GetInstanceImpl<T>(instance_name, internal::TransferOwnership<T>{});
+  return m_service_store.GetInstance<T>(instance_name);
 }
 
 template <typename ServiceType, typename Deleter, typename... Deps>
@@ -252,26 +187,24 @@ bool ObjectManager::RegisterFactoryFunction(
     throw std::runtime_error("ObjectManager::RegisterFactoryFunction: typename already registered");
   }
   factory_functions[registered_typename] =
-    [this, factory_function](const std::string& instance_name, const std::list<std::string>& dependency_names)
+    [this, factory_function](const std::string& instance_name, const std::vector<std::string>& dependency_names)
     {
       if (dependency_names.size() != sizeof...(Deps))
       {
         return ErrorCode::kWrongNumberOfDependencies;
       }
-      internal::TypeStringList<Deps...> type_string_list(dependency_names);
-      internal::MakeIndexSequence<sizeof...(Deps)> index_sequence;
-      bool register_succes;
+      bool register_success;
       try
       {
-        auto p_instance = CreateFromTypeStringList(
-          factory_function, type_string_list, index_sequence);
-        register_succes = RegisterInstance(std::move(p_instance), instance_name);
+        register_success = m_service_store.StoreInstance(
+          internal::InvokeWithStoreArgs<Deps...>(factory_function, m_service_store, dependency_names),
+          instance_name);
       }
       catch(const std::runtime_error&)
       {
         return ErrorCode::kDependencyNotFound;
       }
-      if (!register_succes)
+      if (!register_success)
       {
         return ErrorCode::kInvalidInstanceName;
       }
@@ -284,19 +217,12 @@ template <typename ServiceType>
 bool ObjectManager::RegisterInstance(
   std::unique_ptr<ServiceType>&& instance, const std::string& instance_name)
 {
-  auto& service_map = GetServiceMap<ServiceType>();
-  if (service_map.find(instance_name) != service_map.end())
-  {
-    return false;
-  }
-  service_map[instance_name] = internal::WrapIntoContainer(std::move(instance));
-  return true;
+  return m_service_store.StoreInstance(std::move(instance), instance_name);
 }
 
 template <typename... Deps>
-bool ObjectManager::RegisterGlobalFunction(
-  const std::string& registered_function_name,
-  internal::GlobalFunction<Deps...> global_function)
+bool ObjectManager::RegisterGlobalFunction(const std::string& registered_function_name,
+                                           internal::GlobalFunction<Deps...> global_function)
 {
   if (global_functions.find(registered_function_name) != global_functions.end())
   {
@@ -304,110 +230,29 @@ bool ObjectManager::RegisterGlobalFunction(
       "ObjectManager::RegisterGlobalFunction: function name already registered");
   }
   global_functions[registered_function_name] =
-    [this, global_function](const std::list<std::string>& dependency_names)
+    [this, global_function](const std::vector<std::string>& dependency_names)
     {
       if (dependency_names.size() != sizeof...(Deps))
       {
         return ErrorCode::kWrongNumberOfDependencies;
       }
-      internal::TypeStringList<Deps...> type_string_list(dependency_names);
-      internal::MakeIndexSequence<sizeof...(Deps)> index_sequence;
-      return CallFromTypeStringList(global_function, type_string_list, index_sequence);
+      bool call_success;
+      try
+      {
+        call_success =
+          internal::InvokeWithStoreArgs<Deps...>(global_function, m_service_store, dependency_names);
+      }
+      catch(const std::runtime_error&)
+      {
+        return ErrorCode::kDependencyNotFound;
+      }
+      if (!call_success)
+      {
+        return ErrorCode::kGlobalFunctionFailed;
+      }
+      return ErrorCode::kSuccess;
     };
   return true;
-}
-
-template<typename ServiceType, typename Deleter, typename... Deps, std::size_t... I>
-std::unique_ptr<ServiceType, Deleter> ObjectManager::CreateFromTypeStringList(
-  internal::InstanceFactoryFunction<ServiceType, Deleter, Deps...> factory_function,
-  const internal::TypeStringList<Deps...>& type_string_list,
-  internal::IndexSequence<I...> index_sequence)
-{
-  return factory_function(IndexedArgument<I>(type_string_list)...);
-}
-
-template<typename... Deps, std::size_t... I>
-ErrorCode ObjectManager::CallFromTypeStringList(
-  internal::GlobalFunction<Deps...> global_function,
-  const internal::TypeStringList<Deps...>& type_string_list,
-  internal::IndexSequence<I...> index_sequence)
-{
-  bool function_result;
-  try
-  {
-    function_result = global_function(IndexedArgument<I>(type_string_list)...);
-  }
-  catch(const std::runtime_error&)
-  {
-    return ErrorCode::kDependencyNotFound;
-  }
-  if (!function_result)
-  {
-    return ErrorCode::kGlobalFunctionFailed;
-  }
-  return ErrorCode::kSuccess;
-}
-
-template <std::size_t I, typename... Deps>
-internal::InjectionType<internal::NthType<internal::TypeStringList<Deps...>, I>>
-  ObjectManager::IndexedArgument(const internal::TypeStringList<Deps...>& type_string_list)
-{
-  return GetInstance<internal::NthType<internal::TypeStringList<Deps...>, I>>(
-    internal::NthKey<I>(type_string_list) );
-}
-
-template <typename T>
-internal::InjectionType<T> ObjectManager::GetInstanceImpl(const std::string& instance_name,
-                                                          std::true_type)
-{
-  auto instance_it = FindInstance<internal::ValueType<T>>(instance_name);
-  auto result = internal::PointerToInjectionType<T>::Forward(instance_it->second->Release());
-  RemoveInstance<internal::ValueType<T>>(instance_it);
-  return std::move(result);
-}
-
-template <typename T>
-internal::InjectionType<T> ObjectManager::GetInstanceImpl(const std::string& instance_name,
-                                                          std::false_type)
-{
-  auto instance_it = FindInstance<internal::ValueType<T>>(instance_name);
-  return internal::PointerToInjectionType<T>::Forward(instance_it->second->Get());
-}
-
-template <typename T>
-ObjectManager::ServiceMapIterator
-ObjectManager::FindInstance(const std::string& instance_name)
-{
-  auto service_map_it = instance_map.find<T>();
-  if (service_map_it == instance_map.end())
-  {
-    throw std::runtime_error("ObjectManager::FindInstance: accessing unknow service type");
-  }
-  auto instance_it = service_map_it->second.find(instance_name);
-  if (instance_it == service_map_it->second.end())
-  {
-    throw std::runtime_error("ObjectManager::FindInstance: accessing unknow instance");
-  }
-  return instance_it;
-}
-
-template <typename T>
-void ObjectManager::RemoveInstance(ObjectManager::ServiceMapIterator it)
-{
-  auto service_map_it = instance_map.find<T>();
-  service_map_it->second.erase(it);
-}
-
-template <typename ServiceType>
-ObjectManager::ServiceMap& ObjectManager::GetServiceMap()
-{
-  auto it = instance_map.find<ServiceType>();
-  if (it == instance_map.end())
-  {
-    instance_map.put<ServiceType>(ServiceMap{});
-    it = instance_map.find<ServiceType>();
-  }
-  return it->second;
 }
 
 }  // namespace di

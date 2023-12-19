@@ -28,14 +28,14 @@ namespace di
 ObjectManager::ObjectManager()
   : factory_functions{}
   , global_functions{}
-  , instance_map{}
+  , m_service_store{}
 {}
 
 ObjectManager::~ObjectManager() = default;
 
 ErrorCode ObjectManager::CreateInstance(
   const std::string& registered_typename, const std::string& instance_name,
-  const std::list<std::string>& dependency_names)
+  const std::vector<std::string>& dependency_names)
 {
   auto it = factory_functions.find(registered_typename);
   if (it == factory_functions.end())
@@ -46,7 +46,7 @@ ErrorCode ObjectManager::CreateInstance(
 }
 
 ErrorCode ObjectManager::CallGlobalFunction(const std::string& registered_function_name,
-                                            const std::list<std::string>& dependency_names)
+                                            const std::vector<std::string>& dependency_names)
 {
   auto it = global_functions.find(registered_function_name);
   if (it == global_functions.end())

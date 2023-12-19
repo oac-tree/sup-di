@@ -85,8 +85,8 @@ private:
 };
 
 template <std::size_t I, typename... Deps, typename Key>
-InjectionType<NthType<TypeList<Deps...>, I>> GetStoreInstance(ServiceStore<Key>& store,
-                                                              const std::vector<Key>& key_list)
+InjectionType<NthType<TypeList<Deps...>, I>>
+GetServiceStoreInstance(ServiceStore<Key>& store, const std::vector<Key>& key_list)
 {
   return store.template GetInstance<NthType<TypeList<Deps...>, I>>(key_list[I]);
 }
@@ -96,7 +96,7 @@ auto InvokeWithStoreArgsImpl(F&& f, ServiceStore<Key>& store, const std::vector<
                              IndexSequence<I...> index_sequence)
   -> decltype(f(std::declval<InjectionType<Deps>>()...))
 {
-  return f(GetStoreInstance<I, Deps...>(store, key_list)...);
+  return f(GetServiceStoreInstance<I, Deps...>(store, key_list)...);
 }
 
 template <typename... Deps, typename F, typename Key>
