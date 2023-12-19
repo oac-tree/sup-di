@@ -17,6 +17,7 @@ target_sources(unit-tests
     object_composer_element_tests.cpp
     object_manager_tests.cpp
     object_manager_external_tests.cpp
+    service_store_tests.cpp
     string_instance_element_tests.cpp
     temporary_file.cpp
     tree_extract_tests.cpp

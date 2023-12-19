@@ -22,6 +22,8 @@
 #ifndef SUP_DI_TYPE_KEY_LIST_H_
 #define SUP_DI_TYPE_KEY_LIST_H_
 
+#include <sup/di/type_list.h>
+
 #include <list>
 #include <stdexcept>
 
@@ -101,9 +103,6 @@ public:
 };
 
 // Type algorithms
-template <typename List>
-class FrontT;
-
 template <typename Key, typename Head, typename... Tail>
 class FrontT<TypeKeyList<Key, Head, Tail...>>
 {
@@ -111,32 +110,12 @@ public:
   using Type = Head;
 };
 
-template <typename List>
-using Front = typename FrontT<List>::Type;
-
-template <typename List>
-class PopFrontT;
-
 template <typename Key, typename Head, typename... Tail>
 class PopFrontT<TypeKeyList<Key, Head, Tail...>>
 {
 public:
   using Type = TypeKeyList<Key, Tail...>;
 };
-
-template <typename List>
-using PopFront = typename PopFrontT<List>::Type;
-
-template <typename List, std::size_t N>
-class NthTypeT : public NthTypeT<PopFront<List>, N-1>
-{};
-
-template <typename List>
-class NthTypeT<List, 0> : public FrontT<List>
-{};
-
-template <typename List, std::size_t N>
-using NthType = typename NthTypeT<List, N>::Type;
 
 // Key algorithms
 template <std::size_t N>

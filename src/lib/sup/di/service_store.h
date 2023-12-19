@@ -23,7 +23,6 @@
 #define SUP_DI_SERVICE_STORE_H_
 
 #include <sup/di/dependency_traits.h>
-#include <sup/di/error_codes.h>
 #include <sup/di/index_sequence.h>
 #include <sup/di/instance_container.h>
 #include <sup/di/type_functions.h>
@@ -32,7 +31,7 @@
 
 #include <map>
 #include <stdexcept>
-#include <string>
+#include <utility>
 #include <vector>
 
 namespace sup
@@ -56,18 +55,17 @@ template <typename Key>
 class ServiceStore
 {
 public:
-  ServiceStore() = default;
+  ServiceStore() : m_typed_instance_map{} {}
   ~ServiceStore() = default;
 
   /**
-   * @brief Get an object with the correct type to inject it in a function or method that has a
-   * parameter of Dep, where Dep is the I'th type in the Deps template parameter pack and its key
-   * is the I'th key in the provided key_list.
+   * @brief Get an object with the correct type and key to inject it in a function or method that
+   * has a parameter of Dep.
    *
-   * @return The instance of the correct type for injection.
+   * @return An instance of the correct type for injection.
    */
-  template <std::size_t I, typename... Deps>
-  InjectionType<NthType<TypeList<Deps...>, I>> GetInstance(const std::vector<Key>& key_list);
+  template <typename Dep>
+  InjectionType<Dep> GetInstance(const Key& key);
 
   /**
    * @brief Store an object with the provided type under the given key.
@@ -80,17 +78,34 @@ private:
   TypeMap<InstanceMap<Key>> m_typed_instance_map;
 
   /**
-   * @brief Helper method for GetInstance.
-   */
-  template <typename Dep>
-  InjectionType<Dep> GetInstanceImpl(const Key& key);
-
-  /**
    * @brief Helper method for StoreInstance.
    */
   template <typename Service>
   InstanceMap<Key>& GetInstanceMap();
 };
+
+template <std::size_t I, typename... Deps, typename Key>
+InjectionType<NthType<TypeList<Deps...>, I>> GetStoreInstance(ServiceStore<Key>& store,
+                                                              const std::vector<Key>& key_list)
+{
+  return store.template GetInstance<NthType<TypeList<Deps...>, I>>(key_list[I]);
+}
+
+template <typename... Deps, typename F, typename Key, std::size_t... I>
+auto InvokeWithStoreArgsImpl(F&& f, ServiceStore<Key>& store, const std::vector<Key>& key_list,
+                             IndexSequence<I...> index_sequence)
+  -> decltype(f(std::declval<InjectionType<Deps>>()...))
+{
+  return f(GetStoreInstance<I, Deps...>(store, key_list)...);
+}
+
+template <typename... Deps, typename F, typename Key>
+auto InvokeWithStoreArgs(F&& f, ServiceStore<Key>& store, const std::vector<Key>& key_list)
+  -> decltype(f(std::declval<InjectionType<Deps>>()...))
+{
+  return InvokeWithStoreArgsImpl<Deps...>(std::forward<F>(f), store, key_list,
+                                          MakeIndexSequence<sizeof...(Deps)>{});
+}
 
 /**
  * @brief Helper function template to retrieve a typed value pointer from an instance container
@@ -135,7 +150,7 @@ public:
    */
   InjectionType<Dep> Get();
 private:
-  using iterator = InstanceMap<Key>::iterator;
+  using iterator = typename InstanceMap<Key>::iterator;
   InstanceMap<Key>& m_instance_map;
   iterator m_it;
   bool m_retrieved;
@@ -174,11 +189,16 @@ InjectionType<Dep> DependencyRetriever<Key, Dep>::Get()
 }
 
 template <typename Key>
-template <std::size_t I, typename... Deps>
-InjectionType<NthType<TypeList<Deps...>, I>>
-ServiceStore<Key>::GetInstance(const std::vector<Key>& key_list)
+template <typename Dep>
+InjectionType<Dep> ServiceStore<Key>::GetInstance(const Key& key)
 {
-  return GetInstanceImpl<NthType<TypeList<Deps...>, I>>(key_list[I]);
+  auto map_it = m_typed_instance_map.template find<ValueType<Dep>>();
+  if (map_it == m_typed_instance_map.end())
+  {
+    throw std::runtime_error("ServiceStore::GetInstance: accessing unknown service type");
+  }
+  DependencyRetriever<Key, Dep> dependency_retriever(map_it->second, key);
+  return dependency_retriever.Get();
 }
 
 template <typename Key>
@@ -195,27 +215,14 @@ bool ServiceStore<Key>::StoreInstance(std::unique_ptr<Service> instance, const K
 }
 
 template <typename Key>
-template <typename Dep>
-InjectionType<Dep> ServiceStore<Key>::GetInstanceImpl(const Key& key)
-{
-  auto map_it = m_typed_instance_map.find<ValueType<Dep>>();
-  if (map_it == m_typed_instance_map.end())
-  {
-    throw std::runtime_error("ServiceStore::GetInstance: accessing unknown service type");
-  }
-  DependencyRetriever<Key, Dep> dependency_retriever(map_it->second, key);
-  return dependency_retriever.Get();
-}
-
-template <typename Key>
 template <typename Service>
 InstanceMap<Key>& ServiceStore<Key>::GetInstanceMap()
 {
-  auto it = m_typed_instance_map.find<Service>();
+  auto it = m_typed_instance_map.template find<Service>();
   if (it == m_typed_instance_map.end())
   {
-    m_typed_instance_map.put<T>(InstanceMap<Key>{});
-    it = m_typed_instance_map.find<T>();
+    m_typed_instance_map.template put<Service>(InstanceMap<Key>{});
+    it = m_typed_instance_map.template find<Service>();
   }
   return it->second;
 }
