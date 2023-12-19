@@ -22,7 +22,6 @@ target_sources(unit-tests
     temporary_file.cpp
     tree_extract_tests.cpp
     type_map_tests.cpp
-    type_string_list_tests.cpp
 )
 
 target_include_directories(unit-tests
