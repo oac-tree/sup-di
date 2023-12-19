@@ -34,47 +34,6 @@ namespace internal
 {
 
 /**
- * @brief Type function that forwards a void pointer to the proper injection type.
- */
-template <typename T>
-struct PointerToInjectionType
-{
-  static InjectionType<T> Forward(void* arg)
-  {
-    return *static_cast<ValueType<T>*>(arg);
-  }
-};
-
-template <typename T>
-struct PointerToInjectionType<T*>
-{
-  static InjectionType<T*> Forward(void* arg)
-  {
-    return static_cast<InjectionType<T*>>(arg);
-  }
-};
-
-template <typename T>
-struct PointerToInjectionType<std::unique_ptr<T>>
-{
-  static InjectionType<std::unique_ptr<T>> Forward(void* arg)
-  {
-    auto typed_arg = static_cast<internal::ValueType<std::unique_ptr<T>>*>(arg);
-    return InjectionType<std::unique_ptr<T>>{typed_arg};
-  }
-};
-
-template <typename T>
-struct PointerToInjectionType<std::unique_ptr<T>&&>
-{
-  static InjectionType<std::unique_ptr<T>&&> Forward(void* arg)
-  {
-    auto typed_arg = static_cast<internal::ValueType<std::unique_ptr<T>&&>*>(arg);
-    return InjectionType<std::unique_ptr<T>&&>{typed_arg};
-  }
-};
-
-/**
  * @brief Type function that forwards a pointer to a value type to the proper injection type.
  */
 template <typename T>
@@ -120,18 +79,19 @@ struct ValuePointerToInjectionType<std::unique_ptr<T>&&>
 template <typename T>
 struct ForwardDependencyType
 {
-  static InjectionType<T> Forward(InjectionType<T>& arg)
+  static InjectionType<T> Forward(InjectionType<T> arg)
   {
     return arg;
   }
 };
 
 template <typename T>
-struct ForwardDependencyType<T*>
+struct ForwardDependencyType<std::unique_ptr<T>>
 {
-  static InjectionType<T*> Forward(InjectionType<T*> arg)
+  static InjectionType<std::unique_ptr<T>>
+  Forward(InjectionType<std::unique_ptr<T>>& arg)
   {
-    return arg;
+    return std::move(arg);
   }
 };
 
