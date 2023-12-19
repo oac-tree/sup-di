@@ -182,6 +182,7 @@ bool ObjectManager::RegisterFactoryFunction(
   const std::string& registered_typename,
   internal::InstanceFactoryFunction<ServiceType, Deleter, Deps...> factory_function)
 {
+  static_assert(internal::AreLegalDependencyTypes<Deps...>::value, "Using illegal dependency type");
   if (factory_functions.find(registered_typename) != factory_functions.end())
   {
     throw std::runtime_error("ObjectManager::RegisterFactoryFunction: typename already registered");
@@ -224,6 +225,7 @@ template <typename... Deps>
 bool ObjectManager::RegisterGlobalFunction(const std::string& registered_function_name,
                                            internal::GlobalFunction<Deps...> global_function)
 {
+  static_assert(internal::AreLegalDependencyTypes<Deps...>::value, "Using illegal dependency type");
   if (global_functions.find(registered_function_name) != global_functions.end())
   {
     throw std::runtime_error(
