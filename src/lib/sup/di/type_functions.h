@@ -75,6 +75,45 @@ struct PointerToInjectionType<std::unique_ptr<T>&&>
 };
 
 /**
+ * @brief Type function that forwards a pointer to a value type to the proper injection type.
+ */
+template <typename T>
+struct ValuePointerToInjectionType
+{
+  static InjectionType<T> Forward(ValueType<T>* arg)
+  {
+    return *arg;
+  }
+};
+
+template <typename T>
+struct ValuePointerToInjectionType<T*>
+{
+  static InjectionType<T*> Forward(ValueType<T*>* arg)
+  {
+    return arg;
+  }
+};
+
+template <typename T>
+struct ValuePointerToInjectionType<std::unique_ptr<T>>
+{
+  static InjectionType<std::unique_ptr<T>> Forward(ValueType<std::unique_ptr<T>>* arg)
+  {
+    return InjectionType<std::unique_ptr<T>>{arg};
+  }
+};
+
+template <typename T>
+struct ValuePointerToInjectionType<std::unique_ptr<T>&&>
+{
+  static InjectionType<std::unique_ptr<T>&&> Forward(ValueType<std::unique_ptr<T>&&>* arg)
+  {
+    return InjectionType<std::unique_ptr<T>&&>{arg};
+  }
+};
+
+/**
  * @brief Type function that perfectly forwards a dependency type to its injection type (for
  * forwarding of arguments in a creation function to a constructor).
  */

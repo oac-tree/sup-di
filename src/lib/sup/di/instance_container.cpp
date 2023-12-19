@@ -29,6 +29,16 @@ namespace internal
 {
 AbstractInstanceContainer::~AbstractInstanceContainer() = default;
 
+void* GetInstancePointer(AbstractInstanceContainer& container, std::true_type)
+{
+  return container.Release();
+}
+
+void* GetInstancePointer(AbstractInstanceContainer& container, std::false_type)
+{
+  return container.Get();
+}
+
 }  // namespace internal
 
 }  // namespace di

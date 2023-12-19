@@ -88,6 +88,14 @@ std::unique_ptr<AbstractInstanceContainer> WrapIntoContainer(std::unique_ptr<T, 
   return std::unique_ptr<AbstractInstanceContainer>{MakeInstanceContainer(std::move(p))};
 }
 
+/**
+ * @brief Retrieve the instance pointer of the container. This function is overloaded to distinguish
+ * between the need to just retrieve the pointer or release the object.
+ */
+void* GetInstancePointer(AbstractInstanceContainer& container, std::true_type release);
+
+void* GetInstancePointer(AbstractInstanceContainer& container, std::false_type do_not_release);
+
 }  // namespace internal
 
 }  // namespace di
