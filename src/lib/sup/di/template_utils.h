@@ -28,6 +28,12 @@ namespace di
 {
 namespace internal
 {
+// Class template that defines a Type type member that is identical to its type parameter
+template <typename T>
+struct Identity
+{
+  using Type = T;
+};
 
 // Class template that defines a Type type member conditionally
 template <typename T, bool>

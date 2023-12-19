@@ -33,6 +33,10 @@ namespace di
 {
 namespace internal
 {
+// Forward declaration of DependencyTraits
+template <typename T>
+struct DependencyTraits;
+
 /**
  * @brief Type trait that provides the underlying value type (as it is registered) from the
  * type of a function parameter.
@@ -43,52 +47,7 @@ namespace internal
  * const/volatile qualifiers.
  */
 template <typename T>
-struct ValueTypeT;
-
-template <typename T>
-using ValueType = typename ValueTypeT<T>::Type;
-
-// Check if type is same as its ValueType, if that exists
-template <typename T, typename = void>
-struct IsSameAsValueType : std::false_type {};
-
-template <typename T>
-struct IsSameAsValueType<T, VoidT<ValueType<T>>>
-  : public std::is_same<T, ValueType<T>> {};
-
-template <typename T>
-struct ValueTypeT
-{
-  using Type = typename std::remove_cv<
-                 typename std::remove_reference<
-                   typename std::remove_pointer<T>::type>::type>::type;
-};
-
-// Disallow rvalue references as dependency types (unless for unique_ptr)
-template <typename T>
-struct ValueTypeT<T&&>
-{};
-
-// Disallow unique_ptr to pointer, references or cv-qualified types. Otherwise, ValueType is
-// the type held by the unique_ptr.
-template <typename T>
-struct ValueTypeT<std::unique_ptr<T>>
-  : public ConditionalIdentity<T, IsSameAsValueType<T>::value>
-{};
-
-template <typename T>
-struct ValueTypeT<std::unique_ptr<T>&&>
-  : public ConditionalIdentity<T, IsSameAsValueType<T>::value>
-{};
-
-// Type functions to determine if a type can be used as a dependency type, i.e. it has a ValueType
-template <typename T, typename = void>
-struct IsLegalDependencyType : std::false_type
-{};
-
-template <typename T>
-struct IsLegalDependencyType<T, VoidT<ValueType<T>>> : std::true_type
-{};
+using ValueType = typename DependencyTraits<T>::ValueTypeT::Type;
 
 /**
  * @brief Type trait that transforms a function parameter type into the type that needs to be
@@ -102,35 +61,7 @@ struct IsLegalDependencyType<T, VoidT<ValueType<T>>> : std::true_type
  * @note The same restrictions apply as for ValueType.
  */
 template <typename T>
-struct InjectionTypeT
-{
-  using Type = ValueType<T>&;
-};
-
-template <typename T>
-struct InjectionTypeT<T&>
-{
-  using Type = ValueType<T&>&;
-};
-
-template <typename T>
-struct InjectionTypeT<T*>
-{
-  using Type = ValueType<T*>*;
-};
-
-template <typename T>
-struct InjectionTypeT<std::unique_ptr<T>>
-  : public ConditionalIdentity<std::unique_ptr<T>, IsSameAsValueType<T>::value>
-{};
-
-template <typename T>
-struct InjectionTypeT<std::unique_ptr<T>&&>
-  : public ConditionalIdentity<std::unique_ptr<T>, IsSameAsValueType<T>::value>
-{};
-
-template <typename T>
-using InjectionType = typename InjectionTypeT<T>::Type;
+using InjectionType = typename DependencyTraits<T>::InjectionTypeT::Type;
 
 /**
  * @brief Type trait that gives the argument type for a factory function that forwards the
@@ -139,23 +70,7 @@ using InjectionType = typename InjectionTypeT<T>::Type;
  * @note The same restrictions apply as for ValueType.
  */
 template <typename T>
-struct FactoryArgumentTypeT
-{
-  using Type = InjectionType<T>;
-};
-
-template <typename T>
-struct FactoryArgumentTypeT<std::unique_ptr<T>>
-  : public ConditionalIdentity<std::unique_ptr<T>&&, IsSameAsValueType<T>::value>
-{};
-
-template <typename T>
-struct FactoryArgumentTypeT<std::unique_ptr<T>&&>
-  : public ConditionalIdentity<std::unique_ptr<T>&&, IsSameAsValueType<T>::value>
-{};
-
-template <typename T>
-using FactoryArgumentType = typename FactoryArgumentTypeT<T>::Type;
+using FactoryArgumentType = typename DependencyTraits<T>::FactoryArgumentTypeT::Type;
 
 /**
  * @brief Type trait that indicates if passing a variable as the given type requires transfer of
@@ -165,16 +80,106 @@ using FactoryArgumentType = typename FactoryArgumentTypeT<T>::Type;
  * to) a unique_ptr.
  */
 template <typename T>
-struct TransferOwnership : public std::false_type
+struct TransferOwnership : public DependencyTraits<T>::TransferOwnerShipT
+{};
+
+// Check if type is same as its ValueType, if that exists
+template <typename T, typename = void>
+struct IsSameAsValueType : std::false_type {};
+
+template <typename T>
+struct IsSameAsValueType<T, VoidT<ValueType<T>>>
+  : public std::is_same<T, ValueType<T>> {};
+
+// Type functions to determine if a type can be used as a dependency type, i.e. it has a ValueType
+template <typename T, typename = void>
+struct IsLegalDependencyType : std::false_type
 {};
 
 template <typename T>
-struct TransferOwnership<std::unique_ptr<T>> : public IsLegalDependencyType<std::unique_ptr<T>>
+struct IsLegalDependencyType<T, VoidT<ValueType<T>>> : std::true_type
+{};
+
+// Type function that defines a Type type member with an added pointer if the given type has
+// a Type type member.
+template <typename T, typename = void>
+struct AddPointer
 {};
 
 template <typename T>
-struct TransferOwnership<std::unique_ptr<T>&&> : public IsLegalDependencyType<std::unique_ptr<T>&&>
+struct AddPointer<T, VoidT<typename T::Type>>
+{
+  using Type = typename T::Type*;
+};
+
+// Type function that defines a Type type member with an added lvalue reference if the given type
+// has a Type type member.
+template <typename T, typename = void>
+struct AddReference
 {};
+
+template <typename T>
+struct AddReference<T, VoidT<typename T::Type>>
+{
+  using Type = typename T::Type&;
+};
+
+// Specialization of DependencyTraits for different classes of type arguments.
+template <typename T>
+struct DependencyTraits
+{
+  using ValueTypeT = Identity<typename std::remove_cv<
+                                typename std::remove_reference<
+                                  typename std::remove_pointer<T>::type>::type>::type>;
+  using InjectionTypeT = AddReference<ValueTypeT>;
+  using FactoryArgumentTypeT = AddReference<ValueTypeT>;
+  using TransferOwnerShipT = std::false_type;
+};
+
+template <typename T>
+struct DependencyTraits<T*>
+{
+  using ValueTypeT = Identity<typename std::remove_cv<
+                                typename std::remove_reference<T>::type>::type>;
+  using InjectionTypeT = AddPointer<ValueTypeT>;
+  using FactoryArgumentTypeT = AddPointer<ValueTypeT>;
+  using TransferOwnerShipT = std::false_type;
+};
+
+template <typename T>
+struct DependencyTraits<T&>
+{
+  using ValueTypeT = Identity<typename std::remove_cv<T>::type>;
+  using InjectionTypeT = AddReference<ValueTypeT>;
+  using FactoryArgumentTypeT = AddReference<ValueTypeT>;
+  using TransferOwnerShipT = std::false_type;
+};
+
+template <typename T>
+struct DependencyTraits<std::unique_ptr<T>>
+{
+  using ValueTypeT = ConditionalIdentity<T, IsSameAsValueType<T>::value>;
+  using InjectionTypeT = ConditionalIdentity<std::unique_ptr<T>, IsSameAsValueType<T>::value>;
+  using FactoryArgumentTypeT =
+    ConditionalIdentity<std::unique_ptr<T>&&, IsSameAsValueType<T>::value>;
+  using TransferOwnerShipT = IsSameAsValueType<T>;
+};
+
+template <typename T>
+struct DependencyTraits<std::unique_ptr<T>&&>
+{
+  using ValueTypeT = ConditionalIdentity<T, IsSameAsValueType<T>::value>;
+  using InjectionTypeT = ConditionalIdentity<std::unique_ptr<T>, IsSameAsValueType<T>::value>;
+  using FactoryArgumentTypeT =
+    ConditionalIdentity<std::unique_ptr<T>&&, IsSameAsValueType<T>::value>;
+  using TransferOwnerShipT = IsSameAsValueType<T>;
+};
+
+template <typename T>
+struct DependencyTraits<T&&>
+{
+  using TransferOwnerShipT = std::false_type;
+};
 
 }  // namespace internal
 
