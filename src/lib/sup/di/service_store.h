@@ -112,9 +112,9 @@ auto InvokeWithStoreArgs(F&& f, ServiceStore<Key>& store, const std::vector<Key>
  * and release its ownership when required.
  */
 template <typename Dep>
-ValueType<Dep>* GetValuePointer(AbstractInstanceContainer& container)
+StorageType<Dep>* GetValuePointer(AbstractInstanceContainer& container)
 {
-  return static_cast<ValueType<Dep>*>(GetInstancePointer(container, TransferOwnership<Dep>{}));
+  return static_cast<StorageType<Dep>*>(GetInstancePointer(container, TransferOwnership<Dep>{}));
 }
 
 /**
@@ -192,7 +192,7 @@ template <typename Key>
 template <typename Dep>
 InjectionType<Dep> ServiceStore<Key>::GetInstance(const Key& key)
 {
-  auto map_it = m_typed_instance_map.template find<ValueType<Dep>>();
+  auto map_it = m_typed_instance_map.template find<StorageType<Dep>>();
   if (map_it == m_typed_instance_map.end())
   {
     throw std::runtime_error("ServiceStore::GetInstance: accessing unknown service type");

@@ -35,7 +35,7 @@ protected:
 class TestClass {};
 
 template <typename D, typename V>
-struct IsDependencyValueTypePair : public std::is_same<internal::ValueType<D>, V>
+struct IsDependencyValueTypePair : public std::is_same<internal::StorageType<D>, V>
 {};
 
 template <typename D, typename V>
@@ -58,7 +58,7 @@ TEST_F(DependencyTraitsTest, IsLegalDependencyType)
   EXPECT_TRUE((internal::IsLegalDependencyType<std::unique_ptr<TestClass>>::value));
   EXPECT_TRUE((internal::IsLegalDependencyType<std::unique_ptr<TestClass>&&>::value));
 
-  // Weird, but allowed. Note that its ValueType will be std::unique_ptr<TestClass> and
+  // Weird, but allowed. Note that its StorageType will be std::unique_ptr<TestClass> and
   // NOT TestClass
   EXPECT_TRUE((internal::IsLegalDependencyType<std::unique_ptr<TestClass>&>::value));
 
@@ -79,7 +79,7 @@ TEST_F(DependencyTraitsTest, AreLegalDependencyTypes)
   EXPECT_TRUE((internal::AreLegalDependencyTypes<std::unique_ptr<TestClass>, TestClass&,
                                                  std::unique_ptr<TestClass>&&>::value));
 
-  // Weird, but allowed. Note that its ValueType will be std::unique_ptr<TestClass> and
+  // Weird, but allowed. Note that its StorageType will be std::unique_ptr<TestClass> and
   // NOT TestClass
   EXPECT_TRUE((internal::AreLegalDependencyTypes<std::unique_ptr<TestClass>&>::value));
 
@@ -178,7 +178,7 @@ TEST_F(DependencyTraitsTest, TransferOwnership)
   EXPECT_TRUE((internal::TransferOwnership<std::unique_ptr<TestClass>>::value));
   EXPECT_TRUE((internal::TransferOwnership<std::unique_ptr<TestClass>&&>::value));
 
-  // Weird, but allowed. Note that its ValueType will be std::unique_ptr<TestClass> and
+  // Weird, but allowed. Note that its StorageType will be std::unique_ptr<TestClass> and
   // NOT TestClass
   EXPECT_FALSE((internal::TransferOwnership<std::unique_ptr<TestClass>&>::value));
 

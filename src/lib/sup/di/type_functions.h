@@ -39,7 +39,7 @@ namespace internal
 template <typename T>
 struct ValuePointerToInjectionType
 {
-  static InjectionType<T> Forward(ValueType<T>* arg)
+  static InjectionType<T> Forward(StorageType<T>* arg)
   {
     return *arg;
   }
@@ -48,7 +48,7 @@ struct ValuePointerToInjectionType
 template <typename T>
 struct ValuePointerToInjectionType<T*>
 {
-  static InjectionType<T*> Forward(ValueType<T*>* arg)
+  static InjectionType<T*> Forward(StorageType<T*>* arg)
   {
     return arg;
   }
@@ -57,7 +57,7 @@ struct ValuePointerToInjectionType<T*>
 template <typename T>
 struct ValuePointerToInjectionType<std::unique_ptr<T>>
 {
-  static InjectionType<std::unique_ptr<T>> Forward(ValueType<std::unique_ptr<T>>* arg)
+  static InjectionType<std::unique_ptr<T>> Forward(StorageType<std::unique_ptr<T>>* arg)
   {
     return InjectionType<std::unique_ptr<T>>{arg};
   }
@@ -66,7 +66,7 @@ struct ValuePointerToInjectionType<std::unique_ptr<T>>
 template <typename T>
 struct ValuePointerToInjectionType<std::unique_ptr<T>&&>
 {
-  static InjectionType<std::unique_ptr<T>&&> Forward(ValueType<std::unique_ptr<T>&&>* arg)
+  static InjectionType<std::unique_ptr<T>&&> Forward(StorageType<std::unique_ptr<T>&&>* arg)
   {
     return InjectionType<std::unique_ptr<T>&&>{arg};
   }

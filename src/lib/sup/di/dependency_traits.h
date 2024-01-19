@@ -47,7 +47,7 @@ struct DependencyTraits;
  * const/volatile qualifiers.
  */
 template <typename T>
-using ValueType = typename DependencyTraits<T>::ValueTypeT::Type;
+using StorageType = typename DependencyTraits<T>::ValueTypeT::Type;
 
 /**
  * @brief Type trait that transforms a function parameter type into the type that needs to be
@@ -58,7 +58,7 @@ using ValueType = typename DependencyTraits<T>::ValueTypeT::Type;
  * returns an lvalue reference to that type. Finally, for rvalue references to a unique_ptr, the
  * result is a unique_ptr to the underlying type without const/volatile qualifiers.
  *
- * @note The same restrictions apply as for ValueType.
+ * @note The same restrictions apply as for StorageType.
  */
 template <typename T>
 using InjectionType = typename DependencyTraits<T>::InjectionTypeT::Type;
@@ -67,7 +67,7 @@ using InjectionType = typename DependencyTraits<T>::InjectionTypeT::Type;
  * @brief Type trait that gives the argument type for a factory function that forwards the
  * argument to a constructor in its body.
  *
- * @note The same restrictions apply as for ValueType.
+ * @note The same restrictions apply as for StorageType.
  */
 template <typename T>
 using FactoryArgumentType = typename DependencyTraits<T>::FactoryArgumentTypeT::Type;
@@ -83,21 +83,21 @@ template <typename T>
 struct TransferOwnership : public DependencyTraits<T>::TransferOwnerShipT
 {};
 
-// Check if type is same as its ValueType, if that exists
+// Check if type is same as its StorageType, if that exists
 template <typename T, typename = void>
 struct IsSameAsValueType : std::false_type {};
 
 template <typename T>
-struct IsSameAsValueType<T, VoidT<ValueType<T>>>
-  : public std::is_same<T, ValueType<T>> {};
+struct IsSameAsValueType<T, VoidT<StorageType<T>>>
+  : public std::is_same<T, StorageType<T>> {};
 
-// Type functions to determine if a type(s) can be used as a dependency type, i.e. it has a ValueType
+// Type functions to determine if a type(s) can be used as a dependency type, i.e. it has a StorageType
 template <typename T, typename = void>
 struct IsLegalDependencyType : std::false_type
 {};
 
 template <typename T>
-struct IsLegalDependencyType<T, VoidT<ValueType<T>>> : std::true_type
+struct IsLegalDependencyType<T, VoidT<StorageType<T>>> : std::true_type
 {};
 
 template <typename... Deps>
