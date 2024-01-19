@@ -22,7 +22,7 @@
 #ifndef SUP_DI_DEPENDENCY_TRAITS_H_
 #define SUP_DI_DEPENDENCY_TRAITS_H_
 
-#include "template_utils.h"
+#include "storage_type_traits.h"
 
 #include <memory>
 #include <type_traits>
