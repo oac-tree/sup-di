@@ -93,10 +93,10 @@ struct StorageTypeT<std::unique_ptr<T>&&> : public StorageTypeHelper<T>
  *
  * @details The type trait will first remove the outermost CV qualification and chech if the
  * resulting type is a valid type to store. Special cases are:
- * - pointers to T will remove CV qualification of T and use that as storage type if valid;
- * - lvalue references to T will remove CV qualification of T and use that as storage type if valid;
- * - unique pointers to T will use T as storage type if valid;
- * - rvalue references to unique pointers to T will use T as storage type if valid;
+ * - T* : std::remove_cv<T>::type if it is a valid storage type;
+ * - T& : std::remove_cv<T>::type if it is a valid storage type;
+ * - unique_ptr<T> : T if it is a valid storage type;
+ * - unique_ptr<T>&& : T if it is a valid storage type.
  */
 template <typename T>
 using StorageType = typename StorageTypeT<typename std::remove_cv<T>::type>::Type;

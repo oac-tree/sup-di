@@ -64,7 +64,7 @@ struct ForwardingArgTypeT<std::unique_ptr<T>&&>
  * - T* : std::remove_cv<T>::type* if std::remove_cv<T>::type is a valid storage type;
  * - T& : std::remove_cv<T>::type& if std::remove_cv<T>::type is a valid storage type;
  * - unique_ptr<T> : unique_ptr<T>&& if T is a valid storage type;
- * - unique_ptr<T>&& : unique_ptr<T>&& if T is a valid storage type;
+ * - unique_ptr<T>&& : unique_ptr<T>&& if T is a valid storage type.
  */
 template <typename T>
 using ForwardingArgType = typename ForwardingArgTypeT<typename std::remove_cv<T>::type>::Type;
