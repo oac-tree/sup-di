@@ -160,7 +160,7 @@ private:
  */
 template <typename ServiceType, typename ConcreteType, typename... Deps>
 std::unique_ptr<ServiceType>
-ForwardingInstanceFactoryFunction(internal::FactoryArgumentType<Deps>... dependencies)
+ForwardingInstanceFactoryFunction(internal::ForwardingArgType<Deps>... dependencies)
 {
   return std::unique_ptr<ServiceType>(
     new ConcreteType(internal::ForwardDependencyType<Deps>::Forward(dependencies)...));

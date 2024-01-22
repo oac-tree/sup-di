@@ -35,11 +35,11 @@ protected:
 class TestClass {};
 
 template <typename D, typename V>
-struct IsDependencyValueTypePair : public std::is_same<internal::StorageType2<D>, V>
+struct IsDependencyValueTypePair : public std::is_same<internal::StorageType<D>, V>
 {};
 
 template <typename D, typename V>
-struct IsDependencyInjectionTypePair : public std::is_same<internal::InjectionType2<D>, V>
+struct IsDependencyInjectionTypePair : public std::is_same<internal::InjectionType<D>, V>
 {};
 
 template <typename D, typename V>

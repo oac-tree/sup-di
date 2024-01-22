@@ -35,65 +35,29 @@ namespace di
 {
 namespace internal
 {
-// Forward declaration of DependencyTraits
-template <typename T>
-struct DependencyTraits;
-
-/**
- * @brief Type trait that provides the underlying value type (as it is registered) from the
- * type of a function parameter.
- *
- * @details The type trait will in general remove pointers, references and const volatile
- * qualifiers. A special case is provided for function parameters declared with rvalue references
- * to a unique_ptr: the value type will then be the underlying type of the unique_ptr without
- * const/volatile qualifiers.
- */
-template <typename T>
-using StorageType = typename DependencyTraits<T>::ValueTypeT::Type;
-
-/**
- * @brief Type trait that transforms a function parameter type into the type that needs to be
- * returned to inject it into that function.
- *
- * @details The type trait will in general transform the underlying type (for pointers and
- * lvalue references) by removing the const/volatile qualifiers. For value types, the transformation
- * returns an lvalue reference to that type. Finally, for rvalue references to a unique_ptr, the
- * result is a unique_ptr to the underlying type without const/volatile qualifiers.
- *
- * @note The same restrictions apply as for StorageType.
- */
-template <typename T>
-using InjectionType = typename DependencyTraits<T>::InjectionTypeT::Type;
-
-/**
- * @brief Type trait that gives the argument type for a factory function that forwards the
- * argument to a constructor in its body.
- *
- * @note The same restrictions apply as for StorageType.
- */
-template <typename T>
-using FactoryArgumentType = typename DependencyTraits<T>::FactoryArgumentTypeT::Type;
-
 /**
  * @brief Type trait that indicates if passing a variable as the given type requires transfer of
  * ownership.
  *
- * @details A boolean member constant value is defined, which is only true for (rvalue references
- * to) a unique_ptr.
+ * @details A boolean member constant value is defined, which is only true for valid (rvalue refs
+ * to) unique_ptr.
  */
 template <typename T>
-struct TransferOwnership : public DependencyTraits<T>::TransferOwnerShipT
-{};
-
-// Type functions to determine if a type(s) can be used as a dependency type, i.e. it has a StorageType
-template <typename T, typename = void>
-struct IsLegalDependencyType : std::false_type
+struct TransferOwnership : public std::false_type
 {};
 
 template <typename T>
-struct IsLegalDependencyType<T, VoidT<StorageType2<T>>> : std::true_type
+struct TransferOwnership<std::unique_ptr<T>> : public IsLegalDependencyType<std::unique_ptr<T>>
 {};
 
+template <typename T>
+struct TransferOwnership<std::unique_ptr<T>&&> : public IsLegalDependencyType<std::unique_ptr<T>&&>
+{};
+
+/**
+ * @brief Variadic template to determine if all given types can be used as a dependency types, i.e.
+ * they all have a valid storage type.
+ */
 template <typename... Deps>
 struct AreLegalDependencyTypes;
 
@@ -105,63 +69,6 @@ struct AreLegalDependencyTypes<Head, Tail...>
 template <>
 struct AreLegalDependencyTypes<> : public std::true_type
 {};
-
-// Specialization of DependencyTraits for different classes of type arguments.
-template <typename T>
-struct DependencyTraits
-{
-  using ValueTypeT = Identity<typename std::remove_cv<
-                                typename std::remove_reference<
-                                  typename std::remove_pointer<T>::type>::type>::type>;
-  using InjectionTypeT = AddReference<ValueTypeT>;
-  using FactoryArgumentTypeT = AddReference<ValueTypeT>;
-  using TransferOwnerShipT = std::false_type;
-};
-
-template <typename T>
-struct DependencyTraits<T*>
-{
-  using ValueTypeT = Identity<typename std::remove_cv<
-                                typename std::remove_reference<T>::type>::type>;
-  using InjectionTypeT = AddPointer<ValueTypeT>;
-  using FactoryArgumentTypeT = AddPointer<ValueTypeT>;
-  using TransferOwnerShipT = std::false_type;
-};
-
-template <typename T>
-struct DependencyTraits<T&>
-{
-  using ValueTypeT = Identity<typename std::remove_cv<T>::type>;
-  using InjectionTypeT = AddReference<ValueTypeT>;
-  using FactoryArgumentTypeT = AddReference<ValueTypeT>;
-  using TransferOwnerShipT = std::false_type;
-};
-
-template <typename T>
-struct DependencyTraits<std::unique_ptr<T>>
-{
-  using ValueTypeT = ConditionalIdentity<T, IsValidStorageType<T>::value>;
-  using InjectionTypeT = ConditionalIdentity<std::unique_ptr<T>, IsValidStorageType<T>::value>;
-  using FactoryArgumentTypeT =
-    ConditionalIdentity<std::unique_ptr<T>&&, IsValidStorageType<T>::value>;
-  using TransferOwnerShipT = IsValidStorageType<T>;
-};
-
-template <typename T>
-struct DependencyTraits<std::unique_ptr<T>&&>
-{
-  using ValueTypeT = ConditionalIdentity<T, IsValidStorageType<T>::value>;
-  using InjectionTypeT = ConditionalIdentity<std::unique_ptr<T>, IsValidStorageType<T>::value>;
-  using FactoryArgumentTypeT =
-    ConditionalIdentity<std::unique_ptr<T>&&, IsValidStorageType<T>::value>;
-  using TransferOwnerShipT = IsValidStorageType<T>;
-};
-
-template <typename T>
-struct DependencyTraits<T&&>
-{
-  using TransferOwnerShipT = std::false_type;
-};
 
 }  // namespace internal
 

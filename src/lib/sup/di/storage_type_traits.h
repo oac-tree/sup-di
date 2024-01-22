@@ -58,9 +58,15 @@ struct IsValidStorageType
                             std::true_type, std::false_type>::type
 {};
 
+/**
+ * @brief Helper alias template for storage type traits.
+ */
 template <typename T>
 using StorageTypeHelper = ConditionalIdentity<T, IsValidStorageType<T>::value>;
 
+/**
+ * @brief Helper type trait (and specializations) for the storage type traits.
+ */
 template <typename T>
 struct StorageTypeT : public StorageTypeHelper<T>
 {};
@@ -81,8 +87,38 @@ template <typename T>
 struct StorageTypeT<std::unique_ptr<T>&&> : public StorageTypeHelper<T>
 {};
 
+/**
+ * @brief Type trait that provides the underlying value type (as it will be stored) from a
+ * given dependency type.
+ *
+ * @details The type trait will first remove the outermost CV qualification and chech if the
+ * resulting type is a valid type to store. Special cases are:
+ * - pointers to T will remove CV qualification of T and use that as storage type if valid;
+ * - lvalue references to T will remove CV qualification of T and use that as storage type if valid;
+ * - unique pointers to T will use T as storage type if valid;
+ * - rvalue references to unique pointers to T will use T as storage type if valid;
+ */
 template <typename T>
-using StorageType2 = typename StorageTypeT<typename std::remove_cv<T>::type>::Type;
+using StorageType = typename StorageTypeT<typename std::remove_cv<T>::type>::Type;
+
+/**
+ * @brief Type trait to determine if a type can be used as a dependency type, i.e. it has a
+ * valid storage type.
+ */
+template <typename T, typename = void>
+struct IsLegalDependencyType : public std::false_type
+{};
+
+template <typename T>
+struct IsLegalDependencyType<T, VoidT<StorageType<T>>> : public std::true_type
+{};
+
+/**
+ * @brief Helper alias template defines a member Type equal to T when the given dependency type
+ * Dep has a valid storage type.
+ */
+template <typename T, typename Dep>
+using EnableIfValid = ConditionalIdentity<T, IsLegalDependencyType<Dep>::value>;
 
 }  // namespace internal
 

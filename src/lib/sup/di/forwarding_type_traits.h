@@ -31,35 +31,41 @@ namespace di
 namespace internal
 {
 /**
- * @brief Type trait that provides the parameter type of a function that will forward it to a given
- * dependency type.
+ * @brief Helper type trait (and specializations) for the forwarding argument type traits.
  */
 template <typename T>
-struct ForwardingArgTypeT : public ConditionalIdentity<T&, IsValidStorageType<T>::value>
+struct ForwardingArgTypeT : public EnableIfValid<T&, T>
 {};
 
 template <typename T>
-struct ForwardingArgTypeT<T*>
-  : public ConditionalIdentity<typename std::remove_cv<T>::type*,
-                               IsValidStorageType<typename std::remove_cv<T>::type>::value>
+struct ForwardingArgTypeT<T*> : public EnableIfValid<typename std::remove_cv<T>::type*, T*>
 {};
 
 template <typename T>
-struct ForwardingArgTypeT<T&>
-  : public ConditionalIdentity<typename std::remove_cv<T>::type&,
-                               IsValidStorageType<typename std::remove_cv<T>::type>::value>
+struct ForwardingArgTypeT<T&> : public EnableIfValid<typename std::remove_cv<T>::type&, T&>
 {};
 
 template <typename T>
 struct ForwardingArgTypeT<std::unique_ptr<T>>
-  : public ConditionalIdentity<std::unique_ptr<T>&&, IsValidStorageType<T>::value>
+  : public EnableIfValid<std::unique_ptr<T>&&, std::unique_ptr<T>>
 {};
 
 template <typename T>
 struct ForwardingArgTypeT<std::unique_ptr<T>&&>
-  : public ConditionalIdentity<std::unique_ptr<T>&&, IsValidStorageType<T>::value>
+  : public EnableIfValid<std::unique_ptr<T>&&, std::unique_ptr<T>&&>
 {};
 
+/**
+ * @brief Type trait that provides the parameter type of a function that will forward it to a given
+ * dependency type.
+ *
+ * @details The type trait will first remove the outermost CV qualification and chech if the
+ * resulting type is a valid type to store and add a lvalue reference. Special cases are:
+ * - T* : std::remove_cv<T>::type* if std::remove_cv<T>::type is a valid storage type;
+ * - T& : std::remove_cv<T>::type& if std::remove_cv<T>::type is a valid storage type;
+ * - unique_ptr<T> : unique_ptr<T>&& if T is a valid storage type;
+ * - unique_ptr<T>&& : unique_ptr<T>&& if T is a valid storage type;
+ */
 template <typename T>
 using ForwardingArgType = typename ForwardingArgTypeT<typename std::remove_cv<T>::type>::Type;
 
