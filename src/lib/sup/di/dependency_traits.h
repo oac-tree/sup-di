@@ -23,6 +23,7 @@
 #define SUP_DI_DEPENDENCY_TRAITS_H_
 
 #include "storage_type_traits.h"
+#include "injection_type_traits.h"
 
 #include <memory>
 #include <type_traits>
@@ -103,30 +104,6 @@ struct AreLegalDependencyTypes<Head, Tail...>
 template <>
 struct AreLegalDependencyTypes<> : public std::true_type
 {};
-
-// Type function that defines a Type type member with an added pointer if the given type has
-// a Type type member.
-template <typename T, typename = void>
-struct AddPointer
-{};
-
-template <typename T>
-struct AddPointer<T, VoidT<typename T::Type>>
-{
-  using Type = typename T::Type*;
-};
-
-// Type function that defines a Type type member with an added lvalue reference if the given type
-// has a Type type member.
-template <typename T, typename = void>
-struct AddReference
-{};
-
-template <typename T>
-struct AddReference<T, VoidT<typename T::Type>>
-{
-  using Type = typename T::Type&;
-};
 
 // Specialization of DependencyTraits for different classes of type arguments.
 template <typename T>

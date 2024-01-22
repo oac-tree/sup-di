@@ -35,6 +35,7 @@ install(FILES
   di_utils.h
   error_codes.h
   index_sequence.h
+  injection_type_traits.h
   instance_container.h
   object_manager.h
   service_store.h
