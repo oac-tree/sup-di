@@ -38,6 +38,7 @@ install(FILES
   instance_container.h
   object_manager.h
   service_store.h
+  storage_type_traits.h
   template_utils.h
   type_functions.h
   type_list.h

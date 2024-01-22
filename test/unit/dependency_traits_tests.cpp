@@ -35,7 +35,7 @@ protected:
 class TestClass {};
 
 template <typename D, typename V>
-struct IsDependencyValueTypePair : public std::is_same<internal::StorageType<D>, V>
+struct IsDependencyValueTypePair : public std::is_same<internal::StorageType2<D>, V>
 {};
 
 template <typename D, typename V>
@@ -58,14 +58,11 @@ TEST_F(DependencyTraitsTest, IsLegalDependencyType)
   EXPECT_TRUE((internal::IsLegalDependencyType<std::unique_ptr<TestClass>>::value));
   EXPECT_TRUE((internal::IsLegalDependencyType<std::unique_ptr<TestClass>&&>::value));
 
-  // Weird, but allowed. Note that its StorageType will be std::unique_ptr<TestClass> and
-  // NOT TestClass
-  EXPECT_TRUE((internal::IsLegalDependencyType<std::unique_ptr<TestClass>&>::value));
-
   // Illegal dependency types
   EXPECT_FALSE((internal::IsLegalDependencyType<TestClass&&>::value));
   EXPECT_FALSE((internal::IsLegalDependencyType<std::unique_ptr<const TestClass>>::value));
   EXPECT_FALSE((internal::IsLegalDependencyType<std::unique_ptr<TestClass*>>::value));
+  EXPECT_FALSE((internal::IsLegalDependencyType<std::unique_ptr<TestClass>&>::value));
   EXPECT_FALSE((internal::IsLegalDependencyType<std::unique_ptr<TestClass&&>>::value));
 }
 
@@ -79,9 +76,6 @@ TEST_F(DependencyTraitsTest, AreLegalDependencyTypes)
   EXPECT_TRUE((internal::AreLegalDependencyTypes<std::unique_ptr<TestClass>, TestClass&,
                                                  std::unique_ptr<TestClass>&&>::value));
 
-  // Weird, but allowed. Note that its StorageType will be std::unique_ptr<TestClass> and
-  // NOT TestClass
-  EXPECT_TRUE((internal::AreLegalDependencyTypes<std::unique_ptr<TestClass>&>::value));
 
   // Mix with illegal dependency types
   EXPECT_FALSE((internal::AreLegalDependencyTypes<TestClass, TestClass&&, TestClass*>::value));
@@ -89,6 +83,7 @@ TEST_F(DependencyTraitsTest, AreLegalDependencyTypes)
                                                   TestClass&, TestClass*>::value));
   EXPECT_FALSE((internal::AreLegalDependencyTypes<std::unique_ptr<TestClass*>,
                                                   TestClass&, TestClass*>::value));
+  EXPECT_FALSE((internal::AreLegalDependencyTypes<TestClass, std::unique_ptr<TestClass>&>::value));
   EXPECT_FALSE((internal::AreLegalDependencyTypes<TestClass, TestClass&&,
                                                   std::unique_ptr<TestClass&&>>::value));
 }
@@ -110,10 +105,10 @@ TEST_F(DependencyTraitsTest, ValueTypes)
   EXPECT_TRUE((IsDependencyValueTypePair<std::unique_ptr<TestClass>&&, TestClass>::value));
 
   // The weird cases
-  EXPECT_TRUE((IsDependencyValueTypePair<std::unique_ptr<TestClass>&,
-                                         std::unique_ptr<TestClass>>::value));
-  EXPECT_TRUE((IsDependencyValueTypePair<std::unique_ptr<const TestClass*>&,
-                                         std::unique_ptr<const TestClass*>>::value));
+  // EXPECT_TRUE((IsDependencyValueTypePair<std::unique_ptr<TestClass>&,
+  //                                        std::unique_ptr<TestClass>>::value));
+  // EXPECT_TRUE((IsDependencyValueTypePair<std::unique_ptr<const TestClass*>&,
+  //                                        std::unique_ptr<const TestClass*>>::value));
 }
 
 TEST_F(DependencyTraitsTest, InjectionTypes)

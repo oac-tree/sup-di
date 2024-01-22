@@ -83,21 +83,13 @@ template <typename T>
 struct TransferOwnership : public DependencyTraits<T>::TransferOwnerShipT
 {};
 
-// Check if type is same as its StorageType, if that exists
-template <typename T, typename = void>
-struct IsSameAsValueType : std::false_type {};
-
-template <typename T>
-struct IsSameAsValueType<T, VoidT<StorageType<T>>>
-  : public std::is_same<T, StorageType<T>> {};
-
 // Type functions to determine if a type(s) can be used as a dependency type, i.e. it has a StorageType
 template <typename T, typename = void>
 struct IsLegalDependencyType : std::false_type
 {};
 
 template <typename T>
-struct IsLegalDependencyType<T, VoidT<StorageType<T>>> : std::true_type
+struct IsLegalDependencyType<T, VoidT<StorageType2<T>>> : std::true_type
 {};
 
 template <typename... Deps>
@@ -170,21 +162,21 @@ struct DependencyTraits<T&>
 template <typename T>
 struct DependencyTraits<std::unique_ptr<T>>
 {
-  using ValueTypeT = ConditionalIdentity<T, IsSameAsValueType<T>::value>;
-  using InjectionTypeT = ConditionalIdentity<std::unique_ptr<T>, IsSameAsValueType<T>::value>;
+  using ValueTypeT = ConditionalIdentity<T, IsValidStorageType<T>::value>;
+  using InjectionTypeT = ConditionalIdentity<std::unique_ptr<T>, IsValidStorageType<T>::value>;
   using FactoryArgumentTypeT =
-    ConditionalIdentity<std::unique_ptr<T>&&, IsSameAsValueType<T>::value>;
-  using TransferOwnerShipT = IsSameAsValueType<T>;
+    ConditionalIdentity<std::unique_ptr<T>&&, IsValidStorageType<T>::value>;
+  using TransferOwnerShipT = IsValidStorageType<T>;
 };
 
 template <typename T>
 struct DependencyTraits<std::unique_ptr<T>&&>
 {
-  using ValueTypeT = ConditionalIdentity<T, IsSameAsValueType<T>::value>;
-  using InjectionTypeT = ConditionalIdentity<std::unique_ptr<T>, IsSameAsValueType<T>::value>;
+  using ValueTypeT = ConditionalIdentity<T, IsValidStorageType<T>::value>;
+  using InjectionTypeT = ConditionalIdentity<std::unique_ptr<T>, IsValidStorageType<T>::value>;
   using FactoryArgumentTypeT =
-    ConditionalIdentity<std::unique_ptr<T>&&, IsSameAsValueType<T>::value>;
-  using TransferOwnerShipT = IsSameAsValueType<T>;
+    ConditionalIdentity<std::unique_ptr<T>&&, IsValidStorageType<T>::value>;
+  using TransferOwnerShipT = IsValidStorageType<T>;
 };
 
 template <typename T>

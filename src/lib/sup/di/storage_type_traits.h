@@ -33,50 +33,56 @@ namespace di
 {
 namespace internal
 {
-template <typename T, typename = void>
-struct StorageTypeT
+/**
+ * @brief Trait to check if a type is a std::unique_ptr
+ */
+template <typename T>
+struct IsUniquePtr : public std::false_type
+{};
+
+template <typename T>
+struct IsUniquePtr<std::unique_ptr<T>> : public std::true_type
+{};
+
+/**
+ * @brief Trait to check if a type is a valid type for storing in the ServiceStore
+ *
+ * @details Valid storage types are non-CV qualified types, excluding: void, functions, references,
+ * pointers or std::unique_ptr.
+ */
+template <typename T>
+struct IsValidStorageType
+  : public std::conditional<std::is_object<T>::value && !std::is_pointer<T>::value
+                              && !IsUniquePtr<typename std::remove_cv<T>::type>::value
+                              && !std::is_const<T>::value && !std::is_volatile<T>::value,
+                            std::true_type, std::false_type>::type
+{};
+
+template <typename T>
+using StorageTypeHelper = ConditionalIdentity<T, IsValidStorageType<T>::value>;
+
+template <typename T>
+struct StorageTypeT : public StorageTypeHelper<T>
+{};
+
+template <typename T>
+struct StorageTypeT<T*> : public StorageTypeHelper<typename std::remove_cv<T>::type>
+{};
+
+template <typename T>
+struct StorageTypeT<T&> : public StorageTypeHelper<typename std::remove_cv<T>::type>
+{};
+
+template <typename T>
+struct StorageTypeT<std::unique_ptr<T>> : public StorageTypeHelper<T>
+{};
+
+template <typename T>
+struct StorageTypeT<std::unique_ptr<T>&&> : public StorageTypeHelper<T>
 {};
 
 template <typename T>
 using StorageType2 = typename StorageTypeT<typename std::remove_cv<T>::type>::Type;
-
-// Check if type is same as its StorageType, if that exists
-template <typename T, typename = void>
-struct IsSameAsStorageType : std::false_type {};
-
-template <typename T>
-struct IsSameAsStorageType<T, VoidT<StorageType2<T>>>
-  : public std::is_same<T, StorageType2<T>> {};
-
-template <typename T>
-struct StorageTypeT<T, typename std::enable_if<std::is_object<T>::value>::type>
-{
-  using Type = T;
-};
-
-template <typename T>
-struct StorageTypeT<T*, void>
-  : public ConditionalIdentity<typename std::remove_cv<T>::type,
-                               IsSameAsStorageType<typename std::remove_cv<T>::type>::value>
-{};
-
-template <typename T>
-struct StorageTypeT<T&, void>
-  : public ConditionalIdentity<typename std::remove_cv<T>::type,
-                               IsSameAsStorageType<typename std::remove_cv<T>::type>::value>
-{};
-
-template <typename T>
-struct StorageTypeT<std::unique_ptr<T>, void>
-  : public ConditionalIdentity<typename std::remove_cv<T>::type,
-                               IsSameAsStorageType<typename std::remove_cv<T>::type>::value>
-{};
-
-template <typename T>
-struct StorageTypeT<std::unique_ptr<T>&&, void>
-  : public ConditionalIdentity<typename std::remove_cv<T>::type,
-                               IsSameAsStorageType<typename std::remove_cv<T>::type>::value>
-{};
 
 }  // namespace internal
 
