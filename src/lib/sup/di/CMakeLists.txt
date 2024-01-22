@@ -34,6 +34,7 @@ install(FILES
   dependency_traits.h
   di_utils.h
   error_codes.h
+  forwarding_type_traits.h
   index_sequence.h
   injection_type_traits.h
   instance_container.h

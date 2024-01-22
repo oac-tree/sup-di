@@ -23,6 +23,7 @@
 #define SUP_DI_DEPENDENCY_TRAITS_H_
 
 #include "storage_type_traits.h"
+#include "forwarding_type_traits.h"
 #include "injection_type_traits.h"
 
 #include <memory>
