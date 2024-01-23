@@ -23,6 +23,7 @@
 #define SUP_DI_FORWARDING_TYPE_TRAITS_H_
 
 #include "storage_type_traits.h"
+#include "injection_type_traits.h"
 
 namespace sup
 {
@@ -68,6 +69,41 @@ struct ForwardingArgTypeT<std::unique_ptr<T>&&>
  */
 template <typename T>
 using ForwardingArgType = typename ForwardingArgTypeT<typename std::remove_cv<T>::type>::Type;
+
+/**
+ * @brief Type function that perfectly forwards a dependency type to its injection type (for
+ * forwarding of arguments in a creation function to a constructor).
+ *
+ * @tparam T Dependency type.
+ */
+template <typename T>
+struct ForwardDependencyHelper
+{
+  static InjectionType<T> Forward(ForwardingArgType<T> arg)
+  {
+    return arg;
+  }
+};
+
+template <typename T>
+struct ForwardDependencyHelper<std::unique_ptr<T>>
+{
+  static InjectionType<std::unique_ptr<T>>
+  Forward(ForwardingArgType<std::unique_ptr<T>>& arg)
+  {
+    return std::move(arg);
+  }
+};
+
+template <typename T>
+struct ForwardDependencyHelper<std::unique_ptr<T>&&>
+{
+  static InjectionType<std::unique_ptr<T>&&>
+  Forward(ForwardingArgType<std::unique_ptr<T>&&>& arg)
+  {
+    return std::move(arg);
+  }
+};
 
 }  // namespace internal
 

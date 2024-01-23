@@ -31,7 +31,6 @@ install(TARGETS sup-di EXPORT sup-di-targets LIBRARY DESTINATION ${CMAKE_INSTALL
 set_target_properties(sup-di PROPERTIES EXPORT_NAME sup-di)
 
 install(FILES
-  dependency_traits.h
   di_utils.h
   error_codes.h
   forwarding_type_traits.h
@@ -39,10 +38,10 @@ install(FILES
   injection_type_traits.h
   instance_container.h
   object_manager.h
+  ownership_traits.h
   service_store.h
   storage_type_traits.h
   template_utils.h
-  type_functions.h
   type_list.h
   type_map.h
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/sup/di

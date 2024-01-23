@@ -26,10 +26,10 @@ f(GetInstance(instance_key));
 
 The following table shows the possible type mappings, where `UP` denotes `std::unique_ptr` and `(CV)` is an optional CV qualification of the type that follows.
 
-| Dependency   | ValueType | InjectionType | FactoryArgumentType |
-| ------------ | --------- | ------------- | ------------------- |
-| (CV) T       | T         | T&            | T&                  |
-| (CV) T*      | T         | T*            | T*                  |
-| (CV) T&      | T         | T&            | T&                  |
-| UP\<T>       | T         | UP\<T>        | UP\<T>&&            |
-| UP\<T>&&     | T         | UP\<T>        | UP\<T>&&            |
+| Dependency   | ValueType | InjectionType | ForwardingArgType |
+| ------------ | --------- | ------------- | ----------------- |
+| (CV) T       | T         | T&            | T&                |
+| (CV) T*      | T         | T*            | T*                |
+| (CV) T&      | T         | T&            | T&                |
+| UP\<T>       | T         | UP\<T>        | UP\<T>&&          |
+| UP\<T>&&     | T         | UP\<T>        | UP\<T>&&          |

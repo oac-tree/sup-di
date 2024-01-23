@@ -114,6 +114,23 @@ struct IsLegalDependencyType<T, VoidT<StorageType<T>>> : public std::true_type
 {};
 
 /**
+ * @brief Variadic template to determine if all given types can be used as a dependency types, i.e.
+ * they all have a valid storage type.
+ */
+template <typename... Deps>
+struct AreLegalDependencyTypes;
+
+template <typename Head, typename... Tail>
+struct AreLegalDependencyTypes<Head, Tail...>
+  : public std::conditional<IsLegalDependencyType<Head>::value, AreLegalDependencyTypes<Tail...>,
+                            std::false_type>::type
+{};
+
+template <>
+struct AreLegalDependencyTypes<> : public std::true_type
+{};
+
+/**
  * @brief Helper alias template defines a member Type equal to T when the given dependency type
  * Dep has a valid storage type.
  */

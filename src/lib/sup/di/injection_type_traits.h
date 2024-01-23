@@ -68,6 +68,47 @@ struct InjectionTypeT<std::unique_ptr<T>&&>
 template <typename T>
 using InjectionType = typename InjectionTypeT<typename std::remove_cv<T>::type>::Type;
 
+/**
+ * @brief Type function that forwards a pointer to a storage type to the proper type for injection.
+ *
+ * @tparam T Dependency type.
+ */
+template <typename T>
+struct ValuePointerToInjectionType
+{
+  static InjectionType<T> Forward(StorageType<T>* arg)
+  {
+    return *arg;
+  }
+};
+
+template <typename T>
+struct ValuePointerToInjectionType<T*>
+{
+  static InjectionType<T*> Forward(StorageType<T*>* arg)
+  {
+    return arg;
+  }
+};
+
+template <typename T>
+struct ValuePointerToInjectionType<std::unique_ptr<T>>
+{
+  static InjectionType<std::unique_ptr<T>> Forward(StorageType<std::unique_ptr<T>>* arg)
+  {
+    return InjectionType<std::unique_ptr<T>>{arg};
+  }
+};
+
+template <typename T>
+struct ValuePointerToInjectionType<std::unique_ptr<T>&&>
+{
+  static InjectionType<std::unique_ptr<T>&&> Forward(StorageType<std::unique_ptr<T>&&>* arg)
+  {
+    return InjectionType<std::unique_ptr<T>&&>{arg};
+  }
+};
+
 }  // namespace internal
 
 }  // namespace di

@@ -28,13 +28,6 @@ namespace di
 {
 namespace internal
 {
-// Class template that defines a Type type member that is identical to its type parameter
-template <typename T>
-struct Identity
-{
-  using Type = T;
-};
-
 // Class template that defines a Type type member conditionally
 template <typename T, bool>
 struct ConditionalIdentity
@@ -55,30 +48,6 @@ struct MakeVoid
 
 template<typename... Ts>
 using VoidT = typename MakeVoid<Ts...>::Type;
-
-// Type function that defines a Type type member with an added pointer if the given type has
-// a Type type member.
-template <typename T, typename = void>
-struct AddPointer
-{};
-
-template <typename T>
-struct AddPointer<T, VoidT<typename T::Type>>
-{
-  using Type = typename T::Type*;
-};
-
-// Type function that defines a Type type member with an added lvalue reference if the given type
-// has a Type type member.
-template <typename T, typename = void>
-struct AddReference
-{};
-
-template <typename T>
-struct AddReference<T, VoidT<typename T::Type>>
-{
-  using Type = typename T::Type&;
-};
 
 }  // namespace internal
 

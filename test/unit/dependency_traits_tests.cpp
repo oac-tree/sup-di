@@ -19,7 +19,9 @@
  * of the distribution package.
  ******************************************************************************/
 
-#include "sup/di/dependency_traits.h"
+#include <sup/di/forwarding_type_traits.h>
+#include <sup/di/injection_type_traits.h>
+#include "sup/di/ownership_traits.h"
 
 #include <gtest/gtest.h>
 

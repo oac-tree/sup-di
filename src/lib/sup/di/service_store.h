@@ -22,10 +22,10 @@
 #ifndef SUP_DI_SERVICE_STORE_H_
 #define SUP_DI_SERVICE_STORE_H_
 
-#include <sup/di/dependency_traits.h>
 #include <sup/di/index_sequence.h>
+#include <sup/di/injection_type_traits.h>
 #include <sup/di/instance_container.h>
-#include <sup/di/type_functions.h>
+#include <sup/di/ownership_traits.h>
 #include <sup/di/type_map.h>
 #include <sup/di/type_list.h>
 

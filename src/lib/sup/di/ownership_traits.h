@@ -19,15 +19,10 @@
  * of the distribution package.
  ******************************************************************************/
 
-#ifndef SUP_DI_DEPENDENCY_TRAITS_H_
-#define SUP_DI_DEPENDENCY_TRAITS_H_
+#ifndef SUP_DI_OWNERSHIP_TRAITS_H_
+#define SUP_DI_OWNERSHIP_TRAITS_H_
 
 #include "storage_type_traits.h"
-#include "forwarding_type_traits.h"
-#include "injection_type_traits.h"
-
-#include <memory>
-#include <type_traits>
 
 namespace sup
 {
@@ -54,26 +49,10 @@ template <typename T>
 struct TransferOwnership<std::unique_ptr<T>&&> : public IsLegalDependencyType<std::unique_ptr<T>&&>
 {};
 
-/**
- * @brief Variadic template to determine if all given types can be used as a dependency types, i.e.
- * they all have a valid storage type.
- */
-template <typename... Deps>
-struct AreLegalDependencyTypes;
-
-template <typename Head, typename... Tail>
-struct AreLegalDependencyTypes<Head, Tail...>
-  : public std::conditional<IsLegalDependencyType<Head>::value, AreLegalDependencyTypes<Tail...>, std::false_type>::type
-{};
-
-template <>
-struct AreLegalDependencyTypes<> : public std::true_type
-{};
-
 }  // namespace internal
 
 }  // namespace di
 
 }  // namespace sup
 
-#endif  // SUP_DI_DEPENDENCY_TRAITS_H_
+#endif  // SUP_DI_OWNERSHIP_TRAITS_H_

@@ -22,10 +22,11 @@
 #ifndef SUP_DI_OBJECT_MANAGER_H_
 #define SUP_DI_OBJECT_MANAGER_H_
 
-#include <sup/di/dependency_traits.h>
 #include <sup/di/error_codes.h>
+#include <sup/di/forwarding_type_traits.h>
+#include <sup/di/injection_type_traits.h>
+#include <sup/di/ownership_traits.h>
 #include <sup/di/service_store.h>
-#include <sup/di/type_functions.h>
 
 #include <functional>
 #include <memory>
@@ -163,7 +164,7 @@ std::unique_ptr<ServiceType>
 ForwardingInstanceFactoryFunction(internal::ForwardingArgType<Deps>... dependencies)
 {
   return std::unique_ptr<ServiceType>(
-    new ConcreteType(internal::ForwardDependencyType<Deps>::Forward(dependencies)...));
+    new ConcreteType(internal::ForwardDependencyHelper<Deps>::Forward(dependencies)...));
 }
 
 /**
