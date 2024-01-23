@@ -15,6 +15,7 @@ target_sources(sup-di-composer-core
   function_element.cpp
   i_composer_element.cpp
   instance_element.cpp
+  integer_instance_element.cpp
   library_element.cpp
   object_composer_element.cpp
   string_instance_element.cpp

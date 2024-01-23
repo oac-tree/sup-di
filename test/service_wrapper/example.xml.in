@@ -8,6 +8,10 @@
         <InstanceName>ClientName</InstanceName>
         <Value>Test::Client</Value>
     </StringInstance>
+    <IntegerInstance>
+        <InstanceName>ClientId</InstanceName>
+        <Value>42</Value>
+    </IntegerInstance>
     <Instance>
         <TypeName>Service</TypeName>
         <InstanceName>MyService</InstanceName>

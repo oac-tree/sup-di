@@ -60,7 +60,7 @@ TEST_F(StringInstanceElementTest, Validation)
 {
   {
     sup::xml::TreeData string_instance_tree{constants::STRING_INSTANCE_TAG};
-    EXPECT_THROW(ValidateStringInstanceTree(string_instance_tree), sup::xml::ValidationException);
+    EXPECT_THROW(ValidateLiteralInstanceTree(string_instance_tree), sup::xml::ValidationException);
   }
   {
     sup::xml::TreeData string_instance_tree{constants::STRING_INSTANCE_TAG};
@@ -70,9 +70,9 @@ TEST_F(StringInstanceElementTest, Validation)
     sup::xml::TreeData type_tree{constants::VALUE_TAG};
     type_tree.SetContent("str_value");
     string_instance_tree.AddChild(type_tree);
-    EXPECT_NO_THROW(ValidateStringInstanceTree(string_instance_tree));
+    EXPECT_NO_THROW(ValidateLiteralInstanceTree(string_instance_tree));
     string_instance_tree.SetContent("not_allowed");
-    EXPECT_THROW(ValidateStringInstanceTree(string_instance_tree), sup::xml::ValidationException);
+    EXPECT_THROW(ValidateLiteralInstanceTree(string_instance_tree), sup::xml::ValidationException);
   }
   {
     sup::xml::TreeData string_instance_tree{constants::STRING_INSTANCE_TAG};
@@ -82,9 +82,9 @@ TEST_F(StringInstanceElementTest, Validation)
     sup::xml::TreeData type_tree{constants::VALUE_TAG};
     type_tree.SetContent("str_value");
     string_instance_tree.AddChild(type_tree);
-    EXPECT_NO_THROW(ValidateStringInstanceTree(string_instance_tree));
+    EXPECT_NO_THROW(ValidateLiteralInstanceTree(string_instance_tree));
     string_instance_tree.AddAttribute("name", "not_allowed");
-    EXPECT_THROW(ValidateStringInstanceTree(string_instance_tree), sup::xml::ValidationException);
+    EXPECT_THROW(ValidateLiteralInstanceTree(string_instance_tree), sup::xml::ValidationException);
   }
 }
 

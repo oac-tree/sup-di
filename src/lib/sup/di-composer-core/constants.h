@@ -41,6 +41,7 @@ const std::string INSTANCE_NAME_TAG = "InstanceName";
 const std::string DEPENDENCY_TAG = "Dependency";
 
 const std::string STRING_INSTANCE_TAG = "StringInstance";
+const std::string INTEGER_INSTANCE_TAG = "IntegerInstance";
 const std::string VALUE_TAG = "Value";
 
 const std::string CALL_FUNCTION_TAG = "CallFunction";

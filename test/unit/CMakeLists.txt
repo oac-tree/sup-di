@@ -12,6 +12,7 @@ target_sources(unit-tests
     global_test_environment.cpp
     global_test_objects.cpp
     index_sequence_tests.cpp
+    integer_instance_element_tests.cpp
     instance_element_tests.cpp
     library_element_tests.cpp
     object_composer_element_tests.cpp

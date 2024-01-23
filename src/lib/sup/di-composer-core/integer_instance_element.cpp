@@ -19,7 +19,7 @@
  * of the distribution package.
  ******************************************************************************/
 
-#include "string_instance_element.h"
+#include "integer_instance_element.h"
 
 #include "constants.h"
 #include "exceptions.h"
@@ -34,7 +34,7 @@ namespace sup
 namespace di
 {
 
-StringInstanceElement::StringInstanceElement(const sup::xml::TreeData& string_instance_tree)
+IntegerInstanceElement::IntegerInstanceElement(const sup::xml::TreeData& string_instance_tree)
   : m_instance_name{}
   , m_value{}
 {
@@ -48,21 +48,23 @@ StringInstanceElement::StringInstanceElement(const sup::xml::TreeData& string_in
     }
     else if (nodename == constants::VALUE_TAG)
     {
-      utils::SetFromTreeNodeContent(m_value, child);
+      std::string value_rep;
+      utils::SetFromTreeNodeContent(value_rep, child);
+      m_value = std::stoi(value_rep, nullptr, 0);
     }
   }
 }
 
-StringInstanceElement::~StringInstanceElement() = default;
+IntegerInstanceElement::~IntegerInstanceElement() = default;
 
-void StringInstanceElement::Execute()
+void IntegerInstanceElement::Execute()
 {
   auto& global_object_manager = GlobalObjectManager();
-  std::unique_ptr<std::string> instance{new std::string(m_value)};
+  std::unique_ptr<int> instance{new int{m_value}};
   if (!global_object_manager.RegisterInstance(std::move(instance), m_instance_name))
   {
-    std::string error_message = "StringInstanceElement::Execute(): creating string with name [" +
-      m_instance_name + "] and value [" + m_value + "] failed";
+    std::string error_message = "IntegerInstanceElement::Execute(): creating integer with name [" +
+      m_instance_name + " failed";
     throw sup::di::RuntimeException(error_message);
   }
 }

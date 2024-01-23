@@ -19,8 +19,8 @@
  * of the distribution package.
  ******************************************************************************/
 
-#ifndef SUP_DI_COMPOSER_STRING_INSTANCE_ELEMENT_H_
-#define SUP_DI_COMPOSER_STRING_INSTANCE_ELEMENT_H_
+#ifndef SUP_DI_COMPOSER_INTEGER_INSTANCE_ELEMENT_H_
+#define SUP_DI_COMPOSER_INTEGER_INSTANCE_ELEMENT_H_
 
 #include "i_composer_element.h"
 
@@ -31,21 +31,21 @@ namespace sup
 namespace di
 {
 
-class StringInstanceElement : public IComposerElement
+class IntegerInstanceElement : public IComposerElement
 {
 public:
-  StringInstanceElement(const sup::xml::TreeData& string_instance_tree);
-  ~StringInstanceElement();
+  IntegerInstanceElement(const sup::xml::TreeData& string_instance_tree);
+  ~IntegerInstanceElement();
 
   void Execute() override;
 
 private:
   std::string m_instance_name;
-  std::string m_value;
+  int m_value;
 };
 
 }  // namespace di
 
 }  // namespace sup
 
-#endif  // SUP_DI_COMPOSER_STRING_INSTANCE_ELEMENT_H_
+#endif  // SUP_DI_COMPOSER_INTEGER_INSTANCE_ELEMENT_H_

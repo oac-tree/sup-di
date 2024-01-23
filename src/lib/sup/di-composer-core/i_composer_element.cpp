@@ -21,12 +21,31 @@
 
 #include "i_composer_element.h"
 
+#include "constants.h"
+
+#include <sup/xml/tree_data_validate.h>
+
 namespace sup
 {
 namespace di
 {
 
 IComposerElement::~IComposerElement() = default;
+
+void ValidateLiteralInstanceTree(const sup::xml::TreeData& instance_tree)
+{
+  sup::xml::ValidateNoContent(instance_tree);
+  sup::xml::ValidateNoAttributes(instance_tree);
+  sup::xml::ValidateAllowedChildTags(instance_tree,
+    { constants::INSTANCE_NAME_TAG, constants::VALUE_TAG });
+  sup::xml::ValidateSingleChildWithTag(instance_tree, constants::INSTANCE_NAME_TAG);
+  sup::xml::ValidateSingleChildWithTag(instance_tree, constants::VALUE_TAG);
+  for (const auto& child : instance_tree.Children())
+  {
+    sup::xml::ValidateNoAttributes(child);
+    sup::xml::ValidateNoChildren(child);
+  }
+}
 
 }  // namespace di
 

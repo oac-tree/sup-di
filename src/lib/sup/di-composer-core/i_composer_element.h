@@ -41,6 +41,8 @@ public:
 
 std::unique_ptr<IComposerElement> CreateComposerElement(const sup::xml::TreeData& tree);
 
+void ValidateLiteralInstanceTree(const sup::xml::TreeData& instance_tree);
+
 }  // namespace di
 
 }  // namespace sup
