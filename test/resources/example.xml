@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ObjectComposer xmlns="http://codac.iter.org/sup/di" version="1.0"
+           name="Example configuration file for the SUP dependency injection framework"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema-instance"
+           xs:schemaLocation="http://codac.iter.org/sup/di sup-di.xsd">
+    <LoadLibrary>./libtest-printing.so</LoadLibrary>
+    <StringInstance>
+        <InstanceName>ClientName</InstanceName>
+        <Value>John Denver</Value>
+    </StringInstance>
+    <IntegerInstance>
+        <InstanceName>ClientId</InstanceName>
+        <Value>42</Value>
+    </IntegerInstance>
+    <DoubleInstance>
+        <InstanceName>Timestamp</InstanceName>
+        <Value>-1e9</Value>
+    </DoubleInstance>
+    <Instance>
+        <TypeName>Client</TypeName>
+        <InstanceName>MyClient</InstanceName>
+        <Dependency>ClientName</Dependency>
+        <Dependency>ClientId</Dependency>
+        <Dependency>Timestamp</Dependency>
+    </Instance>
+    <CallFunction>
+        <FunctionName>PrintClient</FunctionName>
+        <Dependency>MyClient</Dependency>
+    </CallFunction>
+</ObjectComposer>

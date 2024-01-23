@@ -2,9 +2,11 @@ Changes for 1.2.0
 
 - Refactor ObjectManager into multiple components
 - Added ServiceStore class template to manage storage and retrieval of objects
+- Added possibility to register integer and double literals from XML
 - Refactor dependency traits
 - Added static asserts for dependency types during registration
 - Added unit tests
+- Added example
 
 Changes for 1.1.0:
 
