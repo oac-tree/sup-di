@@ -35,6 +35,7 @@ const std::string Test_StringWrapper_Name = "test_string_wrapper";
 const std::string Test_CheckStringNotNull_Name = "test_check_string_not_null";
 const std::string Test_CompareWrapperWithString_Name = "test_compare_wrapper_with_string";
 const std::string Test_String_Name = "test_string";
+const std::string Test_Literals_Name = "test_literals_positive";
 
 class Test_StringWrapper
 {
@@ -50,6 +51,8 @@ private:
 bool Test_CheckStringNotNull(const std::string& str);
 
 bool Test_CompareWrapperWithString(const Test_StringWrapper& wrapper, const std::string& str);
+
+bool Test_Literals(const std::string& str, int i, double d);
 
 }  // namespace test
 

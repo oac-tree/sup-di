@@ -54,6 +54,8 @@ void ObjectManagerEnvironment::SetUp()
     test::Test_StringWrapper_Name,
     ForwardingInstanceFactoryFunction<test::Test_StringWrapper, test::Test_StringWrapper,
       const std::string&>);
+  GlobalObjectManager().RegisterGlobalFunction(test::Test_Literals_Name,
+                                               test::Test_Literals);
 }
 
 void ObjectManagerEnvironment::TearDown()

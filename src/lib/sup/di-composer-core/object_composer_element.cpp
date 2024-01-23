@@ -56,8 +56,9 @@ void ValidateComposerTree(const sup::xml::TreeData& composer_tree)
 {
   sup::xml::ValidateNoContent(composer_tree);
   sup::xml::ValidateAllowedChildTags(composer_tree,
-    { constants::LOAD_LIBRARY_TAG, constants::CREATE_INSTANCE_TAG, constants::STRING_INSTANCE_TAG,
-      constants::CALL_FUNCTION_TAG });
+    { constants::LOAD_LIBRARY_TAG, constants::CREATE_INSTANCE_TAG, constants::CALL_FUNCTION_TAG,
+      constants::STRING_INSTANCE_TAG, constants::INTEGER_INSTANCE_TAG,
+      constants::DOUBLE_INSTANCE_TAG });
 }
 
 std::unique_ptr<IComposerElement> CreateComposerElement(const sup::xml::TreeData& child_tree)

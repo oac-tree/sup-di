@@ -53,6 +53,12 @@ bool Test_CompareWrapperWithString(const Test_StringWrapper& wrapper, const std:
   return wrapper.GetString() == str;
 }
 
+bool Test_Literals(const std::string& str, int i, double d)
+{
+  return str.size() > 0 && i > 0 && d > 0;
+}
+
+
 }  // namespace test
 
 }  // namespace di
