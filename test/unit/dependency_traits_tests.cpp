@@ -45,7 +45,7 @@ struct IsDependencyInjectionTypePair : public std::is_same<internal::InjectionTy
 {};
 
 template <typename D, typename V>
-struct IsFactoryArgumentTypePair : public std::is_same<internal::ForwardingArgType<D>, V>
+struct IsForwardingArgTypePair : public std::is_same<internal::ForwardingArgType<D>, V>
 {};
 
 TEST_F(DependencyTraitsTest, IsLegalDependencyType)
@@ -63,6 +63,7 @@ TEST_F(DependencyTraitsTest, IsLegalDependencyType)
   // Illegal dependency types
   EXPECT_FALSE((internal::IsLegalDependencyType<TestClass&&>::value));
   EXPECT_FALSE((internal::IsLegalDependencyType<std::unique_ptr<const TestClass>>::value));
+  EXPECT_FALSE((internal::IsLegalDependencyType<std::unique_ptr<volatile TestClass>>::value));
   EXPECT_FALSE((internal::IsLegalDependencyType<std::unique_ptr<TestClass*>>::value));
   EXPECT_FALSE((internal::IsLegalDependencyType<std::unique_ptr<TestClass>&>::value));
   EXPECT_FALSE((internal::IsLegalDependencyType<std::unique_ptr<TestClass&&>>::value));
@@ -105,12 +106,6 @@ TEST_F(DependencyTraitsTest, ValueTypes)
   // Dependency types of type unique_ptr
   EXPECT_TRUE((IsDependencyValueTypePair<std::unique_ptr<TestClass>, TestClass>::value));
   EXPECT_TRUE((IsDependencyValueTypePair<std::unique_ptr<TestClass>&&, TestClass>::value));
-
-  // The weird cases
-  // EXPECT_TRUE((IsDependencyValueTypePair<std::unique_ptr<TestClass>&,
-  //                                        std::unique_ptr<TestClass>>::value));
-  // EXPECT_TRUE((IsDependencyValueTypePair<std::unique_ptr<const TestClass*>&,
-  //                                        std::unique_ptr<const TestClass*>>::value));
 }
 
 TEST_F(DependencyTraitsTest, InjectionTypes)
@@ -130,37 +125,25 @@ TEST_F(DependencyTraitsTest, InjectionTypes)
                                              std::unique_ptr<TestClass>>::value));
   EXPECT_TRUE((IsDependencyInjectionTypePair<std::unique_ptr<TestClass>&&,
                                              std::unique_ptr<TestClass>>::value));
-
-  // The weird cases
-  // EXPECT_TRUE((IsDependencyInjectionTypePair<std::unique_ptr<TestClass>&,
-  //                                            std::unique_ptr<TestClass>&>::value));
-  // EXPECT_TRUE((IsDependencyInjectionTypePair<std::unique_ptr<const TestClass*>&,
-  //                                            std::unique_ptr<const TestClass*>&>::value));
 }
 
 TEST_F(DependencyTraitsTest, FactoryArgumentTypes)
 {
   // Common dependency types (by value, lvalue reference or pointer)
-  EXPECT_TRUE((IsFactoryArgumentTypePair<int, int&>::value));
-  EXPECT_FALSE((IsFactoryArgumentTypePair<TestClass, int&>::value));
-  EXPECT_TRUE((IsFactoryArgumentTypePair<TestClass, TestClass&>::value));
-  EXPECT_TRUE((IsFactoryArgumentTypePair<const TestClass, TestClass&>::value));
-  EXPECT_TRUE((IsFactoryArgumentTypePair<volatile TestClass, TestClass&>::value));
-  EXPECT_TRUE((IsFactoryArgumentTypePair<const volatile TestClass, TestClass&>::value));
-  EXPECT_TRUE((IsFactoryArgumentTypePair<const TestClass&, TestClass&>::value));
-  EXPECT_TRUE((IsFactoryArgumentTypePair<const TestClass*, TestClass*>::value));
+  EXPECT_TRUE((IsForwardingArgTypePair<int, int&>::value));
+  EXPECT_FALSE((IsForwardingArgTypePair<TestClass, int&>::value));
+  EXPECT_TRUE((IsForwardingArgTypePair<TestClass, TestClass&>::value));
+  EXPECT_TRUE((IsForwardingArgTypePair<const TestClass, TestClass&>::value));
+  EXPECT_TRUE((IsForwardingArgTypePair<volatile TestClass, TestClass&>::value));
+  EXPECT_TRUE((IsForwardingArgTypePair<const volatile TestClass, TestClass&>::value));
+  EXPECT_TRUE((IsForwardingArgTypePair<const TestClass&, TestClass&>::value));
+  EXPECT_TRUE((IsForwardingArgTypePair<const TestClass*, TestClass*>::value));
 
   // Dependency types of type unique_ptr
-  EXPECT_TRUE((IsFactoryArgumentTypePair<std::unique_ptr<TestClass>,
+  EXPECT_TRUE((IsForwardingArgTypePair<std::unique_ptr<TestClass>,
                                          std::unique_ptr<TestClass>&&>::value));
-  EXPECT_TRUE((IsFactoryArgumentTypePair<std::unique_ptr<TestClass>&&,
+  EXPECT_TRUE((IsForwardingArgTypePair<std::unique_ptr<TestClass>&&,
                                          std::unique_ptr<TestClass>&&>::value));
-
-  // The weird cases
-  // EXPECT_TRUE((IsFactoryArgumentTypePair<std::unique_ptr<TestClass>&,
-  //                                        std::unique_ptr<TestClass>&>::value));
-  // EXPECT_TRUE((IsFactoryArgumentTypePair<std::unique_ptr<const TestClass*>&,
-  //                                        std::unique_ptr<const TestClass*>&>::value));
 }
 
 TEST_F(DependencyTraitsTest, TransferOwnership)
@@ -175,13 +158,10 @@ TEST_F(DependencyTraitsTest, TransferOwnership)
   EXPECT_TRUE((internal::TransferOwnership<std::unique_ptr<TestClass>>::value));
   EXPECT_TRUE((internal::TransferOwnership<std::unique_ptr<TestClass>&&>::value));
 
-  // Weird, but allowed. Note that its StorageType will be std::unique_ptr<TestClass> and
-  // NOT TestClass
-  EXPECT_FALSE((internal::TransferOwnership<std::unique_ptr<TestClass>&>::value));
-
   // Illegal dependency types are categorized as not transferring ownership
   EXPECT_FALSE((internal::TransferOwnership<TestClass&&>::value));
   EXPECT_FALSE((internal::TransferOwnership<std::unique_ptr<const TestClass>>::value));
   EXPECT_FALSE((internal::TransferOwnership<std::unique_ptr<TestClass*>>::value));
+  EXPECT_FALSE((internal::TransferOwnership<std::unique_ptr<TestClass>&>::value));
   EXPECT_FALSE((internal::TransferOwnership<std::unique_ptr<TestClass&&>>::value));
 }
