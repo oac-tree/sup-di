@@ -6,6 +6,7 @@ target_sources(unit-tests
     PRIVATE
     composition_root_tests.cpp
     dependency_traits_tests.cpp
+    double_instance_element_tests.cpp
     error_codes_tests.cpp
     exceptions_tests.cpp
     function_element_tests.cpp

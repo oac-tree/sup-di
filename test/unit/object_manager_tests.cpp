@@ -120,8 +120,7 @@ TEST_F(ObjectManagerTest, RegisterString)
   // Register a string instance
   std::string instance_name = "StringInstanceName";
   std::string instance_value = "StringValue";
-  std::unique_ptr<std::string> str{new std::string(instance_value)};
-  EXPECT_TRUE(object_manager.RegisterInstance(std::move(str), instance_name));
+  EXPECT_TRUE(object_manager.RegisterInstance(instance_value, instance_name));
   auto str_ref = object_manager.GetInstance<const std::string*>(instance_name);
   ASSERT_NE(str_ref, nullptr);
   EXPECT_EQ(*str_ref, instance_value);
@@ -283,7 +282,7 @@ TEST_F(ObjectManagerTest, Exceptions)
     ErrorCode::kWrongNumberOfDependencies);
 
   // Call global function with wrong type of parameters
-  EXPECT_TRUE(object_manager.RegisterInstance(std::unique_ptr<int>{new int{1}}, IntInstanceName));
+  EXPECT_TRUE(object_manager.RegisterInstance(1, IntInstanceName));
   EXPECT_EQ(object_manager.CallGlobalFunction(HelloTestName, {IntInstanceName}),
     ErrorCode::kDependencyNotFound);
 }

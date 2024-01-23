@@ -19,7 +19,7 @@
  * of the distribution package.
  ******************************************************************************/
 
-#include "string_instance_element.h"
+#include "double_instance_element.h"
 
 #include "constants.h"
 #include "exceptions.h"
@@ -34,7 +34,7 @@ namespace sup
 namespace di
 {
 
-StringInstanceElement::StringInstanceElement(const sup::xml::TreeData& string_instance_tree)
+DoubleInstanceElement::DoubleInstanceElement(const sup::xml::TreeData& string_instance_tree)
   : m_instance_name{}
   , m_value{}
 {
@@ -48,20 +48,22 @@ StringInstanceElement::StringInstanceElement(const sup::xml::TreeData& string_in
     }
     else if (nodename == constants::VALUE_TAG)
     {
-      utils::SetFromTreeNodeContent(m_value, child);
+      std::string value_rep;
+      utils::SetFromTreeNodeContent(value_rep, child);
+      m_value = std::stod(value_rep);
     }
   }
 }
 
-StringInstanceElement::~StringInstanceElement() = default;
+DoubleInstanceElement::~DoubleInstanceElement() = default;
 
-void StringInstanceElement::Execute()
+void DoubleInstanceElement::Execute()
 {
   auto& global_object_manager = GlobalObjectManager();
   if (!global_object_manager.RegisterInstance(m_value, m_instance_name))
   {
-    std::string error_message = "StringInstanceElement::Execute(): creating string with name [" +
-      m_instance_name + "] and value [" + m_value + "] failed";
+    std::string error_message = "DoubleInstanceElement::Execute(): creating double with name [" +
+      m_instance_name + " failed";
     throw sup::di::RuntimeException(error_message);
   }
 }

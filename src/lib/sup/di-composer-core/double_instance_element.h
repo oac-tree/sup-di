@@ -19,39 +19,33 @@
  * of the distribution package.
  ******************************************************************************/
 
-#ifndef SUP_DI_COMPOSER_CONSTANTS_H_
-#define SUP_DI_COMPOSER_CONSTANTS_H_
+#ifndef SUP_DI_COMPOSER_DOUBLE_INSTANCE_ELEMENT_H_
+#define SUP_DI_COMPOSER_DOUBLE_INSTANCE_ELEMENT_H_
 
-#include <string>
+#include "i_composer_element.h"
+
+#include <sup/xml/tree_data.h>
 
 namespace sup
 {
 namespace di
 {
-namespace constants
+
+class DoubleInstanceElement : public IComposerElement
 {
+public:
+  DoubleInstanceElement(const sup::xml::TreeData& string_instance_tree);
+  ~DoubleInstanceElement();
 
-// XML tags
-const std::string OBJECT_COMPOSER_TAG = "ObjectComposer";
-const std::string LOAD_LIBRARY_TAG = "LoadLibrary";
+  void Execute() override;
 
-const std::string CREATE_INSTANCE_TAG = "Instance";
-const std::string TYPE_NAME_TAG = "TypeName";
-const std::string INSTANCE_NAME_TAG = "InstanceName";
-const std::string DEPENDENCY_TAG = "Dependency";
-
-const std::string STRING_INSTANCE_TAG = "StringInstance";
-const std::string INTEGER_INSTANCE_TAG = "IntegerInstance";
-const std::string DOUBLE_INSTANCE_TAG = "DoubleInstance";
-const std::string VALUE_TAG = "Value";
-
-const std::string CALL_FUNCTION_TAG = "CallFunction";
-const std::string FUNCTION_NAME_TAG = "FunctionName";
-
-}  // namespace constants
+private:
+  std::string m_instance_name;
+  double m_value;
+};
 
 }  // namespace di
 
 }  // namespace sup
 
-#endif  // SUP_DI_COMPOSER_CONSTANTS_H_
+#endif  // SUP_DI_COMPOSER_DOUBLE_INSTANCE_ELEMENT_H_

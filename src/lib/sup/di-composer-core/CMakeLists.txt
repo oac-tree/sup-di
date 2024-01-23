@@ -10,6 +10,7 @@ target_include_directories(sup-di-composer-core PUBLIC
 target_sources(sup-di-composer-core
   PRIVATE
   composition_root.cpp
+  double_instance_element.cpp
   element_constructor_map.cpp
   exceptions.cpp
   function_element.cpp

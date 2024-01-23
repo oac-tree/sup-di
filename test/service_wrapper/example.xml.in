@@ -12,6 +12,10 @@
         <InstanceName>ClientId</InstanceName>
         <Value>42</Value>
     </IntegerInstance>
+    <DoubleInstance>
+        <InstanceName>Timestamp</InstanceName>
+        <Value>-1e9</Value>
+    </DoubleInstance>
     <Instance>
         <TypeName>Service</TypeName>
         <InstanceName>MyService</InstanceName>

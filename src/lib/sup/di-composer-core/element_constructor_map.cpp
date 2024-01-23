@@ -22,6 +22,7 @@
 #include "element_constructor_map.h"
 
 #include "constants.h"
+#include "double_instance_element.h"
 #include "function_element.h"
 #include "instance_element.h"
 #include "integer_instance_element.h"
@@ -52,7 +53,8 @@ const std::map<std::string, ElementConstructor>& ElementConstructorMap()
     { constants::CREATE_INSTANCE_TAG, TElementConstructor<InstanceElement>::Create },
     { constants::LOAD_LIBRARY_TAG, TElementConstructor<LibraryElement>::Create },
     { constants::STRING_INSTANCE_TAG, TElementConstructor<StringInstanceElement>::Create },
-    { constants::INTEGER_INSTANCE_TAG, TElementConstructor<IntegerInstanceElement>::Create }
+    { constants::INTEGER_INSTANCE_TAG, TElementConstructor<IntegerInstanceElement>::Create },
+    { constants::DOUBLE_INSTANCE_TAG, TElementConstructor<DoubleInstanceElement>::Create }
   };
   return constr_map;
 }

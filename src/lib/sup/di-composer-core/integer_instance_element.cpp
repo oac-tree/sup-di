@@ -60,8 +60,7 @@ IntegerInstanceElement::~IntegerInstanceElement() = default;
 void IntegerInstanceElement::Execute()
 {
   auto& global_object_manager = GlobalObjectManager();
-  std::unique_ptr<int> instance{new int{m_value}};
-  if (!global_object_manager.RegisterInstance(std::move(instance), m_instance_name))
+  if (!global_object_manager.RegisterInstance(m_value, m_instance_name))
   {
     std::string error_message = "IntegerInstanceElement::Execute(): creating integer with name [" +
       m_instance_name + " failed";

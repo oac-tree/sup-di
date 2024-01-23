@@ -139,6 +139,16 @@ public:
   bool RegisterInstance(std::unique_ptr<ServiceType>&& instance, const std::string& instance_name);
 
   /**
+   * @brief Register an instance of an object directly.
+   *
+   * @param instance object lvalue.
+   * @param instance_name Name under which the instance will be registered.
+   * @return true on successful registration.
+   */
+  template <typename ServiceType>
+  bool RegisterInstance(const ServiceType& instance, const std::string& instance_name);
+
+  /**
    * @brief Register a global function that requires dependencies.
    *
    * @param registered_function_name Name under which the global function will be registered.
@@ -220,6 +230,13 @@ bool ObjectManager::RegisterInstance(
   std::unique_ptr<ServiceType>&& instance, const std::string& instance_name)
 {
   return m_service_store.StoreInstance(std::move(instance), instance_name);
+}
+
+template <typename ServiceType>
+bool ObjectManager::RegisterInstance(const ServiceType& instance, const std::string& instance_name)
+{
+  std::unique_ptr<ServiceType> new_instance{new ServiceType{instance}};
+  return RegisterInstance(std::move(new_instance), instance_name);
 }
 
 template <typename... Deps>
