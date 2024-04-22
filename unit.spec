@@ -22,6 +22,7 @@
 
 %define        _build_id_links none
 %define        __brp_ldconfig %{nil}
+%define        __brp_strip %{nil}
 
 Name:         %{project_artifactId}
 Version:      %{project_version}
