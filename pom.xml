@@ -35,6 +35,8 @@
     <properties>
         <unit.type>module</unit.type>
         <integrity.level>1</integrity.level>
+        <rpm.release.num>0</rpm.release.num>
+        <rpm.vcs.url>http://www.iter.org/org/team/chd/cid/codac</rpm.vcs.url>
         <!-- -->
         <buildpath>BUILD</buildpath>
         <makefile.args>install</makefile.args>
@@ -86,45 +88,15 @@
                     </init>
                     <!-- Configure packaging and dependencies -->
                     <packaging>
-                        <package>
-                            <!-- Libraries  -->
-                            <include type="file" source="lib" target="lib">
-                                <include>*.so.*</include>
-                            </include>
-                            <!-- Programs -->
-                            <include type="file" source="bin" target="bin">
-                                <include>*</include>
-                            </include>
-                            <!-- Package dependencies -->
-                            <requires codac="true">sup-utils</requires>
-                            <requires codac="true" buildOnly="true">sup-utils-devel</requires>
-                            <requires codac="true" buildOnly="true">gtest-1.12.1-devel</requires>
-                            <requires version="current" buildOnly="true">cmake</requires>
-                        </package>
-                        <package name="devel">
-                            <!-- CMAKE -->
-                            <include type="file" source="lib/cmake/sup-di" target="lib/cmake/sup-di">
-                                <include>*.cmake</include>
-                            </include>
-                            <!--  Libraries  -->
-                            <include type="file" source="lib" target="lib">
-                                <include>*.so</include>
-                            </include>
-                                <!-- Public API headers -->
-                                <include type="file" source="include/sup/di" target="include/sup/di">
-                                    <include>*.h</include>
-                                </include>
-                            <!-- Package dependencies -->
-                            <requires version="current">%{codac_rpm_prefix}-${project.artifactId}</requires>
-                        </package>
-                        <package name="docs">
-                            <!--  Public API headers  -->
-                            <include type="file" source="doc/${project.artifactId}" target="doc/${project.artifactId}"/>
-                            <!-- Package dependencies -->
-                            <requires version="current">%{codac_rpm_prefix}-${project.artifactId}</requires>
-                            <requires version="current" buildOnly="true">doxygen</requires>
-                            <requires codac="true" buildOnly="true">python-sphinx</requires>
-                        </package>
+                        <rpmspec file="unit.spec">
+                            <define macroname="project_artifactId">${project.artifactId}</define>
+                            <define macroname="project_version">${project.version}</define>
+                            <define macroname="project_name">${project.name}</define>
+                            <define macroname="project_description">${project.description}</define>
+                            <define macroname="project_target">${project.build.directory}</define>
+                            <define macroname="rpm_release_num">${rpm.release.num}</define>
+                            <define macroname="rpm_vcs_url">${rpm.vcs.url}</define>
+                        </rpmspec>
                     </packaging>
                 </configuration>
             </plugin>
