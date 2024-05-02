@@ -25,6 +25,7 @@
 #include <csignal>
 #include <iostream>
 #include <thread>
+#include <atomic>
 
 namespace sup
 {
@@ -33,19 +34,19 @@ namespace di
 namespace services
 {
 
-bool signalReceived = false;
+std::atomic<bool> signalReceived(false);
 
 // Function to handle the interrupt signal
 void interruptHandler(int signal)
 {
   std::cout << "Terminating the execution with signal: " << signal << std::endl;
-  signalReceived = true;
+  signalReceived.store(true);
 }
 
 bool KeepAlive()
 {
   signal(SIGINT, interruptHandler);
-  while (!signalReceived)
+  while (!signalReceived.load())
   {
     // Sleep for a certain amount of time
     std::this_thread::sleep_for(std::chrono::milliseconds(500));

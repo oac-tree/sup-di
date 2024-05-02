@@ -41,7 +41,7 @@ TEST(KeepAliveTest, InterruptHandlerTest)
   EXPECT_THAT(output, testing::HasSubstr("Terminating the execution with signal: " + std::to_string(signal)));
 }
 
-TEST(KeepAliveTest, ReturnsFalseWhenSIGINTSignalIsReceived)
+TEST(KeepAliveTest, KeepAliveThreadTermination)
 {
   std::thread t(KeepAlive);
 
