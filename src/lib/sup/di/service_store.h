@@ -96,6 +96,7 @@ auto InvokeWithStoreArgsImpl(F&& f, ServiceStore<Key>& store, const std::vector<
                              IndexSequence<I...> index_sequence)
   -> decltype(f(std::declval<InjectionType<Deps>>()...))
 {
+  (void)index_sequence; // suppress compiler warnings when index sequence is empty and thus not used
   return f(GetServiceStoreInstance<I, Deps...>(store, key_list)...);
 }
 
