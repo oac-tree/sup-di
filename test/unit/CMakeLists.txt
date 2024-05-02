@@ -15,6 +15,7 @@ target_sources(unit-tests
     index_sequence_tests.cpp
     integer_instance_element_tests.cpp
     instance_element_tests.cpp
+    keep_alive_tests.cpp
     library_element_tests.cpp
     object_composer_element_tests.cpp
     object_manager_tests.cpp
@@ -42,6 +43,7 @@ target_link_libraries(unit-tests
     GTest::Main
     sup-utils::sup-xml
     sup-di-composer-core
+    sup-di-services
     sup-di
     dl
 )
