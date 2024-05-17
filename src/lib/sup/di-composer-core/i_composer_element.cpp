@@ -39,7 +39,6 @@ void ValidateLiteralInstanceTree(const sup::xml::TreeData& instance_tree)
   sup::xml::ValidateAllowedChildTags(instance_tree,
     { constants::INSTANCE_NAME_TAG, constants::VALUE_TAG });
   sup::xml::ValidateSingleChildWithTag(instance_tree, constants::INSTANCE_NAME_TAG);
-  sup::xml::ValidateSingleChildWithTag(instance_tree, constants::VALUE_TAG);
   for (const auto& child : instance_tree.Children())
   {
     sup::xml::ValidateNoAttributes(child);
