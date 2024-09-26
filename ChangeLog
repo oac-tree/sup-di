@@ -1,3 +1,8 @@
+Changes for 1.3.0
+
+- Add 'KeepAlive' function
+- Allow definition of empty strings
+
 Changes for 1.2.0
 
 - Refactor ObjectManager into multiple components

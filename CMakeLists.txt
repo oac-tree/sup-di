@@ -22,7 +22,7 @@
 # - CMake 3.13 - CMP0076: relative source file paths are interpreted as being relative to the current source directory
 cmake_minimum_required(VERSION 3.13)
 
-project(sup-di-project VERSION 1.2.0)
+project(sup-di-project VERSION 1.3.0)
 
 option(COVERAGE "Generate unit test coverage information" OFF)
 option(COA_EXPORT_BUILD_TREE "Export build tree in /home/user/.cmake registry" OFF)
