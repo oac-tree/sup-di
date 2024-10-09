@@ -6,8 +6,6 @@ project(test-printing-example
 
 add_library(test-printing SHARED)
 
-target_compile_features(test-printing PRIVATE cxx_std_11)
-
 set_target_properties(test-printing PROPERTIES
     OUTPUT_NAME test-printing
 )

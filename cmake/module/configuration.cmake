@@ -4,6 +4,13 @@ include(GNUInstallDirs)
 include(CTest)
 include(FindPackageMessage)
 
+# -----------------------------------------------------------------------------
+# C++ version
+# -----------------------------------------------------------------------------
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
 # Detecting CODAC environment
 if(NOT COA_NO_CODAC)
   find_package(CODAC OPTIONAL_COMPONENTS site-packages Python MODULE QUIET)

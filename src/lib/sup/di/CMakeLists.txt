@@ -1,8 +1,6 @@
 add_library(sup-di SHARED)
 add_library(sup-di::sup-di ALIAS sup-di) # alias for build-tree usage
 
-target_compile_features(sup-di PRIVATE cxx_std_11)
-
 set_target_properties(sup-di PROPERTIES
   VERSION ${LIBVERSION}
   SOVERSION ${LIBSOVERSION}

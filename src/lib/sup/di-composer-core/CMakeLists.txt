@@ -1,7 +1,5 @@
 add_library(sup-di-composer-core STATIC)
 
-target_compile_features(sup-di-composer-core PRIVATE cxx_std_11)
-
 target_include_directories(sup-di-composer-core PUBLIC
   $<INSTALL_INTERFACE:include>
   $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/../..>
