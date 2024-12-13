@@ -26,7 +26,7 @@
     <artifactId>sup-di</artifactId>
     <packaging>codac</packaging>
     <!-- See ChangeLog file for details -->
-    <version>1.3.0</version>
+    <version>1.4.0</version>
     <name>SUP dependency injection module</name>
     <description>Library for configuration-based dependency injection in SUP</description>
     <url>http://www.iter.org/</url>
@@ -36,11 +36,13 @@
         <unit.type>module</unit.type>
         <integrity.level>1</integrity.level>
         <!-- -->
-        <cppcheck.args>--enable=all --suppress=missingInclude --inline-suppr</cppcheck.args>
-        <sonar.sources.cpp>src</sonar.sources.cpp>
-        <sonar.tests.cpp>test</sonar.tests.cpp>
-        <sonar.exclusions>test/**, src/app/sup-di-composer/**</sonar.exclusions>
+        <buildpath>BUILD</buildpath>
+        <makefile.args>install</makefile.args>
         <coverage>false</coverage>
+        <!-- -->
+        <sonar.language>cpp</sonar.language>
+        <sonar.sources.cpp>src</sonar.sources.cpp>
+        <sonar.exclusions>src/app/sup-di-composer/**</sonar.exclusions>
     </properties>
 
     <!-- Parent pom.xml -->
@@ -59,15 +61,6 @@
             <email>walter.vanherck@iter.org</email>
             <roles>
                 <role>unit owner</role>
-                <role>developer</role>
-            </roles>
-        </developer>
-        <developer>
-            <id>gracasr</id>
-            <name>Rafael Silva</name>
-            <organization>CSW</organization>
-            <email>rg-silva@criticalsoftware.com</email>
-            <roles>
                 <role>developer</role>
             </roles>
         </developer>
@@ -152,32 +145,13 @@
                             <workingDirectory>${project.build.directory}</workingDirectory>
                             <arguments>
                                 <!-- CMAKE configuration options -->
-                                <argument>-B${project.build.directory}/BUILD</argument>
+                                <argument>-B${buildpath}</argument>
                                 <argument>-DCMAKE_INSTALL_PREFIX=${project.build.directory}</argument>
                                 <argument>-DCMAKE_INSTALL_LIBDIR=lib</argument>
                                 <argument>-DCMAKE_INSTALL_DOCDIR=doc/${project.artifactId}</argument>
                                 <argument>-DTEST_OUTPUT_DIRECTORY=${project.build.directory}/test</argument>
                                 <argument>-DCOVERAGE=${coverage}</argument>
                                 <argument>${project.build.directory}/SOURCE</argument>
-                            </arguments>
-                        </configuration>
-                    </execution>
-                    <!-- Compile project -->
-                    <execution>
-                        <id>compile</id>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <executable>cmake</executable>
-                            <workingDirectory>${project.build.directory}</workingDirectory>
-                            <arguments>
-                                <argument>--build</argument>
-                                <argument>${project.build.directory}/BUILD</argument>
-                                <argument>-j4</argument>
-                                <argument>--target</argument>
-                                <argument>install</argument>
                             </arguments>
                         </configuration>
                     </execution>
