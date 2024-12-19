@@ -4,24 +4,17 @@
 #
 # Author        : Walter Van Herck (IO)
 #
-# Copyright (c) : 2010-2023 ITER Organization,
-# CS 90 046
-# 13067 St. Paul-lez-Durance Cedex
-# France
+# Copyright (c) : 2010-2024 ITER Organization,
+#                 CS 90 046
+#                 13067 St. Paul-lez-Durance Cedex
+#                 France
 #
 # This file is part of ITER CODAC software.
 # For the terms and conditions of redistribution or use of this software
 # refer to the file ITER-LICENSE.TXT located in the top level directory
 # of the distribution package.
 
-# Set required CMake version
-# This sets the default CMake behaviour through policies allowing compatibility with future versions
-# Justification:
-# - CMake 3.12 - CMP0074: find_package command now searches prefixes specified by the <PackageName>_ROOT environment variable
-# CODAC systems contain conflicting environment variables which generate warnings when this policy is not set to NEW
-# - CMake 3.13 - CMP0076: relative source file paths are interpreted as being relative to the current source directory
-cmake_minimum_required(VERSION 3.13)
-
+cmake_minimum_required(VERSION 3.13...3.31)
 project(sup-di-project VERSION 1.4.0)
 
 option(COVERAGE "Generate unit test coverage information" OFF)
