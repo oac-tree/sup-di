@@ -57,8 +57,8 @@ TEST_F(ServiceStoreTest, StoreRetrieve)
 {
   StringServiceStore store;
   // Store two services
-  EXPECT_TRUE(store.StoreInstance(std::unique_ptr<TestServiceA>{new TestServiceA{}}, "A"));
-  EXPECT_TRUE(store.StoreInstance(std::unique_ptr<TestServiceB>{new TestServiceB{}}, "B"));
+  EXPECT_TRUE(store.StoreInstance(std::make_unique<TestServiceA>(), "A"));
+  EXPECT_TRUE(store.StoreInstance(std::make_unique<TestServiceB>(), "B"));
 
   // Invoke function with those services
   EXPECT_TRUE((InvokeWithStoreArgs<TestServiceA&, std::unique_ptr<TestServiceB>>(

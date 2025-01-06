@@ -28,6 +28,7 @@
 #include "integer_instance_element.h"
 #include "library_element.h"
 #include "string_instance_element.h"
+#include <memory>
 
 namespace
 {
@@ -36,7 +37,7 @@ struct TElementConstructor
 {
   static std::unique_ptr<sup::di::IComposerElement> Create(const sup::xml::TreeData& tree)
   {
-    return std::unique_ptr<sup::di::IComposerElement>(new Elem(tree));
+    return std::make_unique<Elem>(tree);
   }
 };
 }  // unnamed namespace
