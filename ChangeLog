@@ -1,3 +1,7 @@
+Changes for 1.5.0:
+
+- RPM generation with CPack
+
 Changes for 1.4.0:
 
 - Minor configuration issues (pom.xml and cmake)
