@@ -36,3 +36,5 @@ endif()
 add_subdirectory(doc)
 
 include(installation)
+
+include(packaging)

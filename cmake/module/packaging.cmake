@@ -1,0 +1,21 @@
+set(CPACK_PACKAGE_VENDOR "ITER Organization")
+set(CPACK_PACKAGE_RELOCATABLE OFF)
+set(CPACK_PACKAGE_NAME "codac-core-7.3-sup-di")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "SUP dependency injection module")
+
+set(CPACK_RPM_PACKAGE_GROUP "Development/CODAC")
+set(CPACK_RPM_PACKAGE_LICENSE "ITER License")
+set(CPACK_RPM_FILE_NAME "RPM-DEFAULT")
+set(CPACK_RPM_PACKAGE_RELEASE "0.1")
+set(CPACK_RPM_PACKAGE_RELEASE_DIST ON)
+set(CPACK_RPM_PACKAGE_URL "http://www.iter.org/org/team/chd/cid/codac")
+set(CPACK_RPM_PACKAGE_DESCRIPTION "Library for configuration-based dependency injection in SUP")
+
+if(CODAC_FOUND)
+  set(CPACK_RPM_PACKAGE_VERSION "${CODAC_VERSION}.v${CMAKE_PROJECT_VERSION}")
+  set(CPACK_PACKAGING_INSTALL_PREFIX "${CODAC_DIR}")
+endif()
+
+set(CPACK_GENERATOR RPM)
+
+include(CPack)
