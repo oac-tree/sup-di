@@ -18,9 +18,7 @@
  refer to the file ITER-LICENSE.TXT located in the top level directory
  of the distribution package.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.iter.codac.units</groupId>
     <artifactId>sup-di</artifactId>
@@ -51,7 +49,7 @@
     <parent>
         <groupId>org.iter.codac.units</groupId>
         <artifactId>maven-iter-settings</artifactId>
-        <version>7.2.0</version>
+        <version>7.3.0</version>
     </parent>
 
     <!-- Unit owner and developers -->
