@@ -1,6 +1,11 @@
-add_executable(unit-tests)
+set(unit-tests sup-di-unit-tests)
 
-target_sources(unit-tests
+add_executable(${unit-tests})
+
+set_target_properties(${unit-tests} PROPERTIES OUTPUT_NAME "unit-tests")
+set_target_properties(${unit-tests} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${TEST_OUTPUT_DIRECTORY})
+
+target_sources(${unit-tests}
     PRIVATE
     composition_root_tests.cpp
     dependency_traits_tests.cpp
@@ -25,7 +30,7 @@ target_sources(unit-tests
     type_map_tests.cpp
 )
 
-target_include_directories(unit-tests
+target_include_directories(${unit-tests}
     PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}
     ${SUP_DI_AUTOGEN_DIR}
@@ -35,7 +40,7 @@ find_package(GTest REQUIRED)
 
 find_package(sup-utils REQUIRED)
 
-target_link_libraries(unit-tests
+target_link_libraries(${unit-tests}
     PRIVATE
     GTest::GTest
     GTest::Main
@@ -45,5 +50,3 @@ target_link_libraries(unit-tests
     sup-di
     dl
 )
-
-set_target_properties(unit-tests PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${TEST_OUTPUT_DIRECTORY})

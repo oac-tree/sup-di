@@ -1,5 +1,6 @@
 Changes for 1.5.0:
 
+- CMake changes to allow for pulling sup-dto as a github dependency
 - RPM generation with CPack
 
 Changes for 1.4.0:
