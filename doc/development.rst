@@ -2,12 +2,12 @@
 Development
 ===========
 
-``sup-di`` simplifies the development process by providing tools and patterns for managing dependencies and object lifecycles. Below is a guide on how to use sup-di for development:
+``sup-di`` simplifies the development process by providing tools and patterns for managing dependencies and object lifecycles. Below is a guide on how to use ``sup-di`` for development:
 
 Adding Classes to sup-di
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-To add a new class to sup-di, follow these steps:
+To register a new class to ``sup-di``, follow these steps:
 
 1. Define your class and its dependencies.
 2. Register a factory function for the class in the `ObjectManager`.
@@ -76,34 +76,17 @@ To call the registered function:
 
    sup::di::GlobalObjectManager().CallGlobalFunction("PrintMessage", {"Hello, sup-di!"});
 
-Adding Types to sup-di
-^^^^^^^^^^^^^^^^^^^^^^
+Dependency types
+^^^^^^^^^^^^^^^^
 
-sup-di supports custom types through its type traits system. To add a new type, ensure it is compatible with the storage and injection type traits.
+The ``ObjectManager`` supports dependency injection with various parameter types, including:
 
-Example:
+* Pass by (const) value
+* Pass by reference
+* Pass by pointer
+* Pass by unique pointer (``std::unique_ptr``)
 
-Suppose you want to use `std::unique_ptr<MyService>` as a dependency. sup-di already supports `std::unique_ptr` through its `IsUniquePtr` and `StorageType` traits. You can directly register and use it:
-
-.. code-block:: c++
-
-   #include <memory>
-   #include <sup/di/object_manager.h>
-
-   // Register a unique_ptr factory function
-   static const bool MyServiceUniquePtrRegistered =
-       sup::di::GlobalObjectManager().RegisterFactoryFunction(
-           "MyServiceUniquePtr",
-           [](int value, const std::string& name) -> std::unique_ptr<MyService> {
-             return std::make_unique<MyService>(value, name);
-           });
-
-To retrieve the instance:
-
-.. code-block:: c++
-
-   auto my_service = sup::di::GlobalObjectManager().GetInstance<std::unique_ptr<MyService>>("my_service_instance");
-   my_service->Print();
+When using unique pointer parameters, the ``ObjectManager`` will ensure transfer of ownership of the injected object. This means that the registered instance will no longer be available in the ``ObjectManager`` after the injection.
 
 Best Practices
 ^^^^^^^^^^^^^^

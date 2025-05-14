@@ -1,6 +1,6 @@
-=================
- sup-di Composer
-=================
+===============
+sup-di Composer
+===============
 
 The ``sup-di-composer`` application is a command-line tool for executing dependency injection configurations. It provides a convenient way to test, debug, and automate DI workflows.
 
@@ -34,13 +34,13 @@ With the following code compiled as a shared library named libdi-test.so:
 
    const std::string PRINT_STRING_NAME = "PrintString";
 
-   bool PrintStringFactoryFunction(std::string str) {
+   bool PrintStringFunction(std::string str) {
      std::cout << str << std::endl;
      return true;
    }
 
    const bool PrintStringRegistered = sup::di::GlobalObjectManager().RegisterGlobalFunction(
-       PRINT_STRING_NAME, PrintStringFactoryFunction);
+       PRINT_STRING_NAME, PrintStringFunction);
 
 And the following XML configuration, example.xml:
 
@@ -76,4 +76,4 @@ Expected output:
 
    Hello, World!
 
-This workflow demonstrates how SUP-DI simplifies the process of creating, managing, and testing object graphs and dependencies. By leveraging ``sup-di-composer``, developers can focus on building functionality while SUP-DI handles the complexity of dependency management.
+This workflow demonstrates how ``sup-di`` simplifies the process of creating, managing, and testing object graphs and dependencies. By leveraging ``sup-di-composer``, developers can focus on building functionality while ``sup-di`` handles the complexity of dependency management.
