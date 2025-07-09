@@ -1,3 +1,7 @@
+Changes for 1.6.0:
+
+- Remove fixed release number in pom.xml
+
 Changes for 1.5.0:
 
 - CMake changes to allow for pulling sup-dto as a github dependency
