@@ -35,8 +35,6 @@
     <properties>
         <unit.type>module</unit.type>
         <integrity.level>1</integrity.level>
-        <rpm.release.num>0</rpm.release.num>
-        <rpm.vcs.url>http://www.iter.org/org/team/chd/cid/codac</rpm.vcs.url>
         <!-- -->
         <buildpath>BUILD</buildpath>
         <makefile.args>install</makefile.args>
