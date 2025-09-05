@@ -8,6 +8,7 @@ file(MAKE_DIRECTORY ${SUP_DI_AUTOGEN_DIR})
 add_subdirectory(service_wrapper)
 add_subdirectory(services)
 add_subdirectory(unit)
+add_subdirectory(parasoft)
 
 file(WRITE ${TEST_OUTPUT_DIRECTORY}/test.sh
 "#!/bin/bash
