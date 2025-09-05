@@ -1,3 +1,7 @@
+Changes for 1.7.0:
+
+- Improve code quality
+
 Changes for 1.6.0:
 
 - Remove fixed release number in pom.xml
