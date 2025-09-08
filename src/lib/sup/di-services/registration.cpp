@@ -27,5 +27,5 @@
 
 using namespace sup::di::services;
 
-static const bool Keep_Alive_Function_Registered =
+const bool Keep_Alive_Function_Registered =
     sup::di::GlobalObjectManager().RegisterGlobalFunction(KEEP_ALIVE_NAME, KeepAlive);

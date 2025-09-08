@@ -77,6 +77,11 @@ public:
   ObjectManager();
   ~ObjectManager();
 
+  ObjectManager(const ObjectManager& other) = delete;
+  ObjectManager(ObjectManager&& other) = delete;
+  ObjectManager& operator=(const ObjectManager& other) = delete;
+  ObjectManager& operator=(ObjectManager&& other) = delete;
+
   /**
    * @brief Create an instance and store it under the given name.
    *
@@ -181,7 +186,7 @@ ForwardingInstanceFactoryFunction(internal::ForwardingArgType<Deps>... dependenc
 /**
  * @brief Retrieve global ObjectManager instance.
  */
-ObjectManager& GlobalObjectManager();
+ObjectManager& GlobalObjectManager() noexcept;
 
 template <typename T>
 internal::InjectionType<T> ObjectManager::GetInstance(const std::string& instance_name)

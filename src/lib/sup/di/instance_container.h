@@ -38,7 +38,13 @@ namespace internal
 class AbstractInstanceContainer
 {
 public:
+  AbstractInstanceContainer() = default;
   virtual ~AbstractInstanceContainer();
+
+  AbstractInstanceContainer(const AbstractInstanceContainer& other) = delete;
+  AbstractInstanceContainer(AbstractInstanceContainer&& other) = delete;
+  AbstractInstanceContainer& operator=(const AbstractInstanceContainer& other) = delete;
+  AbstractInstanceContainer& operator=(AbstractInstanceContainer&& other) = delete;
 
   virtual void* Get() = 0;
   virtual void* Release() = 0;

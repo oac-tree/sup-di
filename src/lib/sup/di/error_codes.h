@@ -30,7 +30,7 @@ namespace sup
 namespace di
 {
 
-enum class ErrorCode
+enum class ErrorCode : std::uint32_t
 {
   kSuccess = 0,
   kFactoryFunctionNotFound,

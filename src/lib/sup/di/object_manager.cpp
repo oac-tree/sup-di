@@ -57,7 +57,7 @@ ErrorCode ObjectManager::CallGlobalFunction(const std::string& registered_functi
   return it->second(dependency_names);
 }
 
-ObjectManager& GlobalObjectManager()
+ObjectManager& GlobalObjectManager() noexcept
 {
   static ObjectManager global_object_manager;
   return global_object_manager;
