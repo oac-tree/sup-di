@@ -57,7 +57,7 @@ template <class T, class Deleter>
 class InstanceContainer : public AbstractInstanceContainer
 {
 public:
-  ~InstanceContainer() = default;
+  ~InstanceContainer() override = default;
 
   explicit InstanceContainer(std::unique_ptr<T, Deleter>&& p)
     : pointer(std::move(p)) {}

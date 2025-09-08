@@ -166,8 +166,8 @@ public:
                               internal::GlobalFunction<Deps...> global_function);
 
 private:
-  std::map<std::string, RegisteredFactoryFunction> factory_functions;
-  std::map<std::string, RegisteredGlobalFunction> global_functions;
+  std::map<std::string, RegisteredFactoryFunction> m_factory_functions;
+  std::map<std::string, RegisteredGlobalFunction> m_global_functions;
   internal::ServiceStore<std::string> m_service_store;
 };
 
@@ -200,11 +200,11 @@ bool ObjectManager::RegisterFactoryFunction(
   internal::InstanceFactoryFunction<ServiceType, Deleter, Deps...> factory_function)
 {
   static_assert(internal::AreLegalDependencyTypes<Deps...>::value, "Using illegal dependency type");
-  if (factory_functions.find(registered_typename) != factory_functions.end())
+  if (m_factory_functions.find(registered_typename) != m_factory_functions.end())
   {
     throw std::runtime_error("ObjectManager::RegisterFactoryFunction: typename already registered");
   }
-  factory_functions[registered_typename] =
+  m_factory_functions[registered_typename] =
     [this, factory_function](const std::string& instance_name, const std::vector<std::string>& dependency_names)
     {
       if (dependency_names.size() != sizeof...(Deps))
@@ -250,12 +250,12 @@ bool ObjectManager::RegisterGlobalFunction(const std::string& registered_functio
                                            internal::GlobalFunction<Deps...> global_function)
 {
   static_assert(internal::AreLegalDependencyTypes<Deps...>::value, "Using illegal dependency type");
-  if (global_functions.find(registered_function_name) != global_functions.end())
+  if (m_global_functions.find(registered_function_name) != m_global_functions.end())
   {
     throw std::runtime_error(
       "ObjectManager::RegisterGlobalFunction: function name already registered");
   }
-  global_functions[registered_function_name] =
+  m_global_functions[registered_function_name] =
     [this, global_function](const std::vector<std::string>& dependency_names)
     {
       if (dependency_names.size() != sizeof...(Deps))

@@ -27,8 +27,8 @@ namespace sup
 namespace di
 {
 ObjectManager::ObjectManager()
-  : factory_functions{}
-  , global_functions{}
+  : m_factory_functions{}
+  , m_global_functions{}
   , m_service_store{}
 {}
 
@@ -38,8 +38,8 @@ ErrorCode ObjectManager::CreateInstance(
   const std::string& registered_typename, const std::string& instance_name,
   const std::vector<std::string>& dependency_names)
 {
-  auto it = factory_functions.find(registered_typename);
-  if (it == factory_functions.end())
+  auto it = m_factory_functions.find(registered_typename);
+  if (it == m_factory_functions.end())
   {
     return ErrorCode::kFactoryFunctionNotFound;
   }
@@ -49,8 +49,8 @@ ErrorCode ObjectManager::CreateInstance(
 ErrorCode ObjectManager::CallGlobalFunction(const std::string& registered_function_name,
                                             const std::vector<std::string>& dependency_names)
 {
-  auto it = global_functions.find(registered_function_name);
-  if (it == global_functions.end())
+  auto it = m_global_functions.find(registered_function_name);
+  if (it == m_global_functions.end())
   {
     return ErrorCode::kGlobalFunctionNotFound;
   }
@@ -59,7 +59,7 @@ ErrorCode ObjectManager::CallGlobalFunction(const std::string& registered_functi
 
 ObjectManager& GlobalObjectManager() noexcept
 {
-  static ObjectManager global_object_manager;
+  static ObjectManager global_object_manager{};
   return global_object_manager;
 }
 
