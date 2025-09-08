@@ -10,9 +10,9 @@ cpptest_add_executable(sup-di-cpptest
   CPPTEST_PROJECT_LOC ${CMAKE_CURRENT_BINARY_DIR}
   CPPTEST_PROJECT_FOLDERS
   src-sup-di=${CMAKE_SOURCE_DIR}/src/lib/sup/di
-  src-sup-di-composer-core=${CMAKE_SOURCE_DIR}/src/lib/sup/di-composer-core
+  # src-sup-di-composer-core=${CMAKE_SOURCE_DIR}/src/lib/sup/di-composer-core
   src-sup-di-services=${CMAKE_SOURCE_DIR}/src/lib/sup/di-services
-  TARGETS sup-di sup-di-composer-core sup-di-services
+  TARGETS sup-di sup-di-services # sup-di-composer-core
 )
 get_target_property(SUP_DI_INCLUDE_DIRECTORIES sup-di INCLUDE_DIRECTORIES)
 target_include_directories(sup-di-cpptest PUBLIC ${SUP_DI_INCLUDE_DIRECTORIES})
