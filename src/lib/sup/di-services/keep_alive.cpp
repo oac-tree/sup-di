@@ -23,10 +23,8 @@
 #include "keep_alive.h"
 
 #include <chrono>
-#include <csignal>
-#include <iostream>
+#include <limits>
 #include <thread>
-#include <atomic>
 
 namespace sup
 {
@@ -35,24 +33,19 @@ namespace di
 namespace services
 {
 
-std::atomic<bool> signalReceived(false);
-
-// Function to handle the interrupt signal
-void interruptHandler(int signal)
+bool KeepAliveFor(std::uint32_t seconds)
 {
-  std::cout << "Terminating the execution with signal: " << signal << std::endl;
-  signalReceived.store(true);
+  while (seconds-- > 0)
+  {
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+  }
+  return true;
 }
 
 bool KeepAlive()
 {
-  signal(SIGINT, interruptHandler);
-  while (!signalReceived.load())
-  {
-    // Sleep for a certain amount of time
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
-  }
-  return false;
+  // Keep alive for 137 years
+  return KeepAliveFor(std::numeric_limits<std::uint32_t>::max());
 }
 
 }  // namespace services

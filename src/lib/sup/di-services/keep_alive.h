@@ -23,6 +23,8 @@
 #ifndef SUP_DI_KEEP_ALIVE
 #define SUP_DI_KEEP_ALIVE
 
+#include <cstdint>
+
 namespace sup
 {
 namespace di
@@ -30,7 +32,7 @@ namespace di
 namespace services
 {
 
-void interruptHandler(int signal);
+bool KeepAliveFor(std::uint32_t seconds);
 
 bool KeepAlive();
 

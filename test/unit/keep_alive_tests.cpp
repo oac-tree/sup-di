@@ -31,26 +31,22 @@
 
 using namespace sup::di::services;
 
-TEST(KeepAliveTest, InterruptHandlerTest)
+TEST(KeepAliveTest, OneSecond)
 {
-  testing::internal::CaptureStdout();
-  int signal = SIGINT;
+  std::thread t(KeepAliveFor, 1u);
 
-  interruptHandler(signal);
-
-  std::string output = testing::internal::GetCapturedStdout();
-  EXPECT_THAT(output, testing::HasSubstr("Terminating the execution with signal: " + std::to_string(signal)));
-}
-
-TEST(KeepAliveTest, KeepAliveThreadTermination)
-{
-  std::thread t(KeepAlive);
-
-  std::this_thread::sleep_for(std::chrono::milliseconds(1000));
   EXPECT_TRUE(t.joinable());
-  std::raise(SIGINT);
   t.join();
 
   EXPECT_FALSE(t.joinable());
 }
 
+TEST(KeepAliveTest, ZeroSeconds)
+{
+  std::thread t(KeepAliveFor, 0u);
+
+  EXPECT_TRUE(t.joinable());
+  t.join();
+
+  EXPECT_FALSE(t.joinable());
+}

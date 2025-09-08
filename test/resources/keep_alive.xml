@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ObjectComposer xmlns="http://codac.iter.org/sup/di" version="1.0"
+           name="Example to test KeepAlive function"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema-instance"
+           xs:schemaLocation="http://codac.iter.org/sup/di sup-di.xsd">
+    <LoadLibrary>libsup-di-services.so</LoadLibrary>
+    <CallFunction>
+        <FunctionName>KeepAlive</FunctionName>
+    </CallFunction>
+</ObjectComposer>
