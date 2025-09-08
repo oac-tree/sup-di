@@ -30,11 +30,7 @@ set(CMAKE_CONFIG_PATH ${CMAKE_CURRENT_LIST_DIR}/cmake/config)
 include(configuration)
 
 add_subdirectory(src)
-
-if(COA_BUILD_TESTS)
-  add_subdirectory(test)
-endif()
-
+add_subdirectory(test)
 add_subdirectory(doc)
 
 include(installation)

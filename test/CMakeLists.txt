@@ -1,5 +1,5 @@
-if (COVERAGE)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -g -fprofile-arcs -ftest-coverage --coverage")
+if(NOT COA_BUILD_TESTS)
+  return()
 endif()
 
 set(SUP_DI_AUTOGEN_DIR ${CMAKE_CURRENT_BINARY_DIR}/autogen)
