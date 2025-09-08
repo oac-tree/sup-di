@@ -1,11 +1,21 @@
-add_library(sup-di-composer-core STATIC)
+set(library_name sup-di-composer-core)
+set(export_name sup-di-composer-core)
 
-target_include_directories(sup-di-composer-core PUBLIC
+add_library(${library_name} SHARED)
+add_library(sup-di::${library_name} ALIAS ${library_name}) # alias for build-tree usage
+
+set_target_properties(${library_name} PROPERTIES
+    EXPORT_NAME ${export_name}
+    SOVERSION ${LIBSOVERSION}
+    VERSION ${LIBVERSION}
+)
+
+target_include_directories(${library_name} PUBLIC
   $<INSTALL_INTERFACE:include>
   $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/../..>
 )
 
-target_sources(sup-di-composer-core
+target_sources(${library_name}
   PRIVATE
   composition_root.cpp
   double_instance_element.cpp
@@ -23,8 +33,11 @@ target_sources(sup-di-composer-core
 
 find_package(sup-utils REQUIRED)
 
-target_link_libraries(sup-di-composer-core
+target_link_libraries(${library_name}
   PRIVATE
   sup-utils::sup-xml
   sup-di::sup-di
 )
+
+# -- Installation --
+install(TARGETS ${library_name} EXPORT sup-di-targets LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
