@@ -14,5 +14,5 @@ cpptest_add_executable(sup-di-cpptest
   src-sup-di-services=${CMAKE_SOURCE_DIR}/src/lib/sup/di-services
   TARGETS sup-di sup-di-composer-core sup-di-services
 )
-get_target_property(SUP_di_INCLUDE_DIRECTORIES sup-di INCLUDE_DIRECTORIES)
-target_include_directories(sup-di-cpptest PUBLIC ${SUP_di_INCLUDE_DIRECTORIES})
+get_target_property(SUP_DI_INCLUDE_DIRECTORIES sup-di INCLUDE_DIRECTORIES)
+target_include_directories(sup-di-cpptest PUBLIC ${SUP_DI_INCLUDE_DIRECTORIES})
