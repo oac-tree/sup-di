@@ -24,6 +24,7 @@
 #define SUP_DI_ERROR_CODES_H_
 
 #include <string>
+#include <cstdint>
 
 namespace sup
 {
