@@ -26,7 +26,7 @@
     <artifactId>sup-di</artifactId>
     <packaging>codac</packaging>
     <!-- See ChangeLog file for details -->
-    <version>1.7.0</version>
+    <version>1.8.0</version>
     <name>SUP dependency injection module</name>
     <description>Library for configuration-based dependency injection in SUP</description>
     <url>http://www.iter.org/</url>
