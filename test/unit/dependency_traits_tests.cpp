@@ -147,6 +147,39 @@ TEST_F(DependencyTraitsTest, FactoryArgumentTypes)
                                          std::unique_ptr<TestClass>&&>::value));
 }
 
+TEST_F(DependencyTraitsTest, ForwardDependency)
+{
+  TestClass obj;
+  auto& ref = internal::ForwardDependencyHelper<TestClass>::Forward(obj);
+  EXPECT_EQ(&ref, &obj);
+
+  auto uptr = std::make_unique<TestClass>();
+  auto* raw = uptr.get();
+  auto moved = internal::ForwardDependencyHelper<std::unique_ptr<TestClass>>::Forward(uptr);
+  EXPECT_EQ(moved.get(), raw);
+
+  auto uptr2 = std::make_unique<TestClass>();
+  auto* raw2 = uptr2.get();
+  auto moved2 = internal::ForwardDependencyHelper<std::unique_ptr<TestClass>&&>::Forward(uptr2);
+  EXPECT_EQ(moved2.get(), raw2);
+}
+
+TEST_F(DependencyTraitsTest, ValuePointerToInjectionTypeForward)
+{
+  // Base template (T) and pointer specialization (T*)
+  TestClass obj;
+  TestClass* ptr = &obj;
+  EXPECT_EQ(&internal::ValuePointerToInjectionType<TestClass>::Forward(ptr), ptr);
+  EXPECT_EQ(internal::ValuePointerToInjectionType<TestClass*>::Forward(ptr), ptr);
+
+  // unique_ptr specializations
+  TestClass* raw1 = new TestClass();
+  EXPECT_EQ(internal::ValuePointerToInjectionType<std::unique_ptr<TestClass>>::Forward(raw1).get(), raw1);
+
+  TestClass* raw2 = new TestClass();
+  EXPECT_EQ(internal::ValuePointerToInjectionType<std::unique_ptr<TestClass>&&>::Forward(raw2).get(), raw2);
+}
+
 TEST_F(DependencyTraitsTest, TransferOwnership)
 {
   // Check legal dependency types

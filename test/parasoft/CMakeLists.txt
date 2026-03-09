@@ -21,5 +21,5 @@ target_link_libraries(sup-di-cpptest
   PUBLIC
   sup-di::sup-di
   sup-di::sup-di-services
-  sup-di-composer-core
+  sup-di::sup-di-composer-core
 )

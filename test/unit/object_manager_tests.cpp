@@ -288,6 +288,61 @@ TEST_F(ObjectManagerTest, Exceptions)
     ErrorCode::kDependencyNotFound);
 }
 
+TEST_F(ObjectManagerTest, GlobalFunctionErrorPaths)
+{
+  // Setup
+  EXPECT_TRUE(object_manager.RegisterFactoryFunction(HelloPrinterName, HelloPrinterFactoryFunction));
+  EXPECT_EQ(object_manager.CreateInstance(HelloPrinterName, HelloPrinterInstanceName, {}),
+    ErrorCode::kSuccess);
+  EXPECT_TRUE(object_manager.RegisterGlobalFunction(HelloTestName, TestHelloPrinter));
+  EXPECT_TRUE(object_manager.RegisterGlobalFunction("FailingTest", TestPrinterAlwaysFails));
+
+  // kWrongNumberOfDependencies
+  EXPECT_EQ(object_manager.CallGlobalFunction(HelloTestName, {}),
+    ErrorCode::kWrongNumberOfDependencies);
+  EXPECT_EQ(object_manager.CallGlobalFunction(HelloTestName, 
+                                              {HelloPrinterInstanceName, HelloPrinterInstanceName}),
+    ErrorCode::kWrongNumberOfDependencies);
+
+  // kDependencyNotFound - non-existent instance
+  EXPECT_EQ(object_manager.CallGlobalFunction(HelloTestName, {"NonExistent"}),
+    ErrorCode::kDependencyNotFound);
+
+  // kDependencyNotFound - wrong type
+  EXPECT_TRUE(object_manager.RegisterInstance(42, IntInstanceName));
+  EXPECT_EQ(object_manager.CallGlobalFunction(HelloTestName, {IntInstanceName}),
+    ErrorCode::kDependencyNotFound);
+
+  // kGlobalFunctionFailed
+  EXPECT_EQ(object_manager.CallGlobalFunction("FailingTest", {HelloPrinterInstanceName}),
+    ErrorCode::kGlobalFunctionFailed);
+
+  // Success
+  EXPECT_EQ(object_manager.CallGlobalFunction(HelloTestName, {HelloPrinterInstanceName}),
+    ErrorCode::kSuccess);
+}
+
+TEST_F(ObjectManagerTest, CallGlobalFunctionCoverage)
+{
+  // Setup
+  EXPECT_TRUE(object_manager.RegisterFactoryFunction(HelloPrinterName, HelloPrinterFactoryFunction));
+  EXPECT_EQ(object_manager.CreateInstance(HelloPrinterName, HelloPrinterInstanceName, {}),
+    ErrorCode::kSuccess);
+  EXPECT_TRUE(object_manager.RegisterGlobalFunction(HelloTestName, TestHelloPrinter));
+
+  // Test kWrongNumberOfDependencies path (line 263)
+  EXPECT_EQ(object_manager.CallGlobalFunction(HelloTestName, {}),
+    ErrorCode::kWrongNumberOfDependencies);
+
+  // Test kDependencyNotFound path (lines 269-272)
+  EXPECT_EQ(object_manager.CallGlobalFunction(HelloTestName, {"NonExistent"}),
+    ErrorCode::kDependencyNotFound);
+
+  // Test kSuccess path (line 276)
+  EXPECT_EQ(object_manager.CallGlobalFunction(HelloTestName, {HelloPrinterInstanceName}),
+    ErrorCode::kSuccess);
+}
+
 ObjectManagerTest::ObjectManagerTest()
 {
 }

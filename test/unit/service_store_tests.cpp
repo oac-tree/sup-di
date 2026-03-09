@@ -69,3 +69,44 @@ TEST_F(ServiceStoreTest, StoreRetrieve)
   EXPECT_NO_THROW(store.GetInstance<TestServiceA*>("A"));
   EXPECT_THROW(store.GetInstance<TestServiceB*>("B"), std::runtime_error);
 }
+
+TEST_F(ServiceStoreTest, GetInstanceKeyNotFound)
+{
+  StringServiceStore store;
+  // Store 1 service
+  EXPECT_TRUE(store.StoreInstance(std::make_unique<TestServiceA>(), "A"));
+  
+  // Attempt to get service with non-existent key should throw
+  EXPECT_THROW(store.GetInstance<TestServiceA*>("NonExistent"), std::runtime_error);
+}
+
+TEST_F(ServiceStoreTest, StoreInstanceDuplicate)
+{
+  StringServiceStore store;
+  // Store 1 service
+  EXPECT_TRUE(store.StoreInstance(std::make_unique<TestServiceA>(), "A"));
+  
+  // Attempt to store another instance with the same key should fail
+  EXPECT_FALSE(store.StoreInstance(std::make_unique<TestServiceA>(), "A"));
+}
+
+TEST_F(ServiceStoreTest, InvokeWithStoreArgsSingleParam)
+{
+  StringServiceStore store;
+  EXPECT_TRUE(store.StoreInstance(std::make_unique<TestServiceA>(), "A"));
+  bool called = false;
+  InvokeWithStoreArgs<TestServiceA*>([&called](TestServiceA*) { called = true; }, store, {"A"});
+  EXPECT_TRUE(called);
+}
+
+TEST_F(ServiceStoreTest, InvokeWithStoreArgsNoParams)
+{
+  StringServiceStore store;
+  EXPECT_NO_THROW(InvokeWithStoreArgs<>([]() {}, store, {}));
+}
+
+TEST_F(ServiceStoreTest, GetInstanceUnknownServiceType)
+{
+  StringServiceStore store;
+  EXPECT_THROW(store.GetInstance<TestServiceA*>("A"), std::runtime_error);
+}

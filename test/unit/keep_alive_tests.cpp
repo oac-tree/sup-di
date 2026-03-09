@@ -50,3 +50,11 @@ TEST(KeepAliveTest, ZeroSeconds)
 
   EXPECT_FALSE(t.joinable());
 }
+
+TEST(KeepAliveTest, KeepAliveCanBeCreated)
+{
+  std::thread t(KeepAlive);
+
+  EXPECT_TRUE(t.joinable());
+  t.detach();
+}

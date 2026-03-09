@@ -134,3 +134,14 @@ bool TestString(const std::string* str)
   }
   return true;
 }
+
+bool TestPrinterAlwaysFails(const IPrinter* printer)
+{
+  // Test function that always returns false to test kGlobalFunctionFailed error path
+  return false;
+}
+
+bool TestTwoPrinters(const IPrinter* p1, const IPrinter* p2)
+{
+  return p1 != nullptr && p2 != nullptr;
+}

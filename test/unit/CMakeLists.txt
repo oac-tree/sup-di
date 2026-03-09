@@ -51,3 +51,5 @@ target_link_libraries(${unit-tests}
     sup-di
     dl
 )
+
+gtest_discover_tests(${unit-tests} DISCOVERY_MODE PRE_TEST)
