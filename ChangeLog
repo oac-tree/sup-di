@@ -1,3 +1,8 @@
+Changes for 1.11.0:
+
+- Build coverage with -O0 by selecting Debug over RelWithDebInfo
+- Instrument test code for coverage by setting flags before add_subdirectory
+
 Changes for 1.10.0:
 
 - COA Release v3.5.0, July 2026
