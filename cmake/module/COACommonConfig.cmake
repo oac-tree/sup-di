@@ -23,6 +23,15 @@ if(NOT CMAKE_BUILD_TYPE)
   endif()
 endif()
 
+if(COA_COVERAGE)
+  # Instrument the whole project (library AND tests). Header-defined templates and inline functions
+  # are compiled into whichever translation unit instantiates them; when that is a test TU, the
+  # executed lines only appear in coverage if the test TU is instrumented too. Setting the flags
+  # here (before any add_subdirectory) applies them to every subdirectory.
+  message(STATUS "Enabling test coverage information")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -g -fno-inline --coverage")
+endif()
+
 # -----------------------------------------------------------------------------
 # Variables
 # -----------------------------------------------------------------------------
