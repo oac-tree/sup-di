@@ -66,6 +66,9 @@ struct PopFrontT<TypeList<Head, Tail...>>
 };
 
 // Get Nth type in any type list
+//! @cond Recursive template inheritance confuses Doxygen's class relation
+//! detection (false "potential recursive class relation" warning), so the
+//! implementation is hidden from the generated documentation.
 template <typename List, std::size_t N>
 class NthTypeT : public NthTypeT<PopFront<List>, N-1>
 {};
@@ -73,6 +76,7 @@ class NthTypeT : public NthTypeT<PopFront<List>, N-1>
 template <typename List>
 class NthTypeT<List, 0> : public FrontT<List>
 {};
+//! @endcond
 
 template <typename List, std::size_t N>
 using NthType = typename NthTypeT<List, N>::Type;

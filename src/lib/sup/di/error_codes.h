@@ -28,6 +28,7 @@
 
 namespace sup
 {
+//! @brief Namespace for sup-di (comment added to satisfy Doxygen)
 namespace di
 {
 

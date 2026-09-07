@@ -38,11 +38,9 @@ namespace internal
 template <std::size_t...>
 struct IndexSequence {};
 
-/**
- * @brief Class template generating a sequence of unsigned integers.
- *
- * @details MakeIndexSequence<N> represents IndexSequence<0, 1, ..., N-1>.
- */
+//! @cond Recursive template inheritance confuses Doxygen's class relation
+//! detection (false "potential recursive class relation" warning), so the
+//! implementation is hidden from the generated documentation.
 template <std::size_t N, std::size_t... Idx>
 struct MakeIndexSequenceT : public MakeIndexSequenceT<N-1, N-1, Idx...>
 {};
@@ -52,7 +50,13 @@ struct MakeIndexSequenceT<0, Idx...>
 {
   using Type = IndexSequence<Idx...>;
 };
+//! @endcond
 
+/**
+ * @brief Class template generating a sequence of unsigned integers.
+ *
+ * @details MakeIndexSequence<N> represents IndexSequence<0, 1, ..., N-1>.
+ */
 template <std::size_t N>
 using MakeIndexSequence = typename MakeIndexSequenceT<N>::Type;
 
